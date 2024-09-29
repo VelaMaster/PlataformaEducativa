@@ -7,46 +7,46 @@ body {
     display: flex;  
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Centrar verticalmente */
+    height: 100vh;
     margin: 0;
 }
    
 div {
-    background-color: rgb(0, 0, 0); /* Fondo del formulario */
+    background-color: rgb(0, 0, 0);
     padding: 20px;
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    width: 300px; /* Ancho del formulario */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
 }
 
 label {
-    display: block; /* Hacer etiquetas de bloque */
-    margin-bottom: 5px; /* Espaciado entre etiquetas e inputs */
-    font-weight: bold; /* Negrita */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 input[type="text"] {
-    width: 100%; /* Ancho completo */
-    padding: 10px; /* Espaciado interno */
-    margin-bottom: 15px; /* Espaciado entre inputs */
-    border: 1px solid #ccc; /* Borde suave */
-    border-radius: 4px; /* Bordes redondeados */
-    box-sizing: border-box; /* Para incluir padding y border en el ancho */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
 }
 
 input[type="text"]:focus {
-    border-color: #007bff; /* Cambio de color en el foco */
-    outline: none; /* Quitar contorno predeterminado */
+    border-color: #007bff;
+    outline: none;
 }
 
 input[type="submit"] {
-    background-color: #007bff; /* Color de fondo */
-    color: white; /* Color del texto */
-    border: none; /* Sin borde */
-    border-radius: 4px; /* Bordes redondeados */
-    padding: 10px; /* Espaciado interno */
-    cursor: pointer; /* Cambiar cursor al pasar */
-    width: 100%; /* Ancho completo */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
 }
 
 input[type="submit"]:hover {
