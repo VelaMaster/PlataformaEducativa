@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Tareas</title>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.js'></script>
+    <link rel="stylesheet" href="css/estiloProfesor.css">
+    <body>
+    
+    <header> 
+        <nav>   
+            <ul>
+                <li><a href="alumno.html">Inicio</a></li> <!-- Redirige al archivo de inicio -->
+                <li><a href="calendario.html">Calendario</a></li> <!-- Redirige al archivo del calendario -->
+                <li><a href="clases.html">Clases</a></li> <!-- Redirige al archivo de clases -->
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Clases</h1>
+    <div id='calendar'></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    // Aquí irán las tareas que vienen desde Firestore
+                    {
+                        title: 'Tarea 1',
+                        start: '2024-10-01',
+                        backgroundColor: 'red'  // Color para tareas
+                    },
+                    {
+                        title: 'Tarea 2',
+                        start: '2024-10-05',
+                        backgroundColor: 'blue'  // Otro color para diferentes tareas
+                    }
+                ]
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página del Alumno</title>
+    <link rel="stylesheet" href="css/estiloProfesor.css">
+    <style>
+    body {
+            background: 
+            linear-gradient(rgba(16, 112, 255, 0.6), rgba(0, 0, 0, 0.6)),
+            url('img/alumnos.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        .zona1 {
+            display: flex;
+            flex-direction: column; /* Apilar los elementos uno debajo de otro */
+            align-items: center;    /* Centrarlos horizontalmente */
+            padding: 50px;
+        }
+
+        /* Ajustar el tamaño del primer widget de Facebook */
+        .fb-page {
+            margin-bottom: 20px; /* Separación entre el widget y el botón */
+        }
+
+        /* Botón de invitación */
+        .invite-button {
+            background-color: #269aff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .invite-button:hover {
+            background-color: #ff8c00; /* Color al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SDK de Facebook justo después de la etiqueta <body> -->
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v20.0"></script>
+
+    <header>
+        <nav>   
+            <ul>
+                <li><a href="alumno.html">Inicio</a></li> <!-- Asegúrate de que este archivo esté correctamente nombrado -->
+                <li><a href="calendario.html">Calendario</a></li>
+                <li><a href="clases.html">Clases</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio">
+            <h1>Bienvenido, Estudiante</h1>
+            <p>Aquí encontrarás tus actividades y novedades.</p>
+            
+            <!-- Formulario para unirse a una clase -->
+            <section>
+                <h2>Unirse a una Clase</h2>
+                <form id="joinClassForm"> <!-- Cambié el ID del formulario a joinClassForm para que coincida con el script -->
+                    <label for="codigoClase">Código de Clase:</label>
+                    <input type="text" id="codigoClase" name="codigoClase" required>
+                    <button type="submit">Unirse</button>
+                </form>
+            </section>
+
+            <script>
+                // Asegúrate de usar el ID correcto del formulario
+                document.getElementById('joinClassForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const codigoClase = document.getElementById('codigoClase').value;
+
+                    // Aquí harás una solicitud al backend para unirte a la clase
+                    fetch('/api/unirseClase', { // Asegúrate de que esta ruta sea correcta
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ codigoClase })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Maneja la respuesta del servidor (por ejemplo, mostrar un mensaje de éxito)
+                        alert(data.message);
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            </script>
+
+            <!-- ZONA 1 -->
+            <div class="zona1">
+                <div class="fb-page" 
+                    data-href="https://www.facebook.com/profile.php?id=100064684089409" 
+                    data-tabs="timeline" 
+                    data-width="800"   
+                    data-height="600"  
+                    data-small-header="false" 
+                    data-adapt-container-width="true" 
+                    data-hide-cover="false" 
+                    data-show-facepile="true">
+                    <blockquote cite="https://www.facebook.com/profile.php?id=100064684089409" class="fb-xfbml-parse-ignore">
+                        <a href="https://www.facebook.com/profile.php?id=100064684089409">TECNM Oaxaca</a>
+                    </blockquote>
+                </div>
+    
+                <a href="https://www.facebook.com/ITO.CoordinacionSistemas" target="_blank" class="invite-button">
+                    Visita la página de la carrera de Sistemas Computacionales
+                </a>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2024 PE-ISC</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
