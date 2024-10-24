@@ -57,7 +57,7 @@ h1 {
 h2 {
     color: #000000;
     font-size: 24px;
-    border-bottom: 2px solid #007BFF; /* Línea debajo del título */
+    border-bottom: 2px solid orange; /* Línea debajo del título */
     padding-bottom: 5px;
 }
 
@@ -68,9 +68,9 @@ section {
 
 /* Resumen de Actividades */
 #resumen-actividades p {
-    font-size: 18px;
+    font-size: 22px;
     margin: 10px 0;
-    background-color: #e8f5e9;
+    background-color: rgb(215, 215, 215);
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -81,7 +81,7 @@ section {
     background-color: #f8f9fa;
     padding: 15px;
     margin: 20px 0;
-    border-left: 5px solid #007BFF;
+    border-left: 5px orange;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -100,7 +100,7 @@ section {
     display: inline-block;
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #007BFF; /* Azul para tecnologías */
+    background-color: orange; /* Azul para tecnologías */
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -141,7 +141,7 @@ section {
 
 #generar-codigo button {
     padding: 10px 20px;
-    background-color: #007BFF; /* Azul para tecnologías */
+    background-color: orange; /* Azul para tecnologías */
     color: white;
     border: none;
     border-radius: 5px;

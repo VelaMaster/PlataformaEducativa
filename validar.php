@@ -4,17 +4,17 @@ $contrasena = $_POST['contrasena'];
 $role = $_POST['role'];
 session_start();
 $_SESSION['usuario'] = $usuario;
-$conexion = mysqli_connect("localhost", "root", "", "plataformaweb");
+$conexion = mysqli_connect("localhost", "root", "", "peis");
 
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
 }
 if ($role == "Estudiante") {
     
-    $consulta = "SELECT * FROM alumno WHERE usuario = '$usuario' AND contrasena = '$contrasena'";
+    $consulta = "SELECT * FROM alumnos WHERE num_control = '$usuario' AND contrasena = '$contrasena'";
 } elseif ($role == "Docente") {
     
-    $consulta = "SELECT * FROM docentes WHERE usuario = '$usuario' AND contrasena = '$contrasena'";
+    $consulta = "SELECT * FROM docentes WHERE num_control = '$usuario' AND contrasena = '$contrasena'";
 }
 
 $resultado = mysqli_query($conexion, $consulta);
