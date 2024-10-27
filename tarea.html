@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Tarea</title>
+    <link rel="stylesheet" href="css/estiloTarea.css"> <!-- Puedes agregar estilos personalizados aquí -->
+</head>
+<body>
+
+<header>
+    <nav>
+        <ul>
+            <li><a href="alumno.html">Inicio</a></li>
+            <li><a href="calendario.html">Calendario</a></li>
+            <li><a href="clases.html">Clases</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h1>Detalle de la Tarea</h1>
+    <section id="detalle-tarea">
+        <h2>Tarea: <span id="titulo-tarea">[Título de la Tarea]</span></h2>
+        <p id="descripcion-tarea">Aquí va la descripción de la tarea, indicando lo que se debe hacer y los requisitos específicos.</p>
+    </section>
+
+    <!-- Área para subir archivos -->
+    <section id="subir-archivo">
+        <h3>Subir tu archivo</h3>
+        <form action="upload.php" method="POST" enctype="multipart/form-data">
+            <input type="file" name="archivo" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </section>
+
+    <!-- Botón de regreso -->
+    <button onclick="window.history.back()">Volver</button>
+</main>
+
+<footer>
+    <p>© 2024 Plataforma de Educación</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tareaId = urlParams.get('id');
+
+        const tareas = {
+            '1': { titulo: 'Tarea 1', descripcion: 'Descripción para Tarea 1' },
+            '2': { titulo: 'Tarea 2', descripcion: 'Descripción para Tarea 2' },
+            // Añadir más tareas aquí
+        };
+
+        if (tareas[tareaId]) {
+            document.getElementById('titulo-tarea').textContent = tareas[tareaId].titulo;
+            document.getElementById('descripcion-tarea').textContent = tareas[tareaId].descripcion;
+        }
+    });
+</script>
+
+</body>
+</html>
