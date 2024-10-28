@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas - Profesor</title>
+    <link rel="stylesheet" href="css/estiloProfesor.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header nav {
+            background-color: #ff9900;
+            padding: 10px;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header nav ul li {
+            margin: 0 15px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #ff9900;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        table td a {
+            color: #ff9900;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        table td a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        form label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        form input, form select, form textarea, form button {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        form button {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #e68a00;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #333;
+            color: #fff;
+            margin-top: 20px;
+            border-top: 3px solid #ff9900;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav>
+        <ul>
+            <li><a href="inicioProfesor.html">Inicio</a></li>
+            <li><a href="calendarioProfesor.html">Calendario</a></li>
+            <li><a href="gestionTareasProfesor.html">Gestión de Tareas</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h1>Gestión de Tareas</h1>
+
+    <!-- Sección para ver las tareas -->
+    <section id="ver-tareas">
+        <h2>Tareas Asignadas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Materia</th>
+                    <th>Título de la Tarea</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se podrían cargar tareas dinámicamente desde la base de datos -->
+                <tr>
+                    <td>Matemáticas</td>
+                    <td>Tarea de Álgebra</td>
+                    <td>2024-11-01</td>
+                    <td><a href="tarea.html?id=1">Ver</a> | <a href="editarTarea.html?id=1">Editar</a> | <a href="#" onclick="eliminarTarea(1)">Eliminar</a></td>
+                </tr>
+                <!-- Más tareas aquí -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Formulario para asignar nuevas tareas -->
+    <section id="asignar-tarea">
+        <h2>Asignar Nueva Tarea</h2>
+        <form action="asignarTarea.php" method="POST">
+            <label for="materia">Materia:</label>
+            <select id="materia" name="materia">
+                <option value="matematicas">Matemáticas</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <!-- Agregar más opciones según las materias disponibles -->
+            </select>
+
+            <label for="titulo">Título de la Tarea:</label>
+            <input type="text" id="titulo" name="titulo" required>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required></textarea>
+
+            <label for="fechaEntrega">Fecha de Entrega:</label>
+            <input type="date" id="fechaEntrega" name="fechaEntrega" required>
+
+            <button type="submit">Asignar Tarea</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>© 2024 Plataforma de Educación</p>
+</footer>
+
+<script>
+    function eliminarTarea(id) {
+        if(confirm("¿Estás seguro de que deseas eliminar esta tarea?")) {
+            // Implementar lógica para eliminar la tarea (ejemplo: llamada a la API)
+            alert("Tarea " + id + " eliminada.");
+        }
+    }
+</script>
+
+</body>
+</html>
