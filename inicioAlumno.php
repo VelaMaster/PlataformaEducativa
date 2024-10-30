@@ -1,3 +1,16 @@
+<?php
+session_start();
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php");
+    exit();
+}
+$num_control = $_SESSION['usuario'];
+$conexion = mysqli_connect("localhost", "root", "", "peis");
+if (!$conexion) {
+    die("Conexión fallida: " . mysqli_connect_error());
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -61,36 +74,40 @@
     </ul>
 </div>
 <div class="card-container">
-    <div class="card">
-        <div class="card-content">
-            <h2 class="card-title">Nombre de la Materia</h2>
-            <p class="card-subtitle">Profesor: Nombre del Profesor</p>
-            <button class="view-more">Ver más</button>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-content">
-            <h2 class="card-title">Nombre de la Materia</h2>
-            <p class="card-subtitle">Profesor: Nombre del Profesor</p>
-            <button class="view-more">Ver más</button>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-content">
-            <h2 class="card-title">Nombre de la Materia</h2>
-            <p class="card-subtitle">Profesor: Nombre del Profesor</p>
-            <button class="view-more">Ver más</button>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-content">
-            <h2 class="card-title">Nombre de la Materia</h2>
-            <p class="card-subtitle">Profesor: Nombre del Profesor</p>
-            <button class="view-more">Ver más</button>
-        </div>
-    </div>
+<?php
+try {
+    $consulta_materias = "
+        SELECT c.nombre_curso AS nombre_materia, CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, c.descripcion
+        FROM cursos c
+        JOIN grupos g ON c.id_curso = g.id_curso
+        JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
+        JOIN docentes d ON c.id_docente = d.num_control
+        WHERE ga.num_control = '$num_control'
+    ";
+    $resultado_materias = mysqli_query($conexion, $consulta_materias);
+    if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
+        echo "<div class = 'card-container'>";
+        while ($row = mysqli_fetch_assoc($resultado_materias)) {
+            echo "<div class='card'>";
+            echo "<div class='card-content'>";
+            echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
+            echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
+            echo "<p class='card-description'>" . $row['descripcion'] . "</p>";
+            echo "<button class='view-more'>Ver más</button>";
+            echo "</div>";
+            echo "</div>";
+        }
+        echo "</div>";
+    } else {
+        echo "No se encontraron materias para este estudiante.";
+    }
+} catch (mysqli_sql_exception $e) {
+    echo "Error en la consulta: " . $e->getMessage();
+}
+mysqli_free_result($resultado_materias);
+mysqli_close($conexion);
+?>
 </div>
-
 <!-- Pie de página -->
 <footer class="text-center py-3">
     <p>© 2024 PE-ISC</p>

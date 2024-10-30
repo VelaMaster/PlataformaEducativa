@@ -42,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($filas > 0) {
         $_SESSION['usuario'] = $usuario; // Guardar sesión
         if ($role == "Estudiante") {
-            header("location:inicioAlumno.html");
+            header("location:inicioAlumno.php");
         } elseif ($role == "Docente") {
-            header("location:inicioProfesor.html");
+            header("location:inicioProfesor.php");
         }
     } else {
         header("location:index.php?error=auth"); // Redirigir en caso de fallo
