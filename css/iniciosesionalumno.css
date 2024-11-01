@@ -3,7 +3,7 @@ body {
 }
 
 .barranavegacion {
-    width: 80%;
+    width: 80% !important;
     margin: 5px auto; /* Margen superior de 5px y centrado horizontal */
     border-radius: 40px; /* Bordes redondeados */
     padding: 10px; /* Espacio interno para que el contenido no esté pegado a los bordes */

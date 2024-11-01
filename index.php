@@ -13,7 +13,6 @@
 
     <body>
         <div class="container" id="container">
-
             <div class="form-contianer sing-up">
                  <form method="POST" action="validar.php"> <!-- Asegúrate de que el método y la acción sean correctos -->
                     <h1>Docente</h1>
