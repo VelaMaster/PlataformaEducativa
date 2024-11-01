@@ -59,35 +59,6 @@
             margin-top: 20px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 16px;
-        }
-
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #ff9900;
-            color: white;
-        }
-
-        table td a {
-            color: #ff9900;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        table td a:hover {
-            text-decoration: underline;
-        }
-
         form {
             display: grid;
             gap: 10px;
@@ -135,9 +106,9 @@
 <header>
     <nav>
         <ul>
-            <li><a href="inicioProfesor.html">Inicio</a></li>
-            <li><a href="calendarioProfesor.html">Calendario</a></li>
-            <li><a href="gestionTareasProfesor.html">Gestión de Tareas</a></li>
+            <li><a href="inicioProfesor.php">Inicio</a></li>
+            <li><a href="calendarioProfesor.php">Calendario</a></li>
+            <li><a href="gestionTareasProfesor.php">Gestión de Tareas</a></li>
         </ul>
     </nav>
 </header>
@@ -145,41 +116,12 @@
 <main>
     <h1>Gestión de Tareas</h1>
 
-    <!-- Sección para ver las tareas -->
-    <section id="ver-tareas">
-        <h2>Tareas Asignadas</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Materia</th>
-                    <th>Título de la Tarea</th>
-                    <th>Fecha de Entrega</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se podrían cargar tareas dinámicamente desde la base de datos -->
-                <tr>
-                    <td>Matemáticas</td>
-                    <td>Tarea de Álgebra</td>
-                    <td>2024-11-01</td>
-                    <td><a href="tarea.html?id=1">Ver</a> | <a href="editarTarea.html?id=1">Editar</a> | <a href="#" onclick="eliminarTarea(1)">Eliminar</a></td>
-                </tr>
-                <!-- Más tareas aquí -->
-            </tbody>
-        </table>
-    </section>
-
-    <!-- Formulario para asignar nuevas tareas -->
     <section id="asignar-tarea">
         <h2>Asignar Nueva Tarea</h2>
         <form action="asignarTarea.php" method="POST">
             <label for="materia">Materia:</label>
             <select id="materia" name="materia">
-                <option value="matematicas">Matemáticas</option>
-                <option value="fisica">Física</option>
-                <option value="quimica">Química</option>
-                <!-- Agregar más opciones según las materias disponibles -->
+                <?php include 'obtenerMaterias.php'; ?>
             </select>
 
             <label for="titulo">Título de la Tarea:</label>
@@ -199,15 +141,6 @@
 <footer>
     <p>© 2024 Plataforma de Educación</p>
 </footer>
-
-<script>
-    function eliminarTarea(id) {
-        if(confirm("¿Estás seguro de que deseas eliminar esta tarea?")) {
-            // Implementar lógica para eliminar la tarea (ejemplo: llamada a la API)
-            alert("Tarea " + id + " eliminada.");
-        }
-    }
-</script>
 
 </body>
 </html>
