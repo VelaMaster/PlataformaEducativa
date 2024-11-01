@@ -43,37 +43,58 @@ main h1 {
     margin: 20px 0;
 }
 
-/* Sección de detalles de la tarea */
-#detalle-tarea {
-    max-width: 700px;
-    margin: 20px auto;
+/* Contenedor principal */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 900px;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #fff3e0; /* Naranja claro */
-    border: 1px solid #ffcc80; /* Bordes suaves */
-    border-radius: 8px;
+    position: relative;
+}
+
+/* Título principal */
+main h1 {
+    text-align: left;
+    color: #5d4037; /* Marrón oscuro */
+    margin: 10px 0;
+    padding-left: 80px; /* Desplaza el texto hacia la derecha */
+}
+
+
+/* Sección de detalles de la tarea */
+#container {
+    display: flex;
+    gap: 20px; /* Espacio entre ambos elementos */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+}
+
+#detalle-tarea {
+    width: 90%; /* Ajusta el ancho según sea necesario */
+    padding: 70px;
+    background-color: #fff3e0;
+    border: 2px solid #ffcc80;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-left: -150px;
 }
 
-#detalle-tarea h2 {
-    color: #ff6f00; /* Naranja fuerte */
-    font-size: 1.8em;
-    margin-bottom: 10px;
-}
 
-#detalle-tarea p {
-    line-height: 1.6;
-    color: #5a5a5a;
-}
 
-/* Sección para subir archivos */
+
+/* Sección para subir archivos en la esquina superior derecha */
 #subir-archivo {
-    max-width: 700px;
-    margin: 20px auto;
+    position: absolute;
+    top: 2;
+    right: 0;
+    width: 300px;
     padding: 20px;
     background-color: #ffe0b2; /* Naranja suave */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    margin-right: -90px;
 }
 
 #subir-archivo h3 {
@@ -100,7 +121,7 @@ main h1 {
     background-color: #d84315; /* Naranja más oscuro */
 }
 
-/* Botón de volver */
+/* Botón de volver en la parte inferior */
 button {
     display: block;
     margin: 30px auto;
@@ -112,11 +133,13 @@ button {
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s;
+    
 }
 
 button:hover {
     background-color: #4e342e;
 }
+
 
 /* Footer estilo Classroom */
 footer {
