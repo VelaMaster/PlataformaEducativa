@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Tarea</title>
-    <link rel="stylesheet" href="css/estiloTarea.css"> <!-- Puedes agregar estilos personalizados aquí -->
+    <link rel="stylesheet" href="css/estiloTarea.css">
 </head>
 <body>
 
- <!-- Barra de navegacion -->
+ <!-- Barra de navegación -->
  <header>
     <nav>
         <ul>
@@ -19,28 +19,28 @@
     </nav>
 </header>
 <main>
-    <!-- Área de detalles de la tarea -->
-    <h1>Detalle de la Tarea</h1>
-<div id="container">
+
+ <!-- Área de detalles de la tarea -->
+ <h1>Detalle de la Tarea</h1>
+ <div id="container">
     <section id="detalle-tarea">
         <h2>Tarea: <span id="titulo-tarea">[Título de la Tarea]</span></h2>
         <p id="descripcion-tarea">Aquí va la descripción de la tarea, indicando lo que se debe hacer y los requisitos específicos.</p>
     </section>
-    
-</div>
+ </div>
 
+ <!-- Área para subir archivos -->
+ <section id="subir-archivo">
+    <h3>Subir tu archivo</h3>
+    <form action="upload.php" method="POST" enctype="multipart/form-data">
+        <input type="file" name="archivo" required>
+        <button type="submit" id="enviar-btn">Enviar</button>
+    </form>
+ </section>
 
-    <!-- Área para subir archivos -->
-    <section id="subir-archivo">
-        <h3>Subir tu archivo</h3>
-        <form action="upload.php" method="POST" enctype="multipart/form-data">
-            <input type="file" name="archivo" required>
-            <button type="submit">Enviar</button>
-        </form>
-    </section>
+ <!-- Botón de regreso -->
+ <button onclick="inicioAlumno.html">Volver</button>
 
-    <!-- Botón de regreso -->
-    <button onclick="window.history.back()">Volver</button>
 </main>
 
 <footer>
@@ -62,6 +62,39 @@
             document.getElementById('titulo-tarea').textContent = tareas[tareaId].titulo;
             document.getElementById('descripcion-tarea').textContent = tareas[tareaId].descripcion;
         }
+    });
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita el envío del formulario para mostrar el mensaje
+        
+        // Crea y muestra el mensaje de "Archivo subido"
+        const mensaje = document.createElement('p');
+        mensaje.textContent = 'Archivo subido';
+        mensaje.style.color = 'green';
+        
+        // Inserta el mensaje en la página
+        document.getElementById('subir-archivo').appendChild(mensaje);
+
+        // Reemplazar el botón de "Enviar" con el botón de "Eliminar"
+        const enviarBtn = document.getElementById('enviar-btn');
+        enviarBtn.style.display = 'none'; // Ocultar el botón de "Enviar"
+
+        const eliminarBtn = document.createElement('button');
+        eliminarBtn.textContent = 'Eliminar';
+        eliminarBtn.id = 'eliminar-btn';
+
+        // Añadir funcionalidad al botón de "Eliminar"
+        eliminarBtn.addEventListener('click', function() {
+            mensaje.remove(); // Elimina el mensaje de "Archivo subido"
+            eliminarBtn.remove(); // Elimina el botón de "Eliminar"
+            enviarBtn.style.display = 'inline'; // Muestra nuevamente el botón de "Enviar"
+        });
+
+        // Agregar el botón de "Eliminar" al formulario
+        document.getElementById('subir-archivo').appendChild(eliminarBtn);
+
+        // Enviar el formulario después de mostrar el mensaje
+        event.target.submit();
     });
 </script>
 

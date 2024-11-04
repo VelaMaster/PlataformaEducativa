@@ -18,8 +18,8 @@ if (!$conexion) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio Estudiante</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
+    <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <style>
         /* Estilo de la imagen circular para el perfil */
         .profile-img {
@@ -27,14 +27,22 @@ if (!$conexion) {
             height: 60px;
             border-radius: 50%;
             object-fit: cover;
-        }
-
-        /* Ajustes de la posición de la foto de perfil */
+        }        /* Ajustes de la posición de la foto de perfil */
         .profile-container {
             position: absolute;
             top: 15px; /* Ajusta según la altura que prefieras */
             right: 15px;
         }
+        .card {
+            width: 300px; /* Ajusta el ancho de las tarjetas */
+            height: 250px;
+            border-radius: 8px;
+            box-shadow: #fae8ce;
+        }
+        .card-content {
+            background: rgb(102, 102, 102);
+        }
+        
     </style>
 </head>
 <body>
@@ -49,7 +57,7 @@ if (!$conexion) {
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="inicioAlumno.html">Inicio</a>
+                    <a class="nav-link active" aria-current="page" href="inicioAlumno.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="calendario.html">Calendario</a>
@@ -66,18 +74,21 @@ if (!$conexion) {
 <!-- Contenedor de la imagen de perfil fuera de la barra de navegación -->
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="img/Logoito120.png" alt="Foto de perfil" class="profile-img">
+        <img src="img/perfil120.png" alt="Foto de perfil" class="profile-img">
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
-        <li><a class="dropdown-item" href="verPerfil.html">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarPerfil.html">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="verPerfilAlumno.php">Ver perfil</a></li>
+        <li><a class="dropdown-item" href="editarperfilAlumno.php">Editar perfil</a></li>
     </ul>
 </div>
 <div class="card-container">
 <?php
 try {
     $consulta_materias = "
-        SELECT c.nombre_curso AS nombre_materia, CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, c.descripcion
+        SELECT c.nombre_curso AS nombre_materia, 
+               CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, 
+               c.descripcion, 
+               c.imagen_url 
         FROM cursos c
         JOIN grupos g ON c.id_curso = g.id_curso
         JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
@@ -86,9 +97,10 @@ try {
     ";
     $resultado_materias = mysqli_query($conexion, $consulta_materias);
     if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
-        echo "<div class = 'card-container'>";
+        echo "<div class='card-container'>";
         while ($row = mysqli_fetch_assoc($resultado_materias)) {
-            echo "<div class='card'>";
+            $imagen_url = $row['imagen_url']; // Recupera la URL de la imagen
+            echo "<div class='card' style='background-image: url($imagen_url)'>"; // Aplica la imagen como fondo
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
@@ -108,6 +120,7 @@ mysqli_free_result($resultado_materias);
 mysqli_close($conexion);
 ?>
 </div>
+
 <!-- Pie de página -->
 <footer class="text-center py-3">
     <p>© 2024 PE-ISC</p>

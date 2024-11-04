@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega')";
     
     if ($conexion->query($sql) === TRUE) {
-       echo "<script>alert('Tarea asignada exitosamente.');</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function() { document.getElementById('successModal').style.display = 'block'; });</script>";
     } else {
         echo "<script>alert('Error: " . $sql . "<br>" . $conexion->error . "');</script>";
     }
@@ -129,6 +129,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #e68a00;
         }
 
+        /* Modal styling */
+        #successModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        #successModal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #successModal button:hover {
+            background-color: #e68a00;
+        }
+
         /* Button styling for "Mostrar Tareas Asignadas" */
         .show-tasks-button {
             display: block;
@@ -191,7 +220,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="fechaEntrega">Fecha de Entrega:</label>
             <input type="date" id="fechaEntrega" name="fechaEntrega" required>
 
-            <!-- Asignar Tarea button submits the form -->
             <button type="submit">Asignar Tarea</button>
         </form>
     </section>
@@ -203,6 +231,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <footer>
     <p>© 2024 Plataforma de Educación</p>
 </footer>
+
+<!-- Modal for successful assignment -->
+<div id="successModal">
+    <p>Tarea asignada con éxito</p>
+    <button onclick="document.getElementById('successModal').style.display='none'">Aceptar</button>
+</div>
 
 </body>
 </html>
