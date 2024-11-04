@@ -82,7 +82,7 @@ if (!$conexion) {
                     <a class="nav-link" href="calendario.html">Calendario</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="clases.html">Clases</a>
+                    <a class="nav-link" href="aki pones tu archivo chay">Tareas</a>
                 </li>
             </ul>
         </div>
@@ -106,8 +106,10 @@ try {
     $consulta_materias = "
         SELECT c.nombre_curso AS nombre_materia, 
                CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, 
-               c.descripcion, 
-               c.imagen_url 
+               c.imagen_url,
+               g.horario,
+               g.aula,
+               g.nombre_grupo AS grupo
         FROM cursos c
         JOIN grupos g ON c.id_curso = g.id_curso
         JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
@@ -123,7 +125,8 @@ try {
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
-            echo "<p class='card-description'>" . $row['descripcion'] . "</p>";
+            echo "<p class='card-subtitle'>Grupo: " . $row['grupo'] . "</p>"; // Muestra el grupo
+            echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
             echo "<button class='view-more'>Ver más</button>";
             echo "</div>";
             echo "</div>";
@@ -138,6 +141,7 @@ try {
 mysqli_free_result($resultado_materias);
 mysqli_close($conexion);
 ?>
+
 </div>
 
 <!-- Pie de página -->

@@ -103,7 +103,6 @@ try {
     $consulta_materias = "
         SELECT 
             c.nombre_curso AS nombre_materia,
-            c.descripcion,
             g.nombre_grupo,
             c.imagen_url
         FROM 
@@ -125,7 +124,6 @@ try {
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
-            echo "<p class='card-description'>" . $row['descripcion'] . "</p>";
             echo "<button class='view-more'>Ver más</button>";
             echo "</div>";
             echo "</div>";
