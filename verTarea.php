@@ -1,7 +1,7 @@
 <?php
 // verTarea.php
 
-// Conexión a la base de datos
+// Database connection
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -13,10 +13,10 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Obtener el ID de la tarea
+// Get the task ID
 $id_tarea = $_GET['id'];
 
-// Función para obtener el nombre de la materia
+// Function to get the course name
 function obtenerNombreMateria($id_curso, $conexion) {
     $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
     $resultado = $conexion->query($consulta);
@@ -28,7 +28,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
     }
 }
 
-// Consultar los detalles de la tarea
+// Query task details
 $sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
 $resultado = $conexion->query($sql);
 
@@ -41,7 +41,7 @@ if ($resultado->num_rows > 0) {
     <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <title>Detalles de la tarea</title>
+        <title>Detalles de la Tarea</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -104,7 +104,7 @@ if ($resultado->num_rows > 0) {
     </head>
     <body>
         <div class="card">
-            <h2>Detalles de la tarea</h2>
+            <h2>Detalles de la Tarea</h2>
             <div class="detail">
                 <label>Materia:</label>
                 <p><?php echo $nombre_materia; ?></p>
@@ -125,6 +125,12 @@ if ($resultado->num_rows > 0) {
                 <label>Fecha de Entrega:</label>
                 <p><?php echo $tarea['fecha_limite']; ?></p>
             </div>
+            <?php if (!empty($tarea['archivo_tarea'])): ?>
+                <div class="detail">
+                    <label>Archivo:</label>
+                    <p><a href="<?php echo $tarea['archivo_tarea']; ?>" target="_blank">Descargar archivo</a></p>
+                </div>
+            <?php endif; ?>
             <div class="back-button-container">
                 <a href="listarTareas.php" class="back-button">Regresar a Tareas Asignadas</a>
             </div>

@@ -13,13 +13,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error de conexión: " . $conexion->connect_error);
     }
     
+    // Get form data
     $materia = $_POST['materia'];
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $fechaEntrega = $_POST['fechaEntrega'];
-    
-    // Insert task into the database
-    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega')";
+    $archivoPath = null;
+
+    // Check if a file was uploaded
+    if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
+        $archivoNombre = $_FILES['archivo']['name'];
+        $archivoTmp = $_FILES['archivo']['tmp_name'];
+        $archivoPath = "uploads/" . basename($archivoNombre); // Define upload directory
+
+        // Move file to the uploads directory
+        if (move_uploaded_file($archivoTmp, $archivoPath)) {
+            $archivoPath = $conexion->real_escape_string($archivoPath);
+        } else {
+            $archivoPath = null; // Handle upload failure
+        }
+    }
+
+    // Insert task into the database with optional file path
+    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite, archivo_tarea) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega', '$archivoPath')";
     
     if ($conexion->query($sql) === TRUE) {
         echo "<script>document.addEventListener('DOMContentLoaded', function() { document.getElementById('successModal').style.display = 'block'; });</script>";

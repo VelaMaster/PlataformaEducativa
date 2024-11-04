@@ -18,12 +18,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $fecha_limite = $_POST['fecha_limite'];
-    
-    $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id_tarea = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("sssi", $titulo, $descripcion, $fecha_limite, $id_tarea);
+    $archivoPath = null;
+
+    // Check if a file is uploaded
+    if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
+        $archivoNombre = $_FILES['archivo']['name'];
+        $archivoTmp = $_FILES['archivo']['tmp_name'];
+        $archivoPath = "uploads/" . basename($archivoNombre);
+
+        // Move file to the uploads directory
+        if (move_uploaded_file($archivoTmp, $archivoPath)) {
+            $archivoPath = $conexion->real_escape_string($archivoPath);
+        } else {
+            $archivoPath = null;
+        }
+    }
+
+    // Update the task with or without a new file
+    if ($archivoPath) {
+        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ?, archivo_tarea = ? WHERE id_tarea = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ssssi", $titulo, $descripcion, $fecha_limite, $archivoPath, $id_tarea);
+    } else {
+        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id_tarea = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("sssi", $titulo, $descripcion, $fecha_limite, $id_tarea);
+    }
+
     if ($stmt->execute()) {
-        header("Location: listarTareas.php"); // Redirige sin mostrar alerta
+        header("Location: listarTareas.php");
         exit();
     } else {
         echo "Error al actualizar: " . $stmt->error;
@@ -44,7 +67,6 @@ if ($resultado->num_rows > 0) {
     <meta charset="UTF-8">
     <title>Editar Tarea</title>
     <style>
-        /* Estilos aquí */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
@@ -112,7 +134,7 @@ if ($resultado->num_rows > 0) {
 
 <div class="form-container">
     <h2>Editar Tarea</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <label for="titulo">Título:</label>
         <input type="text" id="titulo" name="titulo" value="<?php echo $fila['titulo']; ?>" required>
 
@@ -121,6 +143,13 @@ if ($resultado->num_rows > 0) {
 
         <label for="fecha_limite">Fecha de Entrega:</label>
         <input type="date" id="fecha_limite" name="fecha_limite" value="<?php echo $fila['fecha_limite']; ?>" required>
+
+        <label for="archivo">Archivo (opcional):</label>
+        <input type="file" id="archivo" name="archivo">
+
+        <?php if (!empty($fila['archivo_tarea'])): ?>
+            <p>Archivo actual: <a href="<?php echo $fila['archivo_tarea']; ?>" target="_blank">Ver archivo</a></p>
+        <?php endif; ?>
 
         <button type="submit">Actualizar Tarea</button>
     </form>

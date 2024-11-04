@@ -140,7 +140,7 @@ $resultado = $conexion->query($sql);
 
     <section id="asignar-tarea">
         <h2>Asignar Nueva Tarea</h2>
-        <form action="asignarTarea.php" method="POST">
+        <form action="asignarTarea.php" method="POST" enctype="multipart/form-data">
             <label for="materia">Materia:</label>
             <select id="materia" name="materia">
                 <?php
@@ -162,6 +162,9 @@ $resultado = $conexion->query($sql);
 
             <label for="fechaEntrega">Fecha de Entrega:</label>
             <input type="date" id="fechaEntrega" name="fechaEntrega" required>
+
+            <label for="archivo">Subir archivo:</label>
+            <input type="file" id="archivo" name="archivo">
 
             <button type="submit">Asignar Tarea</button>
         </form>
