@@ -32,6 +32,9 @@ if (!$conexion) {
             top: 15px;
             right: 15px;
         }
+        .card-content {
+            background: rgb(102, 102, 102);
+        }
     </style>
 </head>
 <body>
@@ -77,7 +80,8 @@ try {
         SELECT 
             c.nombre_curso AS nombre_materia,
             c.descripcion,
-            g.nombre_grupo
+            g.nombre_grupo,
+            c.imagen_url
         FROM 
             cursos c
         JOIN 
@@ -87,11 +91,13 @@ try {
         ORDER BY 
             c.nombre_curso, g.nombre_grupo
     ";
+    
     $resultado_materias = mysqli_query($conexion, $consulta_materias);
     if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
         echo "<div class='card-container'>";
         while ($row = mysqli_fetch_assoc($resultado_materias)) {
-            echo "<div class='card'>";
+            $imagen_url = $row['imagen_url']; // Recupera la URL de la imagen
+            echo "<div class='card' style='background-image: url($imagen_url)'>"; // Aplica la imagen como fondo
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
@@ -111,6 +117,7 @@ try {
 mysqli_free_result($resultado_materias);
 mysqli_close($conexion);
 ?>
+
 </div>
 <!-- Pie de página -->
 <footer class="text-center py-3">

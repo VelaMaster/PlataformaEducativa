@@ -1,4 +1,4 @@
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -6,31 +6,23 @@
 .card-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* Espacio entre tarjetas */
+    gap: 20px; /* Espacio entre tarjetas */
     justify-content: center;
     padding: 20px;
 }
-
 .card {
     width: 300px; /* Ajusta el ancho de las tarjetas */
-    height: 250px; /* Ajusta la altura de las tarjetas */
+    height: 350px;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-image: url('https://source.unsplash.com/featured/?classroom');
+    box-shadow: 0 4px 8px rgba(245, 131, 0, 0.1) !important;
     background-size: cover;
     background-position: center;
-    color: white;
+    color: rgb(255, 255, 255);
     position: relative; 
 }
-
 .card-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.6); /* Fondo oscuro translúcido para un efecto suave */
 }
 
 .card-title {
@@ -43,7 +35,6 @@
     font-size: 14px;
     margin-bottom: 10px;
 }
-
 .view-more {
     padding: 8px 12px;
     border: none;
@@ -54,7 +45,6 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 .view-more:hover {
     background-color: #bc6745;
 }
