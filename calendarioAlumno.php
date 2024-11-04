@@ -20,9 +20,9 @@
     <header> 
         <nav>   
             <ul>
-                <li><a href="alumno.html">Inicio</a></li>
-                <li><a href="calendario.html">Calendario</a></li>
-                <li><a href="clases.html">Clases</a></li>
+                <li><a href="inicioAlumno.php">Inicio</a></li>
+                <li><a href="calendarioAlumno.php">Calendario</a></li>
+                <li><a href="">Tareas</a></li>
             </ul>
         </nav>
     </header>

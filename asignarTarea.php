@@ -13,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error de conexión: " . $conexion->connect_error);
     }
     
-    // Get form data
     $materia = $_POST['materia'];
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];

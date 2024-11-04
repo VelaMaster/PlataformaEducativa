@@ -12,7 +12,7 @@
 }
 .card {
     width: 300px; /* Ajusta el ancho de las tarjetas */
-    height: 350px;
+    height: 250px;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(245, 131, 0, 0.1) !important;

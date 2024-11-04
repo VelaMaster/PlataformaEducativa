@@ -1,16 +1,11 @@
 <?php
 session_start();
-
-// Ensure 'usuario' session variable is set
 if (isset($_SESSION['usuario'])) {
     $num_control = $_SESSION['usuario'];
 } else {
-    // Redirect to login page if not authenticated
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
-
-// Database connection
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -21,12 +16,9 @@ $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
-
-// Query to fetch subjects assigned to the professor
 $sql = "SELECT id_curso, nombre_curso FROM cursos WHERE id_docente = '$num_control'";
 $resultado = $conexion->query($sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -152,7 +144,6 @@ $resultado = $conexion->query($sql);
             <label for="materia">Materia:</label>
             <select id="materia" name="materia">
                 <?php
-                // Display each subject assigned to the professor
                 if ($resultado->num_rows > 0) {
                     while($row = $resultado->fetch_assoc()) {
                         echo "<option value='" . $row['id_curso'] . "'>" . $row['nombre_curso'] . "</option>";
@@ -184,7 +175,7 @@ $resultado = $conexion->query($sql);
 </main>
 
 <footer>
-    <p>© 2024 Plataforma de Educación</p>
+    <p>© 2024 PE-ISC</p>
 </footer>
 
 </body>

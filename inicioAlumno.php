@@ -34,14 +34,33 @@ if (!$conexion) {
             right: 15px;
         }
         .card {
-            width: 300px; /* Ajusta el ancho de las tarjetas */
-            height: 250px;
-            border-radius: 8px;
-            box-shadow: #fae8ce;
-        }
-        .card-content {
-            background: rgb(102, 102, 102);
-        }
+    width: 320px;
+    height: 270px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Organiza el contenido en columna */
+    justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
+    overflow: hidden;
+}
+
+.card img {
+    width: 100%;
+    height: auto; /* Asegura que la imagen mantenga su proporción */
+    flex: 1; /* La imagen toma el espacio disponible en el medio */
+}
+
+.card-content {
+    background-color: rgb(102, 102, 102);
+    color: white;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
         
     </style>
 </head>
