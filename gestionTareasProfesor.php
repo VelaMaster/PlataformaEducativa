@@ -1,3 +1,32 @@
+<?php
+session_start();
+
+// Ensure 'usuario' session variable is set
+if (isset($_SESSION['usuario'])) {
+    $num_control = $_SESSION['usuario'];
+} else {
+    // Redirect to login page if not authenticated
+    echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
+    exit;
+}
+
+// Database connection
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$baseDatos = "peis";
+
+$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
+
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// Query to fetch subjects assigned to the professor
+$sql = "SELECT id_curso, nombre_curso FROM cursos WHERE id_docente = '$num_control'";
+$resultado = $conexion->query($sql);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +35,7 @@
     <title>Gestión de Tareas - Profesor</title>
     <link rel="stylesheet" href="css/estiloProfesor.css">
     <style>
+        /* Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
@@ -121,7 +151,16 @@
         <form action="asignarTarea.php" method="POST">
             <label for="materia">Materia:</label>
             <select id="materia" name="materia">
-                <?php include 'obtenerMaterias.php'; ?>
+                <?php
+                // Display each subject assigned to the professor
+                if ($resultado->num_rows > 0) {
+                    while($row = $resultado->fetch_assoc()) {
+                        echo "<option value='" . $row['id_curso'] . "'>" . $row['nombre_curso'] . "</option>";
+                    }
+                } else {
+                    echo "<option value=''>No tiene materias asignadas</option>";
+                }
+                ?>
             </select>
 
             <label for="titulo">Título de la Tarea:</label>
@@ -136,6 +175,12 @@
             <button type="submit">Asignar Tarea</button>
         </form>
     </section>
+
+    <section id="mostrar-tareas">
+        <form action="listarTareas.php" method="POST">
+            <button type="submit">Mostrar Tareas Asignadas</button>
+        </form>
+    </section>
 </main>
 
 <footer>
@@ -144,3 +189,7 @@
 
 </body>
 </html>
+
+<?php
+$conexion->close();
+?>

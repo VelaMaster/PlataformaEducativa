@@ -1,3 +1,37 @@
+<?php
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Database connection
+    $servidor = "localhost";
+    $usuario = "root";
+    $contraseña = "";
+    $baseDatos = "peis";
+    
+    $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
+    
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
+    }
+    
+    // Get form data
+    $materia = $_POST['materia'];
+    $titulo = $_POST['titulo'];
+    $descripcion = $_POST['descripcion'];
+    $fechaEntrega = $_POST['fechaEntrega'];
+    
+    // Insert task into the database
+    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega')";
+    
+    if ($conexion->query($sql) === TRUE) {
+       echo "<script>alert('Tarea asignada exitosamente.');</script>";
+    } else {
+        echo "<script>alert('Error: " . $sql . "<br>" . $conexion->error . "');</script>";
+    }
+    
+    $conexion->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
