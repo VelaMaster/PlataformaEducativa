@@ -74,11 +74,11 @@ if (!$conexion) {
 <!-- Contenedor de la imagen de perfil fuera de la barra de navegación -->
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="img/Logoito120.png" alt="Foto de perfil" class="profile-img">
+        <img src="img/perfil120.png" alt="Foto de perfil" class="profile-img">
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
-        <li><a class="dropdown-item" href="verPerfilAl.html">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarPerfil.html">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="verPerfilAlumno.php">Ver perfil</a></li>
+        <li><a class="dropdown-item" href="editarperfilAlumno.php">Editar perfil</a></li>
     </ul>
 </div>
 <div class="card-container">
