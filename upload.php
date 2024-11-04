@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root"; // Cambia esto si tu usuario de MySQL es diferente
 $password = ""; // Cambia esto si tienes una contraseña para MySQL
-$database = "PEIS"; // Cambia esto al nombre de tu base de datos si es diferente
+$database = "peis"; // Cambia esto al nombre de tu base de datos si es diferente
 
 // Crear la conexión
 $conn = new mysqli($servername, $username, $password, $database);
@@ -18,6 +18,35 @@ $id_tarea = 1;  // Reemplaza con el ID real de la tarea
 $id_alumno = 123;  // Reemplaza con el ID real del alumno
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"])) {
+    // Verificar que el `id_tarea` existe en la tabla `tareas`
+    $stmt = $conn->prepare("SELECT id_tarea FROM tareas WHERE id_tarea = ?");
+    $stmt->bind_param("i", $id_tarea);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows === 0) {
+        echo "Error: El id_tarea no existe en la tabla tareas.";
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+    $stmt->close();
+
+    // Verificar que el `id_alumno` existe en la tabla `alumnos`
+    $stmt = $conn->prepare("SELECT id_alumno FROM alumnos WHERE id_alumno = ?");
+    $stmt->bind_param("i", $id_alumno);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows === 0) {
+        echo "Error: El id_alumno no existe en la tabla alumnos.";
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+    $stmt->close();
+
+    // Subir el archivo
     $nombreArchivo = $_FILES["archivo"]["name"];
     $rutaArchivo = "uploads/" . basename($nombreArchivo);
 
