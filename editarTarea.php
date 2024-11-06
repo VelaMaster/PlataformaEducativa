@@ -78,33 +78,70 @@ if ($resultado->num_rows > 0) {
             margin: 0;
         }
         .form-container {
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
             width: 100%;
             text-align: center;
         }
         .form-container h2 {
-            color: #333;
+            color: #ff9900;
+            font-size: 24px;
             margin-bottom: 20px;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 10px;
         }
-        .form-container label {
+        .form-group {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-group label {
             font-weight: bold;
-            display: block;
-            margin-top: 10px;
-            text-align: left;
+            color: #ff9900;
+            margin-right: 10px;
         }
-        .form-container input,
-        .form-container textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
+            padding: 8px;
+            font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .file-preview {
+            display: flex;
+            align-items: center;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            justify-content: start;
+        }
+        .file-preview img {
+            width: 36px;
+            height: 36px;
+            margin-right: 10px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+        .file-preview a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .file-preview a:hover {
+            text-decoration: underline;
         }
         .form-container button {
             margin-top: 20px;
@@ -117,15 +154,23 @@ if ($resultado->num_rows > 0) {
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         .form-container button:hover {
             background-color: #e68a00;
         }
-        .form-container .back-button {
+        .back-button {
             background-color: #555;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
             margin-top: 10px;
         }
-        .form-container .back-button:hover {
+        .back-button:hover {
             background-color: #333;
         }
     </style>
@@ -135,20 +180,40 @@ if ($resultado->num_rows > 0) {
 <div class="form-container">
     <h2>Editar Tarea</h2>
     <form method="POST" enctype="multipart/form-data">
-        <label for="titulo">Título:</label>
-        <input type="text" id="titulo" name="titulo" value="<?php echo $fila['titulo']; ?>" required>
+        <div class="form-group">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" value="<?php echo $fila['titulo']; ?>" required>
+        </div>
 
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion" rows="4" required><?php echo $fila['descripcion']; ?></textarea>
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="4" required><?php echo $fila['descripcion']; ?></textarea>
+        </div>
 
-        <label for="fecha_limite">Fecha de Entrega:</label>
-        <input type="date" id="fecha_limite" name="fecha_limite" value="<?php echo $fila['fecha_limite']; ?>" required>
+        <div class="form-group">
+            <label for="fecha_limite">Fecha de Entrega:</label>
+            <input type="date" id="fecha_limite" name="fecha_limite" value="<?php echo $fila['fecha_limite']; ?>" required>
+        </div>
 
-        <label for="archivo">Archivo (opcional):</label>
-        <input type="file" id="archivo" name="archivo">
+        <div class="form-group">
+            <label for="archivo">Archivo (opcional):</label>
+            <input type="file" id="archivo" name="archivo">
+        </div>
 
         <?php if (!empty($fila['archivo_tarea'])): ?>
-            <p>Archivo actual: <a href="<?php echo $fila['archivo_tarea']; ?>" target="_blank">Ver archivo</a></p>
+            <div class="file-preview">
+                <?php
+                $file_path = htmlspecialchars($fila['archivo_tarea']);
+                $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
+                $image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                if (in_array(strtolower($file_extension), $image_extensions)) {
+                    echo "<img src='$file_path' alt='Archivo'>";
+                } else {
+                    echo "<img src='file-icon.png' alt='Archivo'>";
+                }
+                ?>
+                <a href="<?php echo $file_path; ?>" target="_blank"><?php echo basename($file_path); ?></a>
+            </div>
         <?php endif; ?>
 
         <button type="submit">Actualizar Tarea</button>

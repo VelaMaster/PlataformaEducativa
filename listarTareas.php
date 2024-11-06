@@ -1,7 +1,7 @@
 <?php
 // listarTareas.php
 
-// Conexión a la base de datos
+// Database connection
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -13,10 +13,9 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Consulta para obtener las tareas asignadas
+// Query to fetch assigned tasks
 $sql = "SELECT id_tarea, id_curso, titulo, fecha_limite FROM tareas";
 $resultado = $conexion->query($sql);
-
 ?>
 
 <!DOCTYPE html>
@@ -25,10 +24,10 @@ $resultado = $conexion->query($sql);
     <meta charset="UTF-8">
     <title>Tareas Asignadas</title>
     <style>
-        /* General Page Styles */
+        /* Global Styles */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fbfd;
             color: #333;
             margin: 0;
             padding: 0;
@@ -38,15 +37,17 @@ $resultado = $conexion->query($sql);
             text-align: center;
             color: #333;
             padding: 20px 0;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 700;
         }
 
+        /* Table Container */
         .table-container {
             max-width: 90%;
             margin: 20px auto;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -60,7 +61,7 @@ $resultado = $conexion->query($sql);
             color: #fff;
             font-weight: bold;
             text-align: left;
-            padding: 12px;
+            padding: 14px;
             font-size: 16px;
         }
 
@@ -79,7 +80,7 @@ $resultado = $conexion->query($sql);
         }
 
         .acciones a {
-            margin: 0 5px;
+            margin: 0 8px;
             color: #ff9900;
             text-decoration: none;
             font-weight: bold;
@@ -90,28 +91,30 @@ $resultado = $conexion->query($sql);
             color: #e68a00;
         }
 
+        /* Back Button */
         .back-button-container {
             text-align: center;
-            margin: 20px;
+            margin: 30px;
         }
 
         .back-button {
             background-color: #ff9900;
             color: #fff;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             transition: background-color 0.3s;
+            font-size: 16px;
         }
 
         .back-button:hover {
             background-color: #e68a00;
         }
 
-        /* Modal Styles */
+        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -125,10 +128,11 @@ $resultado = $conexion->query($sql);
             z-index: 1000;
         }
 
+        /* Modal Content */
         .modal-content {
             background-color: #fff;
             padding: 20px;
-            width: 300px;
+            width: 320px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
@@ -140,6 +144,7 @@ $resultado = $conexion->query($sql);
             color: #333;
         }
 
+        /* Modal Buttons */
         .modal-buttons {
             display: flex;
             justify-content: space-between;
@@ -149,9 +154,9 @@ $resultado = $conexion->query($sql);
             padding: 10px 20px;
             font-weight: bold;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-size: 16px;
         }
 
         .confirm-button {
@@ -246,7 +251,7 @@ $resultado = $conexion->query($sql);
 </html>
 
 <?php
-// Función para obtener el nombre de la materia basado en el id_curso
+// Function to get course name based on id_curso
 function obtenerNombreMateria($id_curso, $conexion) {
     $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
     $resultado = $conexion->query($consulta);
