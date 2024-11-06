@@ -37,17 +37,18 @@ $resultado = $conexion->query($sql);
             text-align: center;
             color: #333;
             padding: 20px 0;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
+            margin: 0;
         }
 
         /* Table Container */
         .table-container {
-            max-width: 90%;
+            max-width: 80%;
             margin: 20px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             overflow: hidden;
         }
 
@@ -61,14 +62,14 @@ $resultado = $conexion->query($sql);
             color: #fff;
             font-weight: bold;
             text-align: left;
-            padding: 14px;
-            font-size: 16px;
+            padding: 16px;
+            font-size: 18px;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            font-size: 15px;
+            padding: 14px;
+            border-bottom: 1px solid #e6e6e6;
+            font-size: 16px;
         }
 
         tr:nth-child(even) {
@@ -76,11 +77,11 @@ $resultado = $conexion->query($sql);
         }
 
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #fef3e6;
         }
 
         .acciones a {
-            margin: 0 8px;
+            margin: 0 10px;
             color: #ff9900;
             text-decoration: none;
             font-weight: bold;
@@ -100,9 +101,9 @@ $resultado = $conexion->query($sql);
         .back-button {
             background-color: #ff9900;
             color: #fff;
-            padding: 12px 24px;
+            padding: 14px 30px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
@@ -131,16 +132,16 @@ $resultado = $conexion->query($sql);
         /* Modal Content */
         .modal-content {
             background-color: #fff;
-            padding: 20px;
-            width: 320px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            width: 360px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
             text-align: center;
         }
 
         .modal-content p {
             margin-bottom: 20px;
-            font-size: 16px;
+            font-size: 18px;
             color: #333;
         }
 
@@ -151,7 +152,7 @@ $resultado = $conexion->query($sql);
         }
 
         .modal-button {
-            padding: 10px 20px;
+            padding: 12px 28px;
             font-weight: bold;
             border: none;
             border-radius: 6px;
@@ -175,6 +176,23 @@ $resultado = $conexion->query($sql);
 
         .cancel-button:hover {
             background-color: #aaa;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 14px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .footer-divider {
+            height: 5px;
+            background-color: #ff9900;
         }
     </style>
 </head>
@@ -226,6 +244,11 @@ $resultado = $conexion->query($sql);
         </div>
     </div>
 </div>
+
+<footer>
+    <div class="footer-divider"></div>
+    <p>&copy; 2024 PE-ISC</p>
+</footer>
 
 <script>
     let idTareaEliminar = null;

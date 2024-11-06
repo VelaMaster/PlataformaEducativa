@@ -71,8 +71,8 @@ $resultado = $conexion->query($sql);
             max-width: 900px;
             margin: 40px auto;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             padding: 30px 40px;
         }
 
@@ -109,7 +109,7 @@ $resultado = $conexion->query($sql);
             padding: 12px;
             font-size: 16px;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
             outline: none;
             transition: border-color 0.3s ease;
         }
@@ -123,7 +123,7 @@ $resultado = $conexion->query($sql);
             color: white;
             border: none;
             padding: 12px 20px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
@@ -137,19 +137,20 @@ $resultado = $conexion->query($sql);
         /* File Upload Preview Styles */
         .file-upload-preview {
             display: none;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #f5f5f5;
+            border: 2px dashed #ff9900;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #fff4e6;
             margin-top: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .file-upload-preview img {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             border-radius: 4px;
             border: 1px solid #ddd;
