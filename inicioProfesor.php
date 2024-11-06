@@ -42,13 +42,11 @@ if (!$conexion) {
     justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
     overflow: hidden;
 }
-
 .card img {
     width: 100%;
     height: auto; /* Asegura que la imagen mantenga su proporción */
     flex: 1; /* La imagen toma el espacio disponible en el medio */
 }
-
 .card-content {
     background-color: rgb(102, 102, 102);
     color: white;
@@ -76,7 +74,7 @@ if (!$conexion) {
                     <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Calendario</a>
+                    <a class="nav-link" href="calendarioProfesor.php">Calendario</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="gestionTareasProfesor.php">Gestionar tareas</a>
@@ -104,7 +102,9 @@ try {
         SELECT 
             c.nombre_curso AS nombre_materia,
             g.nombre_grupo,
-            c.imagen_url
+            c.imagen_url,
+            g.horario,
+            g.aula
         FROM 
             cursos c
         JOIN 
@@ -124,6 +124,7 @@ try {
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
+            echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>";
             echo "<button class='view-more'>Ver más</button>";
             echo "</div>";
             echo "</div>";
