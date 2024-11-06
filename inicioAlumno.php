@@ -82,7 +82,7 @@ if (!$conexion) {
                     <a class="nav-link" href="calendario.html">Calendario</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="aki pones tu archivo chay">Tareas</a>
+                    <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>
                 </li>
             </ul>
         </div>

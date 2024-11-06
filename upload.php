@@ -1,77 +1,49 @@
 <?php
-// Configuración de conexión a la base de datos
-$servername = "localhost";
-$username = "root"; // Cambia esto si tu usuario de MySQL es diferente
-$password = ""; // Cambia esto si tienes una contraseña para MySQL
-$database = "peis"; // Cambia esto al nombre de tu base de datos si es diferente
+session_start();
 
-// Crear la conexión
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Verificar la conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['usuario'])) {
+    echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
+    exit;
 }
 
-// Variables de ejemplo para `id_tarea` e `id_alumno`
-$id_tarea = 1;  // Reemplaza con el ID real de la tarea
-$id_alumno = 123;  // Reemplaza con el ID real del alumno
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$baseDatos = "peis";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"])) {
-    // Verificar que el `id_tarea` existe en la tabla `tareas`
-    $stmt = $conn->prepare("SELECT id_tarea FROM tareas WHERE id_tarea = ?");
-    $stmt->bind_param("i", $id_tarea);
-    $stmt->execute();
-    $stmt->store_result();
-    
-    if ($stmt->num_rows === 0) {
-        echo "Error: El id_tarea no existe en la tabla tareas.";
-        $stmt->close();
-        $conn->close();
-        exit();
-    }
-    $stmt->close();
+$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 
-    // Verificar que el `id_alumno` existe en la tabla `alumnos`
-    $stmt = $conn->prepare("SELECT id_alumno FROM alumnos WHERE id_alumno = ?");
-    $stmt->bind_param("i", $id_alumno);
-    $stmt->execute();
-    $stmt->store_result();
-    
-    if ($stmt->num_rows === 0) {
-        echo "Error: El id_alumno no existe en la tabla alumnos.";
-        $stmt->close();
-        $conn->close();
-        exit();
-    }
-    $stmt->close();
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
 
-    // Subir el archivo
-    $nombreArchivo = $_FILES["archivo"]["name"];
-    $rutaArchivo = "uploads/" . basename($nombreArchivo);
+$num_control = $_SESSION['usuario'];  // Obtener el ID del alumno desde la sesión
+$id_tarea = $_GET['id'];  // Obtener el ID de la tarea desde la URL
 
-    // Verificar si el directorio "uploads" existe, si no, crearlo
-    if (!is_dir("uploads")) {
-        mkdir("uploads");
-    }
+// Comprobar si se ha subido un archivo
+if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
+    // Obtener información del archivo subido
+    $archivoTmp = $_FILES['archivo']['tmp_name'];
+    $archivoNombre = $_FILES['archivo']['name'];
+    $archivoContenido = addslashes(file_get_contents($archivoTmp));  // Convertir el archivo a binario
 
-    // Mover el archivo subido a la carpeta "uploads"
-    if (move_uploaded_file($_FILES["archivo"]["tmp_name"], $rutaArchivo)) {
-        // Insertar los detalles del archivo en la base de datos
-        $stmt = $conn->prepare("INSERT INTO entregas (id_tarea, id_alumno, archivo_entrega, fecha_entrega) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("iis", $id_tarea, $id_alumno, $rutaArchivo);
+    // Insertar el archivo en la base de datos
+    $sql = "INSERT INTO entregas (id_tarea, id_alumno, archivo_entrega, fecha_entrega) 
+            VALUES (?, ?, ?, NOW())";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("iis", $id_tarea, $num_control, $archivoContenido);  // ID de la tarea, ID del alumno y contenido binario del archivo
 
-        if ($stmt->execute()) {
-            echo "El archivo se ha subido y guardado en la base de datos correctamente.";
-        } else {
-            echo "Error al guardar en la base de datos: " . $stmt->error;
-        }
-
-        $stmt->close();
+    if ($stmt->execute()) {
+        echo "<script>alert('Archivo subido correctamente.'); window.location.href = 'verTarea.php?id=$id_tarea';</script>";
     } else {
-        echo "Hubo un error al subir el archivo.";
+        echo "Error al guardar el archivo en la base de datos: " . $stmt->error;
     }
+
+    $stmt->close();
+} else {
+    echo "Error: No se ha subido ningún archivo.";
 }
 
-$conn->close();
+$conexion->close();
 ?>
