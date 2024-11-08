@@ -79,7 +79,7 @@ if (!$conexion) {
                     <a class="nav-link active" aria-current="page" href="inicioAlumno.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="calendario.html">Calendario</a>
+                    <a class="nav-link" href="calendarioAlumno.php">Calendario</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>

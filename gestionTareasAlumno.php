@@ -1,20 +1,28 @@
 <?php
+session_start();
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// Verificar si el usuario ha iniciado sesión
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$num_control = $_SESSION['usuario'];
+
 // Conexión a la base de datos
-$servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
-$baseDatos = "peis";
-
-$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
-
+$conexion = new mysqli("localhost", "root", "", "peis");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Consulta para obtener las tareas asignadas a todos los estudiantes
-$sql = "SELECT DISTINCT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite 
+// Consulta para obtener las tareas asignadas al alumno actual y su estado de entrega
+$sql = "SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
+               CASE WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' ELSE 'No entregado' END AS estado_entrega
         FROM tareas
-        JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo";
+        JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
+        LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
+        WHERE grupo_alumnos.num_control = '$num_control'";
 
 $resultado = $conexion->query($sql);
 ?>
@@ -121,19 +129,18 @@ $resultado = $conexion->query($sql);
             <th>Materia</th>
             <th>Título de la Tarea</th>
             <th>Fecha de Entrega</th>
+            <th>Estado</th>
             <th>Acciones</th>
         </tr>
         <?php
         if ($resultado->num_rows > 0) {
-            while($fila = $resultado->fetch_assoc()) {
+            while ($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
                 echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
-                echo "<td class='acciones'>
-                        <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> 
-                      
-                      </td>";
+                echo "<td>" . $fila["estado_entrega"] . "</td>";
+                echo "<td class='acciones'> <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
                 echo "</tr>";
             }
         } else {
@@ -147,26 +154,6 @@ $resultado = $conexion->query($sql);
 <div class="back-button-container">
     <a href="inicioAlumno.php" class="back-button">Regresar al inicio</a>
 </div>
-
-<script>
-    let idTareaEliminar = null;
-
-    function confirmarEliminacion(idTarea) {
-        idTareaEliminar = idTarea;
-        document.getElementById('modalEliminar').style.display = 'flex';
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalEliminar').style.display = 'none';
-        idTareaEliminar = null;
-    }
-
-    function eliminarTarea() {
-        if (idTareaEliminar) {
-            window.location.href = 'eliminarTarea.php?id=' + idTareaEliminar;
-        }
-    }
-</script>
 
 </body>
 </html>
@@ -184,3 +171,4 @@ function obtenerNombreMateria($id_curso, $conexion) {
     }
 }
 ?>
+
