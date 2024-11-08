@@ -1,6 +1,4 @@
 <?php
-// listarTareas.php
-
 // Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
@@ -13,10 +11,12 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Consulta para obtener las tareas asignadas
-$sql = "SELECT id_tarea, id_curso, titulo, fecha_limite FROM tareas";
-$resultado = $conexion->query($sql);
+// Consulta para obtener las tareas asignadas a todos los estudiantes
+$sql = "SELECT DISTINCT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite 
+        FROM tareas
+        JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo";
 
+$resultado = $conexion->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +25,6 @@ $resultado = $conexion->query($sql);
     <meta charset="UTF-8">
     <title>Tareas Asignadas</title>
     <style>
-        /* General Page Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
@@ -132,7 +131,8 @@ $resultado = $conexion->query($sql);
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td class='acciones'>
-                        <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a>
+                        <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> 
+                      
                       </td>";
                 echo "</tr>";
             }
@@ -145,8 +145,28 @@ $resultado = $conexion->query($sql);
 </div>
 
 <div class="back-button-container">
-    <a href="inicioAlumno.php" class="back-button">Volver al Menu</a>
+    <a href="inicioAlumno.php" class="back-button">Regresar al inicio</a>
 </div>
+
+<script>
+    let idTareaEliminar = null;
+
+    function confirmarEliminacion(idTarea) {
+        idTareaEliminar = idTarea;
+        document.getElementById('modalEliminar').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEliminar').style.display = 'none';
+        idTareaEliminar = null;
+    }
+
+    function eliminarTarea() {
+        if (idTareaEliminar) {
+            window.location.href = 'eliminarTarea.php?id=' + idTareaEliminar;
+        }
+    }
+</script>
 
 </body>
 </html>
