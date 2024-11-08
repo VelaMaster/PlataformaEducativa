@@ -16,19 +16,13 @@ if ($conexion->connect_error) {
 // Obtener ID de la tarea y asegurarse de que es un número entero
 $id_tarea = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Verificar si $id_tarea tiene un valor válido antes de proceder
 if ($id_tarea > 0) {
-    // Mostrar el valor de $id_tarea para depuración
-    echo "<p>ID de la tarea: $id_tarea</p>"; // Quita esta línea después de probar
-
-    // Obtener los detalles de la tarea
     $sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
     $resultado = $conexion->query($sql);
 
     if ($resultado && $resultado->num_rows > 0) {
         $tarea = $resultado->fetch_assoc();
-        
-        // Función para obtener el nombre del curso
+
         function obtenerNombreMateria($id_curso, $conexion) {
             $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
             $resultado = $conexion->query($consulta);
@@ -47,80 +41,206 @@ if ($id_tarea > 0) {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Detalle de Tarea</title>
-            <link rel="stylesheet" href="css/estiloTarea.css">
+            <title>Detalles de la Tarea</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+            <style>
+                * {
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f8f9fa;
+                    color: #333;
+                    line-height: 1.6;
+                    padding: 20px;
+                }
+                .navbar, .footer {
+                    background-color: #333;
+                    color: #fff;
+                    text-align: center;
+                    padding: 10px 0;
+                }
+                .navbar a, .footer {
+                    color: #fff;
+                    text-decoration: none;
+                    margin: 0 20px;
+                    font-weight: bold;
+                }
+                .footer {
+                    position: relative;
+                    padding-top: 10px;
+                }
+                .footer::after {
+                    content: '';
+                    display: block;
+                    width: 100px;
+                    height: 4px;
+                    background-color: #ff6600;
+                    margin: 5px auto 0;
+                }
+                .container {
+                    max-width: 900px;
+                    margin: 20px auto;
+                    background: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                    padding: 30px;
+                }
+                h1 {
+                    text-align: center;
+                    color: #ff6600;
+                    margin-bottom: 20px;
+                }
+                .line {
+                    border-bottom: 2px solid #ff6600;
+                    margin-bottom: 20px;
+                }
+                .detail-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 0;
+                    border-bottom: 1px solid #ddd;
+                }
+                .detail-item:last-child {
+                    border-bottom: none;
+                }
+                .detail-label {
+                    font-weight: bold;
+                }
+                .upload-section {
+                    background: #f9f9f9;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border: 1px solid #ddd;
+                    margin-top: 20px;
+                    text-align: center;
+                }
+                .upload-section h3 {
+                    margin-bottom: 15px;
+                    color: #6c757d;
+                }
+                .upload-section input[type="file"] {
+                    display: block;
+                    margin: 10px auto;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: 80%;
+                }
+                .upload-section button {
+                    background-color: #ff6600;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+                }
+                .upload-section button:hover {
+                    background-color: #e65c00;
+                }
+                .eliminar-btn {
+                    background-color: #dc3545;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    transition: background-color 0.3s;
+                }
+                .eliminar-btn:hover {
+                    background-color: #c82333;
+                }
+                .back-button {
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                    background-color: #ff6600;
+                    color: #fff;
+                    padding: 10px 0;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    margin-top: 20px;
+                    transition: background-color 0.3s;
+                }
+                .back-button:hover {
+                    background-color: #e65c00;
+                }
+                .preview {
+                    margin-top: 15px;
+                    text-align: center;
+                }
+                .preview img {
+                    max-width: 100px;
+                    border-radius: 5px;
+                    margin-top: 10px;
+                }
+            </style>
         </head>
         <body>
-        <!-- Barra de navegación -->
-        <header>
-            <nav>
-                <ul>
-                    <li><a href="inicioAlumno.php">Inicio</a></li>
-                    <li><a href="gestionTareasAlumno.php">Volver</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main>
-        <!-- Área de detalles de la tarea -->
-        <h1>Detalle de la Tarea</h1>
-        <div id="container">
-            <section id="detalle-tarea">
-                <h2>Tarea: <span id="titulo-tarea"><?php echo $tarea['titulo']; ?></span></h2>
-                <p id="descripcion-tarea"><?php echo $tarea['descripcion']; ?></p>
-                <p><strong>Materia:</strong> <?php echo $nombre_materia; ?></p>
-                <p><strong>Fecha de creación:</strong> <?php echo $tarea['fecha_creacion']; ?></p>
-                <p><strong>Fecha límite:</strong> <?php echo $tarea['fecha_limite']; ?></p>
-                <?php if (!empty($tarea['archivo_tarea'])): ?>
-                    <p><strong>Archivo:</strong> <a href="<?php echo $tarea['archivo_tarea']; ?>" target="_blank">Descargar archivo</a></p>
-                <?php endif; ?>
-            </section>
+        <div class="navbar">
+            <a href="inicioAlumno.php">Inicio</a>
+            <a href="gestionTareasAlumno.php">Volver</a>
         </div>
+        <div class="container">
+            <h1>Detalles de la Tarea</h1>
+            <div class="line"></div>
+            <div class="detail-item">
+                <span class="detail-label">Materia:</span>
+                <span><?php echo $nombre_materia; ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Título:</span>
+                <span><?php echo $tarea['titulo']; ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Descripción:</span>
+                <span><?php echo $tarea['descripcion']; ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fecha de Creación:</span>
+                <span><?php echo $tarea['fecha_creacion']; ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fecha de Entrega:</span>
+                <span><?php echo $tarea['fecha_limite']; ?></span>
+            </div>
+            <?php if (!empty($tarea['archivo_tarea'])): ?>
+                <div class="detail-item">
+                    <span class="detail-label">Archivo:</span>
+                    <a href="<?php echo $tarea['archivo_tarea']; ?>" target="_blank"><?php echo basename($tarea['archivo_tarea']); ?></a>
+                </div>
+                <div class="preview">
+                    <img src="<?php echo $tarea['archivo_tarea']; ?>" alt="Vista previa">
+                </div>
+            <?php endif; ?>
 
-        <!-- Área para subir archivos -->
-        <section id="subir-archivo">
-            <h3>Subir tu archivo</h3>
-            <form action="upload.php" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-                <input type="file" name="archivo" required>
-                <button type="submit" id="enviar-btn">Enviar</button>
-            </form>
-        </section>
-
-        <!-- Botón de regreso -->
-        <button onclick="location.href='inicioAlumno.php'">Volver</button>
-
-        </main>
-
-        <footer>
-            <p>© 2024 Plataforma de Educación</p>
-        </footer>
-
+            <div class="upload-section">
+                <h3>Subir tu archivo</h3>
+                <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+                    <input type="file" name="archivo" required>
+                    <button type="submit">Enviar</button>
+                    <button type="button" class="eliminar-btn" onclick="eliminarArchivo()">Eliminar archivo</button>
+                </form>
+            </div>
+            <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+        </div>
+        <div class="footer">
+            © 2024 PE-ISC
+        </div>
         <script>
-            document.querySelector('form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const mensaje = document.createElement('p');
-                mensaje.textContent = 'Archivo subido';
-                mensaje.style.color = 'green';
-                document.getElementById('subir-archivo').appendChild(mensaje);
-
-                const enviarBtn = document.getElementById('enviar-btn');
-                enviarBtn.style.display = 'none';
-
-                const eliminarBtn = document.createElement('button');
-                eliminarBtn.textContent = 'Eliminar';
-                eliminarBtn.id = 'eliminar-btn';
-
-                eliminarBtn.addEventListener('click', function() {
-                    mensaje.remove();
-                    eliminarBtn.remove();
-                    enviarBtn.style.display = 'inline';
-                });
-
-                document.getElementById('subir-archivo').appendChild(eliminarBtn);
-                event.target.submit();
-            });
+            function eliminarArchivo() {
+                const fileInput = document.querySelector('input[type="file"]');
+                fileInput.value = ''; // Clear the selected file
+            }
         </script>
-
         </body>
         </html>
         <?php
