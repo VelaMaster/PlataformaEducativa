@@ -7,42 +7,39 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+// Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $baseDatos = "peis";
 
 $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
-
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-$num_control = $_SESSION['usuario'];  // Obtener el ID del alumno desde la sesión
-$id_tarea = $_GET['id'];  // Obtener el ID de la tarea desde la URL
+// Validar que 'id_tarea' está en $_POST y que el archivo fue subido
+if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
+    $id_tarea = (int) $_POST['id_tarea'];  // Convertir a entero para evitar inyecciones
+    $num_control = $_SESSION['usuario'];
 
-// Comprobar si se ha subido un archivo
-if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
-    // Obtener información del archivo subido
+    // Leer archivo
     $archivoTmp = $_FILES['archivo']['tmp_name'];
-    $archivoNombre = $_FILES['archivo']['name'];
-    $archivoContenido = addslashes(file_get_contents($archivoTmp));  // Convertir el archivo a binario
+    $archivoContenido = addslashes(file_get_contents($archivoTmp));
 
-    // Insertar el archivo en la base de datos
-    $sql = "INSERT INTO entregas (id_tarea, id_alumno, archivo_entrega, fecha_entrega) 
-            VALUES (?, ?, ?, NOW())";
+    // Insertar en la tabla 'entregas'
+    $sql = "INSERT INTO entregas (id_tarea, id_alumno, archivo_entrega, fecha_entrega) VALUES (?, ?, ?, NOW())";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("iis", $id_tarea, $num_control, $archivoContenido);  // ID de la tarea, ID del alumno y contenido binario del archivo
+    $stmt->bind_param("iis", $id_tarea, $num_control, $archivoContenido);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Archivo subido correctamente.'); window.location.href = 'verTarea.php?id=$id_tarea';</script>";
+        echo "<script>alert('Archivo subido correctamente.'); window.location.href = 'gestionTareasAlumno.php';</script>";
     } else {
-        echo "Error al guardar el archivo en la base de datos: " . $stmt->error;
+        echo "<script>alert('Error al subir el archivo.'); window.history.back();</script>";
     }
-
     $stmt->close();
 } else {
-    echo "Error: No se ha subido ningún archivo.";
+    echo "<script>alert('Error: Parámetros faltantes.'); window.history.back();</script>";
 }
 
 $conexion->close();
