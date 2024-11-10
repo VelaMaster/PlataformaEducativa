@@ -1,0 +1,87 @@
+/* Estilo general del cuerpo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #FFA500;
+    padding: 15px;
+    text-align: center;
+}
+
+header nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+header nav ul li {
+    margin: 0 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #f8f9fa;
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    color: #333;
+    margin: 20px 0;
+    font-size: 24px;
+}
+
+/* Estilo del calendario */
+#calendar {
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Estilo para los eventos */
+.fc-event {
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 4px;
+    color: white;
+}
+
+/* Colores personalizados para diferentes materias */
+.fc-event.Matemáticas {
+    background-color: #FF5733; /* Color para Matemáticas */
+}
+
+.fc-event.Física {
+    background-color: #33C3FF; /* Color para Física */
+}
+
+.fc-event.Química {
+    background-color: #B833FF; /* Color para Química */
+}
+
+/* Estilo del pie de página */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
