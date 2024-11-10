@@ -219,8 +219,8 @@ if (!$conexion) {
         <img src="img/Logoito120.png" alt="Foto de perfil" class="profile-img">
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
-        <li><a class="dropdown-item" href="verPerfil.html">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarPerfil.html">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="verPerfilDocente.php">Ver perfil</a></li>
+        <li><a class="dropdown-item" href="editarperfilDocente.php">Editar perfil</a></li>
     </ul>
 </div>
 
