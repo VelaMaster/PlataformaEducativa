@@ -1,5 +1,5 @@
 <?php
-// verTarea.php
+// tarea.php
 
 // Conexión a la base de datos
 $servidor = "localhost";
@@ -16,35 +16,52 @@ if ($conexion->connect_error) {
 // Obtener ID de la tarea y asegurarse de que es un número entero
 $id_tarea = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
+// Verificar si el ID de la tarea es válido
 if ($id_tarea > 0) {
-    $sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
-    $resultado = $conexion->query($sql);
+    // Obtener el ID del alumno desde la sesión
+    session_start();
+    $id_alumno = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 0;
 
-    if ($resultado && $resultado->num_rows > 0) {
-        $tarea = $resultado->fetch_assoc();
+    if ($id_alumno > 0) {
+        // Consulta para verificar si el alumno tiene acceso a esta tarea
+        $sql = "SELECT * FROM tareas
+                JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
+                WHERE tareas.id_tarea = $id_tarea
+                AND grupo_alumnos.num_control = $id_alumno";
 
-        function obtenerNombreMateria($id_curso, $conexion) {
-            $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
-            $resultado = $conexion->query($consulta);
-            if ($resultado && $resultado->num_rows > 0) {
-                $fila = $resultado->fetch_assoc();
-                return $fila['nombre_curso'];
-            } else {
-                return "Desconocido";
+        $resultado = $conexion->query($sql);
+
+        if ($resultado && $resultado->num_rows > 0) {
+            $tarea = $resultado->fetch_assoc();
+
+            // Verificar si el alumno ya entregó la tarea
+            $sqlEntrega = "SELECT * FROM entregas WHERE id_tarea = $id_tarea AND id_alumno = $id_alumno";
+            $resultadoEntrega = $conexion->query($sqlEntrega);
+            $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
+
+            // Obtener el nombre de la materia
+            function obtenerNombreMateria($id_curso, $conexion) {
+                $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
+                $resultado = $conexion->query($consulta);
+                if ($resultado && $resultado->num_rows > 0) {
+                    $fila = $resultado->fetch_assoc();
+                    return $fila['nombre_curso'];
+                } else {
+                    return "Desconocido";
+                }
             }
-        }
 
-        $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
-        ?>
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Detalles de la Tarea</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-            <style>
-                * {
+            $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de la Tarea</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+         * {
                     box-sizing: border-box;
                     margin: 0;
                     padding: 0;
@@ -181,71 +198,77 @@ if ($id_tarea > 0) {
                     border-radius: 5px;
                     margin-top: 10px;
                 }
-            </style>
-        </head>
-        <body>
-        <div class="navbar">
-            <a href="inicioAlumno.php">Inicio</a>
-            <a href="gestionTareasAlumno.php">Volver</a>
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="inicioAlumno.php">Inicio</a>
+        <a href="gestionTareasAlumno.php">Volver</a>
+    </div>
+    <div class="container">
+        <h1>Detalles de la Tarea</h1>
+        <div class="line"></div>
+        <div class="detail-item">
+            <span class="detail-label">Materia:</span>
+            <span><?php echo htmlspecialchars($nombre_materia); ?></span>
         </div>
-        <div class="container">
-            <h1>Detalles de la Tarea</h1>
-            <div class="line"></div>
-            <div class="detail-item">
-                <span class="detail-label">Materia:</span>
-                <span><?php echo $nombre_materia; ?></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Título:</span>
-                <span><?php echo $tarea['titulo']; ?></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Descripción:</span>
-                <span><?php echo $tarea['descripcion']; ?></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Fecha de Creación:</span>
-                <span><?php echo $tarea['fecha_creacion']; ?></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Fecha de Entrega:</span>
-                <span><?php echo $tarea['fecha_limite']; ?></span>
-            </div>
-            <?php if (!empty($tarea['archivo_tarea'])): ?>
-                <div class="detail-item">
-                    <span class="detail-label">Archivo:</span>
-                    <a href="<?php echo $tarea['archivo_tarea']; ?>" target="_blank"><?php echo basename($tarea['archivo_tarea']); ?></a>
-                </div>
-                <div class="preview">
-                    <img src="<?php echo $tarea['archivo_tarea']; ?>" alt="Vista previa">
-                </div>
-            <?php endif; ?>
+        <div class="detail-item">
+            <span class="detail-label">Título:</span>
+            <span><?php echo htmlspecialchars($tarea['titulo']); ?></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Descripción:</span>
+            <span><?php echo htmlspecialchars($tarea['descripcion']); ?></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Fecha de Creación:</span>
+            <span><?php echo htmlspecialchars($tarea['fecha_creacion']); ?></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Fecha de Entrega:</span>
+            <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
+        </div>
 
+        <?php if ($entregado): ?>
+            <?php 
+            // Obtener los datos de la entrega
+            $entrega = $resultadoEntrega->fetch_assoc();
+            $nombre_archivo = $entrega['archivo_entrega']; // Nombre del archivo subido
+            ?>
+            <div class="detail-item">
+                <span class="detail-label">Archivo Entregado:</span>
+                <!-- Nombre del archivo que puede ser clickeado para ver o descargar -->
+                <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank">
+                    <?php echo htmlspecialchars($nombre_archivo); ?>
+                </a>
+            </div>
+            <form action="eliminarTareaAlumno.php" method="POST">
+                <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+                <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
+            </form>
+        <?php else: ?>
             <div class="upload-section">
                 <h3>Subir tu archivo</h3>
                 <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
                     <input type="file" name="archivo" required>
                     <button type="submit">Enviar</button>
-                    <button type="button" class="eliminar-btn" onclick="eliminarArchivo()">Eliminar archivo</button>
                 </form>
             </div>
-            <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
-        </div>
-        <div class="footer">
-            © 2024 PE-ISC
-        </div>
-        <script>
-            function eliminarArchivo() {
-                const fileInput = document.querySelector('input[type="file"]');
-                fileInput.value = ''; // Clear the selected file
-            }
-        </script>
-        </body>
-        </html>
-        <?php
+        <?php endif; ?>
+        <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+    </div>
+    <div class="footer">
+        © 2024 PE-ISC
+    </div>
+</body>
+</html>
+<?php
+        } else {
+            echo "Tarea no encontrada o no tienes acceso a esta tarea.";
+        }
     } else {
-        echo "Tarea no encontrada";
+        echo "No estás autenticado como alumno.";
     }
 } else {
     echo "ID de tarea inválido.";
