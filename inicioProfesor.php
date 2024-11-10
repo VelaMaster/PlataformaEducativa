@@ -135,7 +135,7 @@ if (!$conexion) {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            width: 550px;
+            width: 600px;
             max-height: 80%;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -286,6 +286,7 @@ if (!$conexion) {
                 <tr>
                     <th>Título</th>
                     <th>Descripción</th>
+                    <th>Fecha Creada</th>
                     <th>Fecha de Entrega</th>
                 </tr>
             </thead>
@@ -313,12 +314,17 @@ if (!$conexion) {
                 if (data.length > 0) {
                     data.forEach(task => {
                         const row = document.createElement("tr");
-                        row.innerHTML = `<td>${task.titulo}</td><td>${task.descripcion}</td><td>${task.fecha_limite || 'Sin fecha'}</td>`;
+                        row.innerHTML = `
+                            <td>${task.titulo}</td>
+                            <td>${task.descripcion}</td>
+                            <td>${task.fecha_creacion || 'Sin fecha'}</td>
+                            <td>${task.fecha_limite || 'Sin fecha'}</td>
+                        `;
                         tasksList.appendChild(row);
                     });
                 } else {
                     const row = document.createElement("tr");
-                    row.innerHTML = "<td colspan='3'>No hay tareas asignadas.</td>";
+                    row.innerHTML = "<td colspan='4'>No hay tareas asignadas.</td>";
                     tasksList.appendChild(row);
                 }
 

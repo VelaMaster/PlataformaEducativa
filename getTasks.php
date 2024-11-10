@@ -22,7 +22,7 @@ if ($id_curso <= 0) {
 }
 
 // Prepare the SQL statement to prevent SQL injection
-$query = "SELECT titulo, descripcion, fecha_limite FROM tareas WHERE id_curso = ?";
+$query = "SELECT titulo, descripcion, fecha_creacion, fecha_limite FROM tareas WHERE id_curso = ?";
 $stmt = $conexion->prepare($query);
 if (!$stmt) {
     echo json_encode(["error" => "Failed to prepare statement"]);
@@ -38,7 +38,12 @@ $result = $stmt->get_result();
 // Fetch the tasks and store them in an array
 $tareas = [];
 while ($row = $result->fetch_assoc()) {
-    $tareas[] = $row;
+    $tareas[] = [
+        'titulo' => $row['titulo'],
+        'descripcion' => $row['descripcion'],
+        'fecha_creacion' => $row['fecha_creacion'] ?: 'Sin fecha',
+        'fecha_limite' => $row['fecha_limite'] ?: 'Sin fecha'
+    ];
 }
 
 // Output the tasks as a JSON array
