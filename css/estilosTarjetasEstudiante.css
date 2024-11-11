@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .tarjeta-materia {
     background-color: #f8f9fa; /* Color de fondo claro */
     border-radius: 10px; /* Bordes redondeados */
@@ -37,4 +38,45 @@
 
 .btn-unirse:hover, .btn-detalles:hover {
     background-color: #218838; /* Color de fondo al pasar el mouse */
+=======
+.tarjeta-materia {
+    background-color: #f8f9fa; /* Color de fondo claro */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    max-width: 300px; /* Ancho máximo */
+    margin: 20px; /* Margen alrededor de la tarjeta */
+    overflow: hidden; /* Para que los bordes redondeados se vean bien */
+}
+
+.tarjeta-header {
+    background-color: #007bff; /* Color de fondo de la cabecera */
+    color: white; /* Color del texto */
+    padding: 15px; /* Espaciado interno */
+    text-align: center; /* Centrar el texto */
+}
+
+.tarjeta-body {
+    padding: 15px; /* Espaciado interno */
+}
+
+.tarjeta-footer {
+    display: flex; /* Para alinear botones en línea */
+    justify-content: space-around; /* Espacio entre los botones */
+    padding: 10px; /* Espaciado interno */
+    background-color: #f1f1f1; /* Color de fondo del pie de tarjeta */
+}
+
+.btn-unirse, .btn-detalles {
+    background-color: #28a745; /* Color del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px 15px; /* Espaciado interno */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+    transition: background-color 0.3s; /* Transición para el color de fondo */
+}
+
+.btn-unirse:hover, .btn-detalles:hover {
+    background-color: #218838; /* Color de fondo al pasar el mouse */
+>>>>>>> a2a1b46207def8b4e85769ff9f52bde6c6ef020e
 }

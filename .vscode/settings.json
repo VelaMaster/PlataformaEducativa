@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 {
     "php.version": "8.2.12"
+=======
+{
+    "php.version": "8.2.12"
+>>>>>>> a2a1b46207def8b4e85769ff9f52bde6c6ef020e
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Estilo general del cuerpo */
 body {
     font-family: 'Arial', sans-serif;
@@ -171,3 +172,178 @@ footer {
     width: 100%;
 }
 
+=======
+/* Estilo general del cuerpo */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9; /* Fondo gris claro */
+    color: #333; /* Color de texto predeterminado */
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #FFA500; /* Verde suave */
+    padding: 15px;
+    text-align: center;
+}
+
+header nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+header nav ul li {
+    margin: 0 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #f1f1f1; /* Color más claro al hacer hover */
+}
+
+/* Estilo principal */
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto; /* Centra el contenido */
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para darle profundidad */
+}
+
+/* Títulos */
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 32px;
+}
+
+h2 {
+    color: #000000;
+    font-size: 24px;
+    border-bottom: 2px solid orange; /* Línea debajo del título */
+    padding-bottom: 5px;
+}
+
+/* Estilo de las secciones */
+section {
+    margin-bottom: 40px;
+}
+
+/* Resumen de Actividades */
+#resumen-actividades p {
+    font-size: 22px;
+    margin: 10px 0;
+    background-color: rgb(215, 215, 215);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Clases Actuales */
+#clases-actuales .clase {
+    background-color: #f8f9fa;
+    padding: 15px;
+    margin: 20px 0;
+    border-left: 5px orange;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#clases-actuales .clase h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#clases-actuales .clase p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+#clases-actuales a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: orange; /* Azul para tecnologías */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.1s; /* Animación suave */
+}
+
+#clases-actuales a:hover {
+    background-color: #FFA500; /* Naranja suave al hacer hover */
+    transform: scale(1.05); /* Efecto de agrandamiento al pasar el ratón */
+}
+
+#clases-actuales a:active {
+    background-color: #FFB347; /* Naranja más claro cuando se hace clic */
+    transform: scale(1); /* Volver al tamaño normal al hacer clic */
+}
+
+/* Generar Código de Clase */
+#generar-codigo {
+    background-color: #e8f5e9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#generar-codigo label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#generar-codigo input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#generar-codigo button {
+    padding: 10px 20px;
+    background-color: orange; /* Azul para tecnologías */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.1s; /* Animación suave */
+}
+
+#generar-codigo button:hover {
+    background-color: #FFA500; /* Naranja suave al hacer hover */
+    transform: scale(1.05); /* Efecto de agrandamiento al pasar el ratón */
+}
+
+#generar-codigo button:active {
+    background-color: #FFB347; /* Naranja más claro cuando se hace clic */
+    transform: scale(1); /* Volver al tamaño normal al hacer clic */
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+>>>>>>> a2a1b46207def8b4e85769ff9f52bde6c6ef020e
