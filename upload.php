@@ -60,3 +60,57 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
 
 $conexion->close();
 ?>
+
+
+<?php
+/*  NUEVO
+session_start();  // Inicia la sesión para acceder a las variables de sesión
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['usuario'])) {  // Verifica si la variable de sesión 'usuario' está definida
+    echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
+    exit;  // Redirecciona al usuario a 'index.php' si no está autenticado y muestra un mensaje de alerta
+}
+
+// Conexión a la base de datos
+$servidor = "localhost";         // Nombre del servidor
+$usuario = "root";               // Nombre de usuario de la base de datos
+$contraseña = "";                // Contraseña del usuario de la base de datos
+$baseDatos = "peis";             // Nombre de la base de datos
+
+$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);  // Crea la conexión con la base de datos
+
+// Verificar si la conexión fue exitosa
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);  // Termina la ejecución si ocurre un error en la conexión
+}
+
+// Validar que 'id_tarea' está en $_POST y que el archivo fue subido
+if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
+    $id_tarea = (int) $_POST['id_tarea'];  // Convertir a entero para evitar inyecciones
+    $num_control = $_SESSION['usuario'];
+
+    // Leer archivo
+    $archivoTmp = $_FILES['archivo']['tmp_name'];
+    $archivoContenido = addslashes(file_get_contents($archivoTmp));
+
+    // Insertar en la tabla 'entregas'
+    $sql = "INSERT INTO entregas (id_tarea, id_alumno, archivo_entrega, fecha_entrega) VALUES (?, ?, ?, NOW())";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("iis", $id_tarea, $num_control, $archivoContenido);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Archivo subido correctamente.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+    } else {
+        echo "<script>alert('Error al subir el archivo.'); window.history.back();</script>";
+    }
+    $stmt->close();
+} else {
+    echo "<script>alert('Error: Parámetros faltantes.'); window.history.back();</script>";
+}
+
+$conexion->close();
+*/
+?>
+
+  
