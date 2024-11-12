@@ -198,13 +198,50 @@ if ($id_tarea > 0) {
                     border-radius: 5px;
                     margin-top: 10px;
                 }
+
+                .modal {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    }
+    .modal-contenido {
+        background-color: #fff;
+        margin: 10% auto; /* Centrado vertical y horizontal */
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+    }
+    .modal h2 {
+        color: #ff6600;
+        margin-bottom: 20px;
+    }
+    .btn-confirmar, .btn-cancelar {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .btn-confirmar {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    .btn-cancelar {
+        background-color: #6c757d;
+        color: #fff;
+    }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="inicioAlumno.php">Inicio</a>
-        <a href="gestionTareasAlumno.php">Volver</a>
-    </div>
+    
     <div class="container">
         <h1>Detalles de la Tarea</h1>
         <div class="line"></div>
@@ -230,37 +267,61 @@ if ($id_tarea > 0) {
         </div>
 
         <?php if ($entregado): ?>
-            <?php 
-            // Obtener los datos de la entrega
-            $entrega = $resultadoEntrega->fetch_assoc();
-            $nombre_archivo = $entrega['archivo_entrega']; // Nombre del archivo subido
-            ?>
-            <div class="detail-item">
-                <span class="detail-label">Archivo Entregado:</span>
-                <!-- Nombre del archivo que puede ser clickeado para ver o descargar -->
-                <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank">
-                    <?php echo htmlspecialchars($nombre_archivo); ?>
-                </a>
-            </div>
-            <form action="eliminarTareaAlumno.php" method="POST">
-                <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-                <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
-            </form>
-        <?php else: ?>
-            <div class="upload-section">
-                <h3>Subir tu archivo</h3>
-                <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-                    <input type="file" name="archivo" required>
-                    <button type="submit">Enviar</button>
-                </form>
-            </div>
-        <?php endif; ?>
+    <?php 
+    // Obtener los datos de la entrega
+    $entrega = $resultadoEntrega->fetch_assoc();
+    $nombre_archivo = str_replace("uploads/", "", $entrega['archivo_entrega']);
+    ?>
+    <div class="detail-item">
+        <span class="detail-label">Archivo Entregado:</span>
+        <!-- Nombre del archivo que puede ser clickeado para ver o descargar -->
+        <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank">
+            <?php echo htmlspecialchars($nombre_archivo); ?>
+        </a>
+    </div>
+    <!-- Botón para abrir la ventana modal de confirmación -->
+    <button type="button" class="eliminar-btn" onclick="mostrarModal()">Eliminar Tarea</button>
+<?php else: ?>
+    <div class="upload-section">
+        <h3>Subir tu archivo</h3>
+        <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+            <input type="file" name="archivo" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+<?php endif; ?>
+
+<!-- Código de la ventana modal -->
+<div id="modalConfirmacion" class="modal">
+    <div class="modal-contenido">
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
+        <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
+            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+            <button type="submit" class="btn-confirmar">Sí, eliminar</button>
+            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
         <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
     </div>
     <div class="footer">
         © 2024 PE-ISC
     </div>
+
+    <script>
+    // Función para mostrar el modal
+    function mostrarModal() {
+        document.getElementById("modalConfirmacion").style.display = "block";
+    }
+
+    // Función para cerrar el modal
+    function cerrarModal() {
+        document.getElementById("modalConfirmacion").style.display = "none";
+    }
+</script>
 </body>
 </html>
 <?php
