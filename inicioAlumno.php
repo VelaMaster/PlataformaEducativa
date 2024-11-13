@@ -98,14 +98,17 @@ if (!$conexion) {
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
         <li><a class="dropdown-item" href="verPerfilAlumno.php">Ver perfil</a></li>
         <li><a class="dropdown-item" href="editarperfilAlumno.php">Editar perfil</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="logout.php">Salir</a></li>
     </ul>
 </div>
+
 <div class="card-container">
 <?php
 try {
     $consulta_materias = "
         SELECT c.nombre_curso AS nombre_materia, 
-               CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, 
+               CONCAT(d.nombre, ' ', d.apellido_p, ' ', d.apellido_m) AS nombre_profesor, 
                c.imagen_url,
                g.horario,
                g.aula,
@@ -113,10 +116,12 @@ try {
         FROM cursos c
         JOIN grupos g ON c.id_curso = g.id_curso
         JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
-        JOIN docentes d ON c.id_docente = d.num_control
+        JOIN docentes d ON g.id_docente = d.num_control
         WHERE ga.num_control = '$num_control'
     ";
+    
     $resultado_materias = mysqli_query($conexion, $consulta_materias);
+    
     if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
         echo "<div class='card-container'>";
         while ($row = mysqli_fetch_assoc($resultado_materias)) {
@@ -141,6 +146,7 @@ try {
 mysqli_free_result($resultado_materias);
 mysqli_close($conexion);
 ?>
+
 
 </div>
 
