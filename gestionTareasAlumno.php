@@ -22,7 +22,8 @@ $sql = "SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_lim
         FROM tareas
         JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
         LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
-        WHERE grupo_alumnos.num_control = '$num_control'";
+        WHERE grupo_alumnos.num_control = '$num_control'
+        AND tareas.fecha_limite >= CURDATE()";
 
 $resultado = $conexion->query($sql);
 ?>
