@@ -20,7 +20,12 @@ if ($conexion->connect_error) {
 }
 
 // Obtener materias del profesor
-$sql = "SELECT id_curso, nombre_curso FROM cursos WHERE id_docente = '$num_control'";
+$sql = "
+    SELECT c.id_curso, c.nombre_curso 
+    FROM cursos c 
+    JOIN grupos g ON c.id_curso = g.id_curso 
+    WHERE g.id_docente = '$num_control'
+";
 $resultado = $conexion->query($sql);
 ?>
 
@@ -346,15 +351,15 @@ $resultado = $conexion->query($sql);
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" placeholder="Documento en Pdf"></td>
-                    <td><input type="text" placeholder="Descripción del criterio"></td>
-                    <td><input type="number" class="puntos" value="0" min="0" oninput="calcularTotal()"></td>
+                    <td><input type="text" placeholder="Criterio" oninput="validarTexto(this)"></td>
+                    <td><input type="text" placeholder="Descripción del criterio" oninput="validarTexto(this)"></td>
+                    <td><input type="number" class="puntos" value="0" min="0" readonly></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="2"><strong>TOTAL</strong></td>
-                    <td id="totalPuntos">0</td>
+                    <td><input type="number" id="totalPuntos" value="100" min="0" oninput="actualizarPuntajes()"></td>
                 </tr>
             </tfoot>
         </table>
@@ -404,6 +409,7 @@ $resultado = $conexion->query($sql);
     function mostrarRubrica() {
         document.getElementById("rubrica-dinamica").style.display = "block";
         document.querySelector(".add-rubric-button").style.display = "none";
+        actualizarPuntajes();
     }
 
     function ocultarRubrica() {
@@ -416,36 +422,33 @@ $resultado = $conexion->query($sql);
         const newRow = document.createElement("tr");
 
         newRow.innerHTML = `
-            <td><input type="text" placeholder="Criterio"></td>
-            <td><input type="text" placeholder="Descripción del criterio"></td>
-            <td><input type="number" class="puntos" value="0" min="0" oninput="calcularTotal()"></td>
+            <td><input type="text" placeholder="Criterio" oninput="validarTexto(this)"></td>
+            <td><input type="text" placeholder="Descripción del criterio" oninput="validarTexto(this)"></td>
+            <td><input type="number" class="puntos" value="0" min="0" readonly></td>
         `;
         tableBody.appendChild(newRow);
+        actualizarPuntajes();
     }
 
     function quitarFila() {
         const tableBody = document.querySelector("#rubricaTable tbody");
         if (tableBody.rows.length > 1) {
             tableBody.deleteRow(tableBody.rows.length - 1);
+            actualizarPuntajes();
         } else {
             mostrarModal("Debe haber al menos una fila.");
         }
     }
 
-    function calcularTotal() {
+    function actualizarPuntajes() {
         const puntosInputs = document.querySelectorAll(".puntos");
-        let total = 0;
+        const totalPuntos = parseFloat(document.getElementById("totalPuntos").value) || 0;
+        const numFilas = puntosInputs.length;
+        const puntosPorFila = totalPuntos / numFilas;
 
         puntosInputs.forEach(input => {
-            total += parseFloat(input.value) || 0;
+            input.value = puntosPorFila.toFixed(2);
         });
-
-        if (total > 100) {
-            mostrarModal("El total de puntos no puede exceder los 100.");
-            total = 100;
-        }
-
-        document.getElementById("totalPuntos").textContent = total;
     }
 
     function validarFecha() {
@@ -453,10 +456,19 @@ $resultado = $conexion->query($sql);
         const fechaActual = new Date().toISOString().split("T")[0];
 
         if (fechaEntrega < fechaActual) {
-            mostrarModal("La fecha de entrega no puede ser en el pasado.");
+            mostrarModal("La fecha debe ser actual o futura.");
             return false;
         }
         return true;
+    }
+
+    function validarTexto(input) {
+        const texto = input.value;
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/; // solo letras y espacios
+        if (!regex.test(texto)) {
+            input.value = texto.slice(0, -1); // elimina el último carácter si no es válido
+            mostrarModal("Solo se permiten letras en este campo.");
+        }
     }
 
     function mostrarModal(mensaje) {

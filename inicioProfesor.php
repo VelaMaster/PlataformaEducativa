@@ -230,22 +230,23 @@ if (!$conexion) {
     <?php
     try {
         $consulta_materias = "
-            SELECT 
-                c.id_curso,
-                c.nombre_curso AS nombre_materia,
-                g.nombre_grupo,
-                c.imagen_url,
-                g.horario,
-                g.aula
-            FROM 
-                cursos c
-            JOIN 
-                grupos g ON c.id_curso = g.id_curso
-            WHERE 
-                c.id_docente = '$num_control'
-            ORDER BY 
-                c.nombre_curso, g.nombre_grupo
-        ";
+    SELECT 
+        c.id_curso,
+        c.nombre_curso AS nombre_materia,
+        g.nombre_grupo,
+        c.imagen_url,
+        g.horario,
+        g.aula
+    FROM 
+        cursos c
+    JOIN 
+        grupos g ON c.id_curso = g.id_curso
+    WHERE 
+        g.id_docente = '$num_control'
+    ORDER BY 
+        c.nombre_curso, g.nombre_grupo
+";
+
         
         $resultado_materias = mysqli_query($conexion, $consulta_materias);
         if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
