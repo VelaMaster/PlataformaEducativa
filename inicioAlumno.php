@@ -98,25 +98,31 @@ if (!$conexion) {
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
         <li><a class="dropdown-item" href="verPerfilAlumno.php">Ver perfil</a></li>
         <li><a class="dropdown-item" href="editarperfilAlumno.php">Editar perfil</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="logout.php">Salir</a></li>
     </ul>
 </div>
+
 <div class="card-container">
 <?php
 try {
     $consulta_materias = "
         SELECT c.nombre_curso AS nombre_materia, 
-               CONCAT(d.nombre,' ',d.apellido_p,' ', d.apellido_m) AS nombre_profesor, 
+               CONCAT(d.nombre, ' ', d.apellido_p, ' ', d.apellido_m) AS nombre_profesor, 
                c.imagen_url,
                g.horario,
                g.aula,
-               g.nombre_grupo AS grupo
+               g.nombre_grupo AS grupo,
+               g.id_curso  /* Asegúrate de incluir el id_grupo */
         FROM cursos c
         JOIN grupos g ON c.id_curso = g.id_curso
         JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
-        JOIN docentes d ON c.id_docente = d.num_control
+        JOIN docentes d ON g.id_docente = d.num_control
         WHERE ga.num_control = '$num_control'
     ";
+
     $resultado_materias = mysqli_query($conexion, $consulta_materias);
+
     if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
         echo "<div class='card-container'>";
         while ($row = mysqli_fetch_assoc($resultado_materias)) {
@@ -127,7 +133,8 @@ try {
             echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
             echo "<p class='card-subtitle'>Grupo: " . $row['grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
-            echo "<button class='view-more'>Ver más</button>";
+            echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "'>Ver más</a>";
+
             echo "</div>";
             echo "</div>";
         }
@@ -139,8 +146,10 @@ try {
     echo "Error en la consulta: " . $e->getMessage();
 }
 mysqli_free_result($resultado_materias);
+
 mysqli_close($conexion);
 ?>
+
 
 </div>
 

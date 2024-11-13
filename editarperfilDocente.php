@@ -29,8 +29,25 @@ mysqli_close($conexion);
     <title>Editar mi perfil</title>
     <link rel="stylesheet" href="css/miPerfilEditarAlumno.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+ 
 </head>
 <body>
+
+    <style>
+        /* Estilo para el botón de salir */
+        #logoutBtn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Botón de "Salir" que regresa a la página anterior -->
+<button id="logoutBtn" class="btn btn-danger" onclick="window.history.back();">Volver</button>
+
 <form>
     <div class="profile-container">
         <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -56,13 +73,16 @@ mysqli_close($conexion);
     </div>
     <div class="mb-3">
         <label for="txtCorreo" class="form-label">Confirmar ontrasena</label>
+
+        <label for="txtCorreo" class="form-label">Confirmar contrasena</label>
+
         <input type="email" class="form-control" id="txtCorreo">
     </div>
 
     <br>
     <div class="botones">
-        <button type="button" class="btn btn-success" onclick='window.location.href = "Se actualiazn los datos en la BDD"'>Confirmar</button>
-        <button type="button" class="btn btn-success" onclick='window.location.href = "verPerfilAlumno.php"'>Cancelar</button>
+<button type="button" class="btn btn-success" onclick='window.location.href = "Se actualiazn los datos en la BDD"'>Confirmar</button>
+<button type="button" class="btn btn-success" onclick='window.location.href = "verPerfilAlumno.php"'>Cancelar</button>
     </div>
 </form>
 </body>

@@ -31,6 +31,22 @@ mysqli_close($conexion);
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+    <style>
+        /* Estilo para el botón de salir */
+        #logoutBtn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    
+<!-- Botón de "Salir" que regresa a la página anterior -->
+<button id="logoutBtn" class="btn btn-danger" onclick="window.history.back();">Volver</button>
+
 <form>
     <div class="profile-container">
         <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
