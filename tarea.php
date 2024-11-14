@@ -238,6 +238,88 @@ if ($id_tarea > 0) {
         background-color: #6c757d;
         color: #fff;
     }
+    /* From Uiverse.io by Na3ar-17 */ 
+.card {
+  width: 200px;
+  /* background-color: rgba(36, 40, 50, 1);
+background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
+
+  background-color: rgba(36, 40, 50, 1);
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
+
+  border-radius: 10px;
+  padding: 15px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card .separator {
+  border-top: 1.5px solid #e65c00;
+}
+
+.card .list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0px 10px;
+}
+
+.card .list .element {
+  display: flex;
+  align-items: center;
+  color: #e65c00;
+  gap: 10px;
+  transition: all 0.3s ease-out;
+  padding: 4px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.card .list .element svg {
+  width: 19px;
+  height: 19px;
+  transition: all 0.3s ease-out;
+}
+
+.card .list .element .label {
+  font-weight: 600;
+}
+
+.card .list .element:hover {
+  background-color: #e65c00;
+  color: #ffffff;
+  transform: translate(1px, -1px);
+}
+.card .list .delete:hover {
+  background-color: #8e2a2a;
+}
+
+.card .list .element:active {
+  transform: scale(0.99);
+}
+
+.card .list:not(:last-child) .element:hover svg {
+  stroke: #ffffff;
+}
+
+.card .list:last-child svg {
+  stroke: #e65c00;
+}
+.card .list:last-child .element {
+  color: #e65c00;
+}
+
+.card .list:last-child .element:hover {
+  background-color: rgba(56, 45, 71, 0.836);
+}
+
     </style>
 </head>
 <body>
@@ -265,6 +347,118 @@ if ($id_tarea > 0) {
             <span class="detail-label">Fecha de Entrega:</span>
             <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
         </div>
+        <div class="card">
+  <ul class="list">
+    <li class="element">
+      <a href="https://drive.google.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+        <!-- Ícono de Google Drive -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#7e8590"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-google-drive"
+          style="margin-right: 8px;"
+        >
+          <path d="M12 2L2 12l5 8h10l5-8L12 2z" fill="#4285F4"></path>
+          <path d="M12 2L2 12h10l5-8z" fill="#0F9D58"></path>
+          <path d="M17 12h-5l5 8h5l-5-8z" fill="#F4B400"></path>
+        </svg>
+        <p class="label">Google Drive</p>
+      </a>
+    </li>
+   
+  
+
+    <li class="element">
+  <a href="https://www.canva.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+    <!-- Ícono de Canva -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="#00C4CC"  
+    >
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.29 16.36c-.703.563-1.446.996-2.173 1.12-.583.1-1.14-.046-1.603-.397-.247-.19-.515-.375-.797-.562-.098-.066-.198-.123-.297-.19-.4-.255-.857-.417-1.33-.47-.517-.06-1.034.034-1.548.15-.273.064-.547.146-.82.236a9.56 9.56 0 01-.297.085c-.272.084-.494.002-.683-.17-.092-.085-.152-.193-.212-.3-.063-.115-.123-.23-.174-.347-.157-.364-.245-.732-.353-1.106-.223-.763-.47-1.517-.722-2.272-.156-.484-.3-.968-.467-1.447-.063-.184-.13-.37-.207-.556-.055-.137-.116-.27-.186-.4-.047-.086-.106-.17-.17-.25-.103-.124-.2-.112-.302-.01-.047.048-.087.102-.127.156-.287.385-.563.77-.88 1.14-.283.333-.62.618-1.04.77-.23.08-.465.144-.693.227a.83.83 0 01-.97-.234c-.35-.417-.445-.916-.44-1.42.008-.767.326-1.48.836-2.058.588-.66 1.3-1.148 2.13-1.455a6.24 6.24 0 012.222-.41c.817.006 1.606.187 2.368.482.472.177.93.394 1.378.626.425.22.85.447 1.266.688.358.206.732.345 1.138.42.395.073.787.063 1.173-.012.275-.054.545-.146.805-.263.246-.11.478-.266.7-.43.36-.268.61-.614.85-.96.088-.13.174-.26.262-.39.02-.03.056-.062.086-.063.06-.002.1.034.14.07.187.18.37.368.54.562.22.25.402.53.553.826.34.666.527 1.376.638 2.108.08.532.046 1.054-.164 1.565-.158.386-.372.746-.683 1.015-.3.26-.664.42-1.028.53a3.568 3.568 0 01-1.27.087c-.542-.04-.98-.242-1.398-.566z"/>
+    </svg>
+    <p class="label">‎ ‎   Canva</p>
+  </a>
+</li>
+
+  </ul>
+  <div class="separator"></div>
+  <ul class="list">
+    <li class="element">
+      <svg
+        class="lucide lucide-settings"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        stroke="#7e8590"
+        fill="none"
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+        ></path>
+        <circle r="3" cy="12" cx="12"></circle>
+      </svg>
+      <p class="label">Presentación</p>
+    </li>
+
+    
+    <li class="element">
+  <a href="https://docs.google.com/document/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
+    <!-- Ícono de archivo de Word -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="#2B579A" 
+    >
+      <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5zM8.5 13h1.2l1.1 3.7h.1l1.2-3.7h1.1l1.2 3.7h.1l1.1-3.7h1.2L14.8 19h-1.1l-1.2-3.5h-.1L11.3 19H10l-1.5-6zm-2.5-.5h1V14h-1v-1.5zm0 2.5h1v1h-1v-1z"/>
+    </svg>
+    <span style="margin-left: 10px; color: #e65c00;">Documento</span>
+  </a>
+</li>
+
+  </ul>
+  <div class="separator"></div>
+  <ul class="list">
+    <li class="element">
+      <svg
+        class="lucide lucide-users-round"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        stroke="#7e8590"
+        fill="none"
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M18 21a8 8 0 0 0-16 0"></path>
+        <circle r="5" cy="8" cx="10"></circle>
+        <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
+      </svg>
+      <p class="label">Seleccionar Archivo</p>
+      
+    </li>
+    
+  </ul>
+</div>
+
 
         <?php if ($entregado): ?>
     <?php 
