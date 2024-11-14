@@ -133,7 +133,8 @@ try {
             echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
             echo "<p class='card-subtitle'>Grupo: " . $row['grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
-            echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "'>Ver más</a>";
+            echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
+
 
             echo "</div>";
             echo "</div>";

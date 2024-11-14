@@ -3,7 +3,7 @@ session_start();
 
 // Verificar si el usuario está autenticado
 if (!isset($_SESSION['usuario'])) {
-    echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
+    header("Location: index.php");
     exit;
 }
 
@@ -34,7 +34,8 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
 
     // Validar que el archivo no sea demasiado grande (por ejemplo, 10 MB)
     if ($archivoTamaño > 10 * 1024 * 1024) { // 10 MB
-        echo "<script>alert('El archivo es demasiado grande.'); window.history.back();</script>";
+        // Redirigir de nuevo a la página de carga si el archivo es demasiado grande
+        header("Location: gestionTareasAlumno.php?error=El archivo es demasiado grande.");
         exit;
     }
 
@@ -46,23 +47,25 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
         $stmt->bind_param("iis", $id_tarea, $num_control, $archivoDestino);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Archivo subido correctamente.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+            // Redirigir a la página de gestión de tareas con un parámetro de éxito
+            header("Location: gestionTareasAlumno.php?success=Archivo subido correctamente.");
         } else {
-            echo "<script>alert('Error al guardar los datos en la base de datos.'); window.history.back();</script>";
+            // Redirigir si hubo un error al guardar en la base de datos
+            header("Location: gestionTareasAlumno.php?error=Error al guardar los datos.");
         }
         $stmt->close();
     } else {
-        echo "<script>alert('Error al mover el archivo.'); window.history.back();</script>";
+        // Redirigir si hubo un error al mover el archivo
+        header("Location: gestionTareasAlumno.php?error=Error al mover el archivo.");
     }
 } else {
-    echo "<script>alert('Error: Parámetros faltantes o archivo no válido.'); window.history.back();</script>";
+    // Redirigir si faltan parámetros o el archivo no es válido
+    header("Location: gestionTareasAlumno.php?error=Error: Parámetros faltantes o archivo no válido.");
 }
 
 $conexion->close();
-?>
 
 
-<?php
 /*  NUEVO
 session_start();  // Inicia la sesión para acceder a las variables de sesión
 
