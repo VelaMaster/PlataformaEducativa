@@ -95,7 +95,7 @@
 
 <body>
     <!-- Barra de navegación -->
-<<<<<<< HEAD
+
     <div class="barranavegacion">
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -119,29 +119,6 @@
     </div>
  </div>
 </div>
-=======
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Plataforma Educativa para Ingeniería en Sistemas</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="calendarioProfesor.php">Calendario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="gestionTareasProfesor.php">Gestionar Tareas</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
->>>>>>> refs/remotes/origin/main
 
     <!-- Contenido principal -->
     <main>
