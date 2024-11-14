@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
-    echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
+    header("Location: index.php");
     exit;
 }
 
@@ -36,16 +36,21 @@ if ($id_tarea > 0) {
             if (file_exists($archivoEliminar)) {
                 unlink($archivoEliminar);
             }
-            echo "<script>alert('Tarea eliminada correctamente.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+            // Redirigir con éxito
+            header("Location: gestionTareasAlumno.php?success=Tarea eliminada correctamente.");
         } else {
-            echo "<script>alert('Error al eliminar la tarea.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+            // Redirigir en caso de error
+            header("Location: gestionTareasAlumno.php?error=Error al eliminar la tarea.");
         }
     } else {
-        echo "<script>alert('No se encontró la entrega.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+        // Redirigir si no se encuentra la entrega
+        header("Location: gestionTareasAlumno.php?error=No se encontró la entrega.");
     }
 } else {
-    echo "<script>alert('Tarea inválida.'); window.location.href = 'gestionTareasAlumno.php';</script>";
+    // Redirigir si la tarea es inválida
+    header("Location: gestionTareasAlumno.php?error=Tarea inválida.");
 }
 
 $conexion->close();
 ?>
+

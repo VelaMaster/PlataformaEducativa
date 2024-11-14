@@ -118,6 +118,22 @@ $resultado = $conexion->query($sql);
         .back-button:hover {
             background-color: #e68a00;
         }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
+        }
+
+        .footer {
+            position: relative;
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +171,11 @@ $resultado = $conexion->query($sql);
 <div class="back-button-container">
     <a href="inicioAlumno.php" class="back-button">Regresar al inicio</a>
 </div>
+
+<!-- Pie de página --> 
+<footer class="text-center py-3">
+    <p>© 2024 PE-ISC</p>
+    </footer>
 
 </body>
 </html>
