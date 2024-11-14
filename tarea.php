@@ -455,11 +455,12 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
 </div>
 
 
-        <?php if ($entregado): ?>
+<?php if ($entregado): ?>
     <?php 
     // Obtener los datos de la entrega
     $entrega = $resultadoEntrega->fetch_assoc();
     $nombre_archivo = str_replace("uploads/", "", $entrega['archivo_entrega']);
+    $ruta_archivo = 'uploads/' . $nombre_archivo;
     ?>
     <div class="detail-item">
         <span class="detail-label">Archivo Entregado:</span>
@@ -468,8 +469,30 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
             <?php echo htmlspecialchars($nombre_archivo); ?>
         </a>
     </div>
+
+    <!-- Previsualización del archivo -->
+    <div class="preview-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto;">
+    <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
+    
+    <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nombre_archivo)): ?>
+        <!-- Imagen centrada con bordes redondeados -->
+        <img src="<?php echo $ruta_archivo; ?>" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
+    <?php elseif (preg_match('/\.pdf$/i', $nombre_archivo)): ?>
+        <!-- Previsualización de PDF centrada sin barras de herramientas -->
+        <embed src="<?php echo $ruta_archivo; ?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="180" height="180" style="border-radius: 8px; border: none;">
+    <?php else: ?>
+        <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
+    <?php endif; ?>
+</div>
+
+
+
     <!-- Botón para abrir la ventana modal de confirmación -->
-    <button type="button" class="eliminar-btn" onclick="mostrarModal()">Eliminar Tarea</button>
+    <div style="display: flex; justify-content: center; margin-top: 15px;">
+    <button type="button" class="eliminar-btn" onclick="mostrarModal()" style="padding: 10px 20px; background-color: #ff4c4c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Eliminar Tarea
+    </button>
+</div>
 <?php else: ?>
     <div class="upload-section">
         <h3>Subir tu archivo</h3>
@@ -480,6 +503,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         </form>
     </div>
 <?php endif; ?>
+
 
 <!-- Código de la ventana modal -->
 <div id="modalConfirmacion" class="modal">
