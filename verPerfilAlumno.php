@@ -38,11 +38,11 @@ mysqli_close($conexion);
         </a>
     </div>
     <br>
-    <h4>Bienvenido, <?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_m . ' ' . $apellido_p; ?></h4>
+    <h4>Bienvenido, <?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_p . ' ' . $apellido_m; ?></h4>
     <br>
     <div class="mb-3">
         <label for="txtNombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="txtNombre" value="<?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_m . ' ' . $apellido_p; ?>" readonly>
+        <input type="text" class="form-control" id="txtNombre" value="<?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_p . ' ' . $apellido_m; ?>" readonly>
     </div>
     <div class="mb-3">
         <label for="txtNumControl" class="form-label">Número de control</label>
