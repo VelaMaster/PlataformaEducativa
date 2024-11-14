@@ -85,17 +85,21 @@ if ($id_tarea > 0) {
                     margin: 0 20px;
                     font-weight: bold;
                 }
-                .footer {
-                    position: relative;
-                    padding-top: 10px;
+                footer {
+                  background-color: #333;
+                  color: white;
+                  text-align: center;
+                  padding: 10px 0;
+                 position: fixed;
+                  bottom: 0;
+                  left: 0;
+                  width: 100%;
+                  z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
                 }
-                .footer::after {
-                    content: '';
-                    display: block;
-                    width: 100px;
-                    height: 4px;
-                    background-color: #ff6600;
-                    margin: 5px auto 0;
+
+                .footer { 
+                  position: relative;
+                  padding-top: 10px;
                 }
                 .container {
                     max-width: 900px;
@@ -562,6 +566,11 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         document.getElementById("modalConfirmacion").style.display = "none";
     }
 </script>
+
+  <!-- Pie de página --> 
+    <footer class="text-center py-3">
+    <p>© 2024 PE-ISC</p>
+    </footer>
 </body>
 </html>
 <?php
