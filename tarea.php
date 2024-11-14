@@ -127,38 +127,65 @@ if ($id_tarea > 0) {
                     font-weight: bold;
                 }
                 .upload-section {
-                    background: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 8px;
-                    border: 1px solid #ddd;
-                    margin-top: 20px;
-                    text-align: center;
-                }
-                .upload-section h3 {
-                    margin-bottom: 15px;
-                    color: #6c757d;
-                }
-                .upload-section input[type="file"] {
-                    display: block;
-                    margin: 10px auto;
-                    padding: 8px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    width: 80%;
-                }
-                .upload-section button {
-                    background-color: #ff6600;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                }
-                .upload-section button:hover {
-                    background-color: #e65c00;
-                }
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    margin-top: 25px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.upload-section h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.upload-section input[type="file"] {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 90%;
+    font-size: 15px;
+    color: #555;
+    transition: border-color 0.3s;
+}
+
+.upload-section input[type="file"]:hover, .upload-section input[type="file"]:focus {
+    border-color: #ff6600;
+    outline: none;
+}
+
+.upload-section button {
+    background-color: #ff6600;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 25px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.upload-section button:hover {
+    background-color: #e65c00;
+    transform: scale(1.05);
+}
+
+.upload-section button:active {
+    background-color: #cc5200;
+    transform: scale(1.02);
+}
+
                 .eliminar-btn {
                     background-color: #dc3545;
                     color: #fff;
@@ -494,14 +521,16 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </button>
 </div>
 <?php else: ?>
-    <div class="upload-section">
-        <h3>Subir tu archivo</h3>
-        <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-            <input type="file" name="archivo" required>
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
+ <div class="upload-section">
+    <h3>Subir tu archivo</h3>
+    <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+        <input type="file" name="archivo" required>
+        <button type="submit">Enviar</button>
+    </form>
+</div>
+
+
 <?php endif; ?>
 
 
@@ -520,9 +549,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
 
         <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
     </div>
-    <div class="footer">
-        © 2024 PE-ISC
-    </div>
+    
 
     <script>
     // Función para mostrar el modal
