@@ -26,38 +26,36 @@ if (!$conexion) {
             height: 60px;
             border-radius: 50%;
             object-fit: cover;
-        }        /* Ajustes de la posición de la foto de perfil */
+        }
         .profile-container {
             position: absolute;
-            top: 15px; /* Ajusta según la altura que prefieras */
+            top: 15px;
             right: 15px;
         }
         .card {
-    width: 320px;
-    height: 270px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column; /* Organiza el contenido en columna */
-    justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
-    overflow: hidden;
-}
-
-.card img {
-    width: 100%;
-    height: auto; /* Asegura que la imagen mantenga su proporción */
-    flex: 1; /* La imagen toma el espacio disponible en el medio */
-}
-
-.card-content {
-    background-color: rgb(102, 102, 102);
-    color: white;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
+            width: 320px;
+            height: 270px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+            flex: 1;
+        }
+        .card-content {
+            background-color: rgb(102, 102, 102);
+            color: white;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
     </style>
 </head>
 <body>
@@ -101,27 +99,25 @@ if (!$conexion) {
 <main>
     <div class="card-container">
     <?php
-<<<<<<< HEAD
     try {
         $consulta_materias = "
-    SELECT 
-        c.id_curso,
-        c.nombre_curso AS nombre_materia,
-        g.nombre_grupo,
-        c.imagen_url,
-        g.horario,
-        g.aula
-    FROM 
-        cursos c
-    JOIN 
-        grupos g ON c.id_curso = g.id_curso
-    WHERE 
-        g.id_docente = '$num_control'
-    ORDER BY 
-        c.nombre_curso, g.nombre_grupo
-";
+        SELECT 
+            c.id_curso,
+            c.nombre_curso AS nombre_materia,
+            g.nombre_grupo,
+            c.imagen_url,
+            g.horario,
+            g.aula
+        FROM 
+            cursos c
+        JOIN 
+            grupos g ON c.id_curso = g.id_curso
+        WHERE 
+            g.id_docente = '$num_control'
+        ORDER BY 
+            c.nombre_curso, g.nombre_grupo
+        ";
 
-        
         $resultado_materias = mysqli_query($conexion, $consulta_materias);
         if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
             while ($row = mysqli_fetch_assoc($resultado_materias)) {
@@ -138,52 +134,14 @@ if (!$conexion) {
             }
         } else {
             echo "<p class='text-center'>No tienes materias asignadas actualmente.</p>";
-=======
-try {
-    $consulta_materias = "
-        SELECT 
-            c.id_curso,
-            c.nombre_curso AS nombre_materia,
-            g.nombre_grupo,
-            c.imagen_url,
-            g.horario,
-            g.aula
-        FROM 
-            cursos c
-        JOIN 
-            grupos g ON c.id_curso = g.id_curso
-        WHERE 
-            g.id_docente = '$num_control'
-        ORDER BY 
-            c.nombre_curso, g.nombre_grupo
-    ";
-    
-    $resultado_materias = mysqli_query($conexion, $consulta_materias);
-    if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
-        while ($row = mysqli_fetch_assoc($resultado_materias)) {
-            $imagen_url = $row['imagen_url'];
-            $id_curso = $row['id_curso'];
-            echo "<div class='card' style='background-image: url($imagen_url)'>";
-            echo "<div class='card-content'>";
-            echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
-            echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
-            echo "<p class='card-subtitle'>Horario: " . $row['horario'] . ' ' . $row['aula'] . "</p>";
-            echo "<button class='view-more' onclick='showTasks($id_curso)'>Ver más</button>";
-            echo "</div>";
-            echo "</div>";
->>>>>>> 26ba27245d00b76e21cd8557696807a301126583
         }
-    } else {
-        echo "<p class='text-center'>No tienes materias asignadas actualmente.</p>";
+    } catch (mysqli_sql_exception $e) {
+        echo "Error en la consulta: " . $e->getMessage();
     }
-} catch (mysqli_sql_exception $e) {
-    echo "Error en la consulta: " . $e->getMessage();
-}
 
-mysqli_free_result($resultado_materias);
-mysqli_close($conexion);
-?>
-
+    mysqli_free_result($resultado_materias);
+    mysqli_close($conexion);
+    ?>
     </div>
 </main>
 
