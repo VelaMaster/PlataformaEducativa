@@ -347,6 +347,8 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
             <span class="detail-label">Fecha de Entrega:</span>
             <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
         </div>
+
+      
         <div class="card">
   <ul class="list">
     <li class="element">
@@ -391,29 +393,22 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
   </a>
 </li>
 
-  </ul>
-  <div class="separator"></div>
-  <ul class="list">
-    <li class="element">
-      <svg
-        class="lucide lucide-settings"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#7e8590"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-        ></path>
-        <circle r="3" cy="12" cx="12"></circle>
-      </svg>
-      <p class="label">Presentación</p>
-    </li>
+<li class="element">
+  <a href="https://docs.google.com/presentation/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
+    <!-- Ícono de PowerPoint -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="#D24726" 
+    >
+      <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5zM11 12h1.5v1.5H11V12zm0 2h1.5v1.5H11V14zm0 2h1.5v1.5H11V16z"/>
+    </svg>
+    <span style="margin-left: 10px; color: #D24726;">Presentación</span>
+  </a>
+</li>
+
 
     
     <li class="element">
