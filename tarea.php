@@ -458,29 +458,8 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
   </a>
 </li>
 
-  </ul>
-  <div class="separator"></div>
-  <ul class="list">
-    <li class="element">
-      <svg
-        class="lucide lucide-users-round"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#7e8590"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M18 21a8 8 0 0 0-16 0"></path>
-        <circle r="5" cy="8" cx="10"></circle>
-        <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
-      </svg>
-      <p class="label">Seleccionar Archivo</p>
-      
-    </li>
+   <!-- aqui va el otro botom yo o poñgo -->
+  
     
   </ul>
 </div>
