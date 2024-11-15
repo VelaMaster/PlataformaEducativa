@@ -350,6 +350,33 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
 .card .list:last-child .element:hover {
   background-color: rgba(56, 45, 71, 0.836);
 }
+.download-button {
+    display: inline-block;
+    padding: 5px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #ff5722; /* Color naranja */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.download-button:hover {
+    background-color: #e64a19; /* Color naranja oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.download-button:active {
+    background-color: #d84315; /* Color aún más oscuro */
+    transform: translateY(0);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+}
 
     </style>
 </head>
@@ -377,6 +404,10 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         <div class="detail-item">
             <span class="detail-label">Fecha de Entrega:</span>
             <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Archivo Adjunto:</span>
+            <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
 
       
@@ -475,9 +506,9 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <div class="detail-item">
         <span class="detail-label">Archivo Entregado:</span>
         <!-- Nombre del archivo que puede ser clickeado para ver o descargar -->
-        <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank">
-            <?php echo htmlspecialchars($nombre_archivo); ?>
-        </a>
+        <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank" class="download-button">
+          <?php echo htmlspecialchars($nombre_archivo); ?>
+         </a>
     </div>
 
     <!-- Previsualización del archivo -->
