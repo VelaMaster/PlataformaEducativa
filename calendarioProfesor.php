@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario del Docente</title>
-    
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
@@ -23,31 +21,6 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
         }
-
-        /* Restauración de la barra de navegación anterior */
-        .navbar {
-            background-color: #ff8c42;
-            padding: 10px 20px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #fff !important;
-            font-size: 1.2rem;
-        }
-        .navbar-nav .nav-link {
-            color: #fff !important;
-            margin-right: 15px;
-            font-size: 1rem;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #f4f4f4 !important;
-            background-color: #d07534;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-
-        /* Título del calendario */
         .calendar-title {
             font-family: 'Georgia', serif;
             font-size: 2.5rem;
@@ -58,7 +31,6 @@
             font-weight: bold;
         }
         
-        /* Contenedor del calendario */
         #calendar {
             width: 100%;
             max-width: 1100px;
@@ -119,17 +91,12 @@
     </div>
  </div>
 </div>
-
-    <!-- Contenido principal -->
+</div>
     <main>
         <h2 class="calendar-title">Calendario de Tareas Asignadas</h2>
         <div id="calendar"></div>
     </main>
-
-    <!-- Incluye el archivo JavaScript compilado por Webpack -->
     <script src="dist/bundle.js"></script>
-
-    <!-- Pie de página -->
     <footer>
         <p>© 2024 Plataforma de Educación para Ingeniería en Sistemas</p>
     </footer>

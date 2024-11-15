@@ -1,0 +1,47 @@
+.barranavegacion{
+    width: 80% !important;
+    margin: 5px auto !important; /* Margen superior de 5px y centrado horizontal */
+    border-radius: 40px !important; /* Bordes redondeados */
+    padding: 10px !important; /* Espacio interno para que el contenido no esté pegado a los bordes */
+}
+.navbar-brand{
+    font-size: 24px !important;
+}
+.navbar-expand-lg{
+    border-radius: 15px !important;
+}
+.navbar {
+    background-color: #e88f13 !important; /* Color de fondo personalizado */
+}
+.navbar-nav .nav-link {
+    font-size: 22px !important;
+    color: #ffffff !important; /* Color del texto de los enlaces */
+}
+.navbar-nav .nav-link:hover {
+    color: #aa6933 !important; /* Color del texto al pasar el cursor */
+}
+.navbar-toggler {
+    border-color: #ffffff !important;
+}
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+}
+.dropdown-menu {
+    background-color: #fae8ce !important; /* Fondo del menú desplegable */
+    border-radius: 15px !important;
+}
+.dropdown-menu .dropdown-item {
+    color: #000000 !important;
+}
+.navbar-toggler{
+    background-color: #e6ae60 !important;
+}
+footer {
+    background-color: #333 !important;
+    color: white !important;
+    text-align: center !important;
+    padding: 10px 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    width: 100% !important;
+}
