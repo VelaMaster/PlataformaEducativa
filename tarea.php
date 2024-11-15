@@ -275,13 +275,13 @@ if ($id_tarea > 0) {
   /* background-color: rgba(36, 40, 50, 1);
 background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
 
-  background-color: rgba(36, 40, 50, 1);
-  background-image: linear-gradient(
+  background-color: ffffff;
+  background-image: none;
     139deg,
     rgba(36, 40, 50, 1) 0%,
     rgba(36, 40, 50, 1) 0%,
     rgba(37, 28, 40, 1) 100%
-  );
+  ;
 
   border-radius: 10px;
   padding: 15px 0px;
@@ -377,6 +377,58 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     transform: translateY(0);
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
 }
+.menu-opciones {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+/* Estilos para el botón y el menú desplegable */
+
+.paste-button {
+  position: relative;
+  display: inline-block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.button {
+  background-color: #4CAF50;
+  color: #212121;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  font-size: 13px;
+  position: absolute;
+  z-index: 1;
+  min-width: 200px;
+  background-color: #212121;
+  border: 2px solid #4CAF50;
+  border-radius: 0px 15px 15px 15px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+  color: #4CAF50;
+  padding: 8px 10px;
+  text-decoration: none;
+  display: block;
+  transition: 0.1s;
+}
+
+.dropdown-content a:hover {
+  background-color: #4CAF50;
+  color: #212121;
+}
+
 
     </style>
 </head>
@@ -409,11 +461,14 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
             <span class="detail-label">Archivo Adjunto:</span>
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
-
-      
-        <div class="card">
-  <ul class="list">
-    <li class="element">
+        
+        <div class="container">
+    <div class="card">
+        <button onclick="toggleMenu()" class="download-button">+ Agregar o crear</button>
+        
+        <div id="menuOpciones" class="menu-opciones" style="display: none;">
+            <ul class="list">
+            <li class="element">
       <a href="https://drive.google.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
         <!-- Ícono de Google Drive -->
         <svg
@@ -436,9 +491,6 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         <p class="label">Google Drive</p>
       </a>
     </li>
-   
-  
-
     <li class="element">
   <a href="https://www.canva.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
     <!-- Ícono de Canva -->
@@ -454,7 +506,6 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <p class="label">‎ ‎   Canva</p>
   </a>
 </li>
-
 <li class="element">
   <a href="https://docs.google.com/presentation/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
     <!-- Ícono de PowerPoint -->
@@ -470,10 +521,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <span style="margin-left: 10px; color: #D24726;">Presentación</span>
   </a>
 </li>
-
-
-    
-    <li class="element">
+<li class="element">
   <a href="https://docs.google.com/document/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
     <!-- Ícono de archivo de Word -->
     <svg
@@ -488,10 +536,63 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <span style="margin-left: 10px; color: #e65c00;">Documento</span>
   </a>
 </li>
+<li class="element">
+  <!-- Formulario de subida de archivos -->
+  <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; align-items: center;">
+    <!-- Input oculto para el id_tarea -->
+    <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+
+    <!-- SVG Ícono y Texto que disparan el input de archivo -->
+    <label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
+      <svg
+        class="lucide lucide-users-round"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        stroke="#7e8590"
+        fill="none"
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M18 21a8 8 0 0 0-16 0"></path>
+        <circle r="5" cy="8" cx="10"></circle>
+        <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
+      </svg>
+      <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
+    </label>
+
+    <!-- Input de archivo oculto -->
+    <input 
+      type="file" 
+      id="file-upload" 
+      name="archivo" 
+      required 
+      style="display: none;"
+    >
+
+    <!-- Botón de enviar -->
+    <button type="submit" style="margin-top: 8px; padding: 6px 12px; background-color: #7e8590; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Enviar
+    </button>
+  </form>
+</li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById("menuOpciones");
+        menu.style.display = menu.style.display === "none" ? "block" : "none";
+    }
+</script>
 
    <!-- aqui va el otro botom yo o poñgo -->
-  
-    
   </ul>
 </div>
 
@@ -542,16 +643,8 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </button>
 </div>
 <?php else: ?>
- <div class="upload-section">
-    <h3>Subir tu archivo</h3>
-    <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-        <input type="file" name="archivo" required>
-        <button type="submit">Enviar</button>
-    </form>
-</div>
-
-
+ 
+<!-- Aqui va el codigo que borre de enviar -->
 <?php endif; ?>
 
 
