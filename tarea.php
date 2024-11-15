@@ -481,9 +481,9 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </div>
 
     <!-- Previsualización del archivo -->
-    <div class="preview-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto;">
+<div class="preview-container" onclick="abrirModal('<?php echo $ruta_archivo; ?>', '<?php echo $nombre_archivo; ?>')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto; cursor: pointer;">
     <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
-    
+
     <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nombre_archivo)): ?>
         <!-- Imagen centrada con bordes redondeados -->
         <img src="<?php echo $ruta_archivo; ?>" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
@@ -493,6 +493,13 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <?php else: ?>
         <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
     <?php endif; ?>
+</div>
+
+<div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
+    <span onclick="cerrarModal()" style="position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; cursor: pointer;">&times;</span>
+    <div id="modal-content" style="background-color: #fff; padding: 20px; border-radius: 8px;">
+        <!-- Contenido del archivo (imagen o PDF) se cargará aquí -->
+    </div>
 </div>
 
 
@@ -544,6 +551,30 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     function cerrarModal() {
         document.getElementById("modalConfirmacion").style.display = "none";
     }
+
+    function abrirModal(ruta, nombre) {
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+    
+    // Limpiar contenido previo
+    modalContent.innerHTML = "";
+
+    // Verificar el tipo de archivo y agregar contenido apropiado
+    if (/\.(jpg|jpeg|png|gif)$/i.test(nombre)) {
+        modalContent.innerHTML = `<img src="${ruta}" style="width: 100%; max-width: 600px; border-radius: 8px;">`;
+    } else if (/\.pdf$/i.test(nombre)) {
+        modalContent.innerHTML = `<embed src="${ruta}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="600" height="500" style="border-radius: 8px; border: none;">`;
+    } else {
+        modalContent.innerHTML = "<p style='color: #333; text-align: center;'>Vista previa no disponible</p>";
+    }
+
+    // Mostrar el modal
+    modal.style.display = "flex";
+}
+
+function cerrarModal() {
+    document.getElementById("modal").style.display = "none";
+}
 </script>
 
   <!-- Pie de página --> 
