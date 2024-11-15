@@ -28,7 +28,6 @@ $resultado = $conexion->query($sql);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Tareas - Profesor</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/gestionTareasprofesor.css">
@@ -79,7 +78,6 @@ $resultado = $conexion->query($sql);
                 }
                 ?>
             </select>
-            
 
             <label for="titulo">Título de la Tarea:</label>
             <input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título de la tarea">
@@ -100,32 +98,32 @@ $resultado = $conexion->query($sql);
             </div>
 
             <div class="button-container">
-                <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rubrica</button>
+                <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
+            </div>
+
+            <!-- Tabla de rúbrica dinámica -->
+            <div id="rubricaContainer" style="display: none;">
+                <h3>Rúbrica de Evaluación</h3>
+                <table id="rubricaTable">
+                    <thead>
+                        <tr>
+                            <th>Criterio</th>
+                            <th>Descripción</th>
+                            <th>Puntos</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filas de rúbrica se agregarán aquí -->
+                    </tbody>
+                </table>
+                <button type="button" onclick="agregarFilaRubrica()">Añadir Fila</button>
             </div>
 
             <div class="button-container">
                 <button type="submit" class="assign-button">Asignar Tarea</button>
                 <a href="listarTareas.php" class="show-tasks-button">Mostrar Tareas Asignadas</a>
             </div>
-            <!-- Tabla de rúbrica dinámica -->
-<div id="rubricaContainer" style="display: none;">
-    <h3>Rúbrica de Evaluación</h3>
-    <table id="rubricaTable">
-        <thead>
-            <tr>
-                <th>Criterio</th>
-                <th>Descripción</th>
-                <th>Puntos</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Filas de rúbrica se agregarán aquí -->
-        </tbody>
-    </table>
-    <button type="button" onclick="agregarFilaRubrica()">Añadir Fila</button>
-</div>
-
         </form>
     </section>
 </main>
