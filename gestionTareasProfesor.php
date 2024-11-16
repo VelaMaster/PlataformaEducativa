@@ -10,7 +10,6 @@ $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $baseDatos = "peis";
-
 $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 
 if ($conexion->connect_error) {
@@ -65,7 +64,7 @@ $resultado = $conexion->query($sql);
 
     <section id="asignar-tarea">
         <h2>Asignar Nueva Tarea</h2>
-        <form action="asignarTarea.php" method="POST" enctype="multipart/form-data" onsubmit="return validarFecha();">
+        <form action="asignarTarea.php" method="POST" enctype="multipart/form-data" onsubmit="return validarFecha() && validarTotalPuntos();">
             <label for="materia">Materia:</label>
             <select id="materia" name="materia" required>
                 <?php
@@ -114,10 +113,10 @@ $resultado = $conexion->query($sql);
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Filas de rúbrica se agregarán aquí -->
                     </tbody>
                 </table>
                 <button type="button" onclick="agregarFilaRubrica()">Añadir Fila</button>
+                <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
             </div>
 
             <div class="button-container">
@@ -143,6 +142,29 @@ $resultado = $conexion->query($sql);
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="js/seleccionarArchivos.js"></script>
 <script src="js/rubrica.js"></script>
+
+<!-- Script para establecer la fecha mínima -->
+<script>
+    // Establecer el atributo 'min' del campo de fecha a la fecha actual
+    document.addEventListener('DOMContentLoaded', function() {
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaEntrega').setAttribute('min', fechaHoy);
+    });
+
+    // Función para validar que la fecha no sea pasada (en caso de que JavaScript esté deshabilitado)
+    function validarFecha() {
+        var fechaSeleccionada = document.getElementById('fechaEntrega').value;
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        if (fechaSeleccionada < fechaHoy) {
+            alert('La fecha de entrega no puede ser una fecha pasada.');
+            return false;
+        }
+        return true;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 </body>
 </html>
 
