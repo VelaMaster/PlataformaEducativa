@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 session_start();
 if (!isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
@@ -17,10 +19,10 @@ if ($conexion->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $materia = $_POST['materia'];
-    $titulo = $_POST['titulo'];
-    $descripcion = $_POST['descripcion'];
-    $fechaEntrega = $_POST['fechaEntrega'];
+    $materia = $conexion->real_escape_string($_POST['materia']);
+    $titulo = $conexion->real_escape_string($_POST['titulo']);
+    $descripcion = $conexion->real_escape_string($_POST['descripcion']);
+    $fechaEntrega = $conexion->real_escape_string($_POST['fechaEntrega']);
     $archivoPath = null;
 
     if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
@@ -37,13 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $archivoPath = null;
         }
     }
-    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite, archivo_tarea) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega', '$archivoPath')";
+
+    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_creacion, fecha_limite, archivo_tarea) VALUES ('$materia', '$titulo', '$descripcion', NOW(), '$fechaEntrega', '$archivoPath')";
+
     if ($conexion->query($sql) === TRUE) {
         $tarea_id = $conexion->insert_id;
 
-        if (isset($_POST['criterios']) && isset($_POST['descripciones']) && isset($_POST['puntos'])) {
-            $criterios = $_POST['criterios'];
-            $descripciones = $_POST['descripciones'];
+        if (isset($_POST['criterio']) && isset($_POST['descripcionCriterio']) && isset($_POST['puntos'])) {
+            $criterios = $_POST['criterio'];
+            $descripciones = $_POST['descripcionCriterio'];
             $puntos = $_POST['puntos'];
 
             for ($i = 0; $i < count($criterios); $i++) {
@@ -56,10 +60,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "Error al insertar rúbrica: " . $conexion->error . "<br>";
                 }
             }
-            echo "<script>alert('Tarea y rúbrica asignadas con éxito.'); window.location.href = 'gestionTareasProfesor.php';</script>";
+            $mensajeExito = 'Tarea y rúbrica asignadas con éxito.';
         } else {
-            echo "<script>alert('Tarea asignada sin rúbrica.'); window.location.href = 'gestionTareasProfesor.php';</script>";
+            $mensajeExito = 'Tarea asignada sin rúbrica.';
         }
+
+        // Mostrar mensaje de éxito con SweetAlert2
+        echo "<!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Tarea Asignada</title>
+            <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        </head>
+        <body>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '$mensajeExito',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                window.location.href = 'gestionTareasProfesor.php';
+            });
+        </script>
+        </body>
+        </html>";
+        exit();
     } else {
         echo "<script>alert('Error al asignar la tarea: " . $conexion->error . "');</script>";
     }
