@@ -97,27 +97,29 @@ $resultado = $conexion->query($sql);
             </div>
 
             <div class="button-container">
-                <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
+            <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
             </div>
 
-            <!-- Tabla de rúbrica dinámica -->
             <div id="rubricaContainer" style="display: none;">
-                <h3>Rúbrica de Evaluación</h3>
-                <table id="rubricaTable">
-                    <thead>
-                        <tr>
-                            <th>Criterio</th>
-                            <th>Descripción</th>
-                            <th>Puntos</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <button type="button" onclick="agregarFilaRubrica()">Añadir Fila</button>
-                <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
-            </div>
+    <h3>Rúbrica de Evaluación</h3>
+    <table id="rubricaTable">
+        <thead>
+            <tr>
+                <th>Criterio</th>
+                <th>Descripción</th>
+                <th>Puntos</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="button-container">
+        <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
+    </div>
+
+    <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
+</div>
 
             <div class="button-container">
                 <button type="submit" class="assign-button">Asignar Tarea</button>
@@ -131,7 +133,6 @@ $resultado = $conexion->query($sql);
     <p>© 2024 PE-ISC</p>
 </footer>
 
-<!-- Modal para mostrar la previsualización -->
 <div id="previewModal" class="modal" onclick="cerrarModal()">
     <span class="close" onclick="cerrarModal()">&times;</span>
     <img class="modal-content" id="modalImage" style="display: none;">
@@ -143,15 +144,12 @@ $resultado = $conexion->query($sql);
 <script src="js/seleccionarArchivos.js"></script>
 <script src="js/rubrica.js"></script>
 
-<!-- Script para establecer la fecha mínima -->
 <script>
-    // Establecer el atributo 'min' del campo de fecha a la fecha actual
+
     document.addEventListener('DOMContentLoaded', function() {
         var fechaHoy = new Date().toISOString().split('T')[0];
         document.getElementById('fechaEntrega').setAttribute('min', fechaHoy);
     });
-
-    // Función para validar que la fecha no sea pasada (en caso de que JavaScript esté deshabilitado)
     function validarFecha() {
         var fechaSeleccionada = document.getElementById('fechaEntrega').value;
         var fechaHoy = new Date().toISOString().split('T')[0];

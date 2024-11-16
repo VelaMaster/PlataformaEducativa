@@ -5,7 +5,6 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-// Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -17,7 +16,6 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Procesamiento del formulario cuando se envía
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $materia = $_POST['materia'];
     $titulo = $_POST['titulo'];
@@ -25,13 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fechaEntrega = $_POST['fechaEntrega'];
     $archivoPath = null;
 
-    // Subida de archivo
     if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
         $archivoNombre = $_FILES['archivo']['name'];
         $archivoTmp = $_FILES['archivo']['tmp_name'];
         $archivoPath = "uploads/" . basename($archivoNombre);
 
-        // Crear la carpeta 'uploads' si no existe
         if (!is_dir('uploads')) {
             mkdir('uploads', 0777, true);
         }
@@ -41,13 +37,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $archivoPath = null;
         }
     }
-
-    // Insertar tarea en la base de datos
     $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_limite, archivo_tarea) VALUES ('$materia', '$titulo', '$descripcion', '$fechaEntrega', '$archivoPath')";
     if ($conexion->query($sql) === TRUE) {
         $tarea_id = $conexion->insert_id;
 
-        // Verificar si existen datos de rúbrica
         if (isset($_POST['criterios']) && isset($_POST['descripciones']) && isset($_POST['puntos'])) {
             $criterios = $_POST['criterios'];
             $descripciones = $_POST['descripciones'];
@@ -58,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $descripcionRubrica = $conexion->real_escape_string($descripciones[$i]);
                 $puntaje_maximo = (int)$puntos[$i];
 
-                // Insertar cada criterio en la base de datos
                 $sqlRubrica = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) VALUES ('$tarea_id', '$criterio', '$descripcionRubrica', '$puntaje_maximo')";
                 if (!$conexion->query($sqlRubrica)) {
                     echo "Error al insertar rúbrica: " . $conexion->error . "<br>";
