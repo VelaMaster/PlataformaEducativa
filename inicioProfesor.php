@@ -77,7 +77,10 @@ if (!$conexion) {
                     <a class="nav-link" href="calendarioProfesor.php">Calendario</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="gestionTareasProfesor.php">Tareas</a>
+                    <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
                 </li>
             </ul>
         </div>
