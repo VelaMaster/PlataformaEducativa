@@ -1,36 +1,90 @@
-body{
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fae8ce !important;
+/* Fondo general */
+body {
+    background-color: #e7d6bf;
 }
-form{
-    width: 100%;
-    max-width: 650px;
-    padding: 100px;
-    border-radius: 10px;
-    background-color: #e0d2be;
+
+/* Botón de "Salir" */
+#logoutBtn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
+#logoutBtn:hover {
+    background-color: #ff5a4c;
+    transform: scale(1.1);
+}
+
+/* Tarjeta del perfil */
+.profile-card {
+    width: 80%;
+    padding: 40px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 1s ease-out;
+}
+
+/* Imagen de perfil */
 .profile-img {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
+    border: 4px solid #ff6f61;
     object-fit: cover;
-}
-/* Ajustes de la posición de la foto de perfil */
-.profile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.botones{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.profile-img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(255, 111, 97, 0.5);
+}
 
+/* Texto de bienvenida */
+.welcome-text {
+    margin: 20px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Campos del formulario */
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+/* Botón de edición */
+.btn-warning {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-warning:hover {
+    background-color: #ff5a4c;
+    transform: scale(1.05);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
