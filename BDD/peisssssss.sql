@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 19-11-2024 a las 06:07:38
+-- Tiempo de generación: 19-11-2024 a las 15:15:54
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,7 +28,10 @@ USE `peis`;
 --
 -- Estructura de tabla para la tabla `alumnos`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `alumnos`;
 CREATE TABLE `alumnos` (
   `num_control` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
@@ -38,6 +41,10 @@ CREATE TABLE `alumnos` (
   `correo` varchar(100) NOT NULL,
   `contrasena` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `alumnos`:
+--
 
 --
 -- Volcado de datos para la tabla `alumnos`
@@ -56,13 +63,20 @@ INSERT INTO `alumnos` (`num_control`, `nombre`, `segundo_nombre`, `apellido_p`, 
 --
 -- Estructura de tabla para la tabla `cursos`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `cursos`;
 CREATE TABLE `cursos` (
   `id_curso` int(11) NOT NULL,
   `nombre_curso` varchar(100) NOT NULL,
   `fecha_creacion` date DEFAULT NULL,
   `imagen_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `cursos`:
+--
 
 --
 -- Volcado de datos para la tabla `cursos`
@@ -79,7 +93,10 @@ INSERT INTO `cursos` (`id_curso`, `nombre_curso`, `fecha_creacion`, `imagen_url`
 --
 -- Estructura de tabla para la tabla `docentes`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `docentes`;
 CREATE TABLE `docentes` (
   `num_control` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
@@ -89,6 +106,10 @@ CREATE TABLE `docentes` (
   `correo` varchar(100) NOT NULL,
   `contrasena` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `docentes`:
+--
 
 --
 -- Volcado de datos para la tabla `docentes`
@@ -105,7 +126,10 @@ INSERT INTO `docentes` (`num_control`, `nombre`, `segundo_nombre`, `apellido_p`,
 --
 -- Estructura de tabla para la tabla `entregas`
 --
+-- Creación: 18-11-2024 a las 23:27:22
+--
 
+DROP TABLE IF EXISTS `entregas`;
 CREATE TABLE `entregas` (
   `id_entrega` int(11) NOT NULL,
   `id_tarea` int(11) DEFAULT NULL,
@@ -117,18 +141,29 @@ CREATE TABLE `entregas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- RELACIONES PARA LA TABLA `entregas`:
+--   `id_tarea`
+--       `tareas` -> `id_tarea`
+--   `id_alumno`
+--       `alumnos` -> `num_control`
+--
+
+--
 -- Volcado de datos para la tabla `entregas`
 --
 
 INSERT INTO `entregas` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo_entrega`, `fecha_entrega`, `calificacion`, `retroalimentacion`) VALUES
-(4, 16, 21160750, 'uploads/Captura desde 2024-11-18 11-45-14.png', '2024-11-18', 100, 'Buen trabajo');
+(4, 16, 21160750, 'uploads/Captura desde 2024-11-18 11-45-14.png', '2024-11-18', 0, 'Buen trabajo');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `grupos`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `grupos`;
 CREATE TABLE `grupos` (
   `id_grupo` int(11) NOT NULL,
   `id_curso` int(11) DEFAULT NULL,
@@ -137,6 +172,14 @@ CREATE TABLE `grupos` (
   `horario` varchar(100) DEFAULT NULL,
   `aula` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `grupos`:
+--   `id_curso`
+--       `cursos` -> `id_curso`
+--   `id_docente`
+--       `docentes` -> `num_control`
+--
 
 --
 -- Volcado de datos para la tabla `grupos`
@@ -153,11 +196,22 @@ INSERT INTO `grupos` (`id_grupo`, `id_curso`, `id_docente`, `nombre_grupo`, `hor
 --
 -- Estructura de tabla para la tabla `grupo_alumnos`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `grupo_alumnos`;
 CREATE TABLE `grupo_alumnos` (
   `id_grupo` int(11) NOT NULL,
   `num_control` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `grupo_alumnos`:
+--   `id_grupo`
+--       `grupos` -> `id_grupo`
+--   `num_control`
+--       `alumnos` -> `num_control`
+--
 
 --
 -- Volcado de datos para la tabla `grupo_alumnos`
@@ -175,7 +229,10 @@ INSERT INTO `grupo_alumnos` (`id_grupo`, `num_control`) VALUES
 --
 -- Estructura de tabla para la tabla `rubricas`
 --
+-- Creación: 12-11-2024 a las 06:54:07
+--
 
+DROP TABLE IF EXISTS `rubricas`;
 CREATE TABLE `rubricas` (
   `id_rubrica` int(11) NOT NULL,
   `id_tarea` int(11) DEFAULT NULL,
@@ -183,6 +240,12 @@ CREATE TABLE `rubricas` (
   `descripcion` text DEFAULT NULL,
   `puntos` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `rubricas`:
+--   `id_tarea`
+--       `tareas` -> `id_tarea`
+--
 
 --
 -- Volcado de datos para la tabla `rubricas`
@@ -199,7 +262,10 @@ INSERT INTO `rubricas` (`id_rubrica`, `id_tarea`, `criterio`, `descripcion`, `pu
 --
 -- Estructura de tabla para la tabla `tareas`
 --
+-- Creación: 15-11-2024 a las 06:36:39
+--
 
+DROP TABLE IF EXISTS `tareas`;
 CREATE TABLE `tareas` (
   `id_tarea` int(11) NOT NULL,
   `id_curso` int(11) DEFAULT NULL,
@@ -209,6 +275,12 @@ CREATE TABLE `tareas` (
   `fecha_creacion` date DEFAULT NULL,
   `fecha_limite` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `tareas`:
+--   `id_curso`
+--       `cursos` -> `id_curso`
+--
 
 --
 -- Volcado de datos para la tabla `tareas`
