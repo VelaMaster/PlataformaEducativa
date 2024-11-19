@@ -76,6 +76,7 @@ $result_entregas = $conexion->query($query_entregas);
     <title>Calificar Tareas</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
+    <link rel="stylesheet" href="css/calificarTareas.css">
 </head>
 <body>
 <div class="barranavegacion">

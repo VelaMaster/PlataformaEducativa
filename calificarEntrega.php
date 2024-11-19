@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calificar Tarea</title>
+    <link rel="stylesheet" href="css/calificarEntrega.css">
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
     <script>
@@ -160,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <th>Criterio</th>
                                 <th>Descripción</th>
                                 <th>Puntos</th>
-                                <th>Calificación por Criterio</th>
+                                <th>Calificación</th>
                             </tr>
                         </thead>
                         <tbody>
