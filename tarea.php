@@ -103,8 +103,9 @@ if ($id_tarea > 0) {
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
 
+          <!-- Esto es para las rubricas -->
         <?php if (isset($rubrica) && count($rubrica) > 0): ?>
-          <h3 style="text-align: center;">Rúbrica de Evaluación</h3>
+          <h3 style="text-align: center;">Rúbricas</h3>
     <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
         <table border="1" cellspacing="0" cellpadding="10" style="margin-top: 20px; width: 80%; max-width: 800px;">
             <thead>
@@ -128,6 +129,8 @@ if ($id_tarea > 0) {
 <?php else: ?>
     <p>No hay criterios definidos para esta rúbrica.</p>
 <?php endif; ?>
+
+  <!-- Aqui termino lo de  -->
 
 
         
