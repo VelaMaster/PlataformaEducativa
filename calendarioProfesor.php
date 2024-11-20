@@ -68,7 +68,7 @@
 <body>
     <!-- Barra de navegación -->
 
-    <div class="barranavegacion">
+<div class="barranavegacion">
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>

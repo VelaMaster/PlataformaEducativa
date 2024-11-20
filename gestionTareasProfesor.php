@@ -28,11 +28,11 @@ $resultado = $conexion->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Tareas - Profesor</title>
-    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/gestionTareasprofesor.css">
-    <link rel="stylesheet" href="css/iniciosesionalumno.css">
-    <link rel="stylesheet" href="css/barradeNavegacion.css">
-    <link rel="stylesheet" href="css/seleccionarArchivo.css">
+    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/gestionTareasprofesor.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/seleccionarArchivo.css?v=<?php echo time(); ?>">
 </head>
 <body>
 <div class="barranavegacion">

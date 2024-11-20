@@ -5,22 +5,6 @@ body {
     margin: 0;
     padding: 0;
 }
-
-/* Barra de navegación */
-.barranavegacion .navbar {
-    background-color: #f39c12; /* Naranja tenue */
-    border-bottom: 2px solid #d35400; /* Contorno naranja oscuro */
-}
-
-.barranavegacion .nav-link {
-    color: white !important;
-    font-weight: bold;
-}
-
-.barranavegacion .nav-link:hover {
-    color: #f9e79f !important; /* Naranja claro */
-}
-
 /* Botones */
 .btn-primary {
     background-color: #e67e22; /* Naranja */
@@ -94,13 +78,6 @@ body {
 textarea#retroalimentacion {
     border: 1px solid #f39c12;
     background-color: #fcf3cf; /* Fondo amarillo pálido */
-}
-
-/* Botón activo en navbar */
-.navbar .nav-link.active {
-    color: #d35400 !important; /* Texto naranja oscuro */
-    background-color: #fdebd0; /* Fondo claro */
-    border-radius: 4px;
 }
 .btn-primary {
     background-color: #ffa726 !important; /* Naranja más apagado */

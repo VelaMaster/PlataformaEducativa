@@ -35,26 +35,7 @@ body {
     border-color: #fb8c00;
 }
 
-/* Barra de navegación */
-.navbar {
-    background-color: #f57c00; /* Naranja más oscuro para la barra */
-    border-bottom: 3px solid #e65100; /* Línea inferior más intensa */
-}
 
-.navbar .navbar-brand {
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.navbar .nav-link {
-    color: #fff;
-    font-size: 1rem;
-}
-
-.navbar .nav-link:hover {
-    color: #ffcc80; /* Naranja claro */
-}
 
 /* Títulos */
 h1, h3 {
