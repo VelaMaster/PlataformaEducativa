@@ -28,6 +28,7 @@ if ($id_tarea > 0) {
                 JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
                 WHERE tareas.id_tarea = $id_tarea
                 AND grupo_alumnos.num_control = $id_alumno";
+                
 
         $resultado = $conexion->query($sql);
 
@@ -52,6 +53,16 @@ if ($id_tarea > 0) {
             }
 
             $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+
+             // **CONSULTAR LA RÚBRICA**
+             $sqlRubrica = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+             $resultadoRubrica = $conexion->query($sqlRubrica);
+             $rubrica = [];
+             if ($resultadoRubrica && $resultadoRubrica->num_rows > 0) {
+                 while ($fila = $resultadoRubrica->fetch_assoc()) {
+                     $rubrica[] = $fila;
+                 }
+             }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -60,377 +71,7 @@ if ($id_tarea > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de la Tarea</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-         * {
-                    box-sizing: border-box;
-                    margin: 0;
-                    padding: 0;
-                }
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f8f9fa;
-                    color: #333;
-                    line-height: 1.6;
-                    padding: 20px;
-                }
-                .navbar, .footer {
-                    background-color: #333;
-                    color: #fff;
-                    text-align: center;
-                    padding: 10px 0;
-                }
-                .navbar a, .footer {
-                    color: #fff;
-                    text-decoration: none;
-                    margin: 0 20px;
-                    font-weight: bold;
-                }
-                footer {
-                  background-color: #333;
-                  color: white;
-                  text-align: center;
-                  padding: 10px 0;
-                 position: fixed;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
-                }
-
-                .footer { 
-                  position: relative;
-                  padding-top: 10px;
-                }
-                .container {
-                    max-width: 900px;
-                    margin: 20px auto;
-                    background: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-                    padding: 30px;
-                }
-                h1 {
-                    text-align: center;
-                    color: #ff6600;
-                    margin-bottom: 20px;
-                }
-                .line {
-                    border-bottom: 2px solid #ff6600;
-                    margin-bottom: 20px;
-                }
-                .detail-item {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 10px 0;
-                    border-bottom: 1px solid #ddd;
-                }
-                .detail-item:last-child {
-                    border-bottom: none;
-                }
-                .detail-label {
-                    font-weight: bold;
-                }
-                .upload-section {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    margin-top: 25px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.upload-section h3 {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.upload-section input[type="file"] {
-    display: block;
-    margin: 15px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 90%;
-    font-size: 15px;
-    color: #555;
-    transition: border-color 0.3s;
-}
-
-.upload-section input[type="file"]:hover, .upload-section input[type="file"]:focus {
-    border-color: #ff6600;
-    outline: none;
-}
-
-.upload-section button {
-    background-color: #ff6600;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-
-.upload-section button:hover {
-    background-color: #e65c00;
-    transform: scale(1.05);
-}
-
-.upload-section button:active {
-    background-color: #cc5200;
-    transform: scale(1.02);
-}
-
-                .eliminar-btn {
-                    background-color: #dc3545;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    margin-top: 10px;
-                    transition: background-color 0.3s;
-                }
-                .eliminar-btn:hover {
-                    background-color: #c82333;
-                }
-                .back-button {
-                    display: block;
-                    width: 100%;
-                    text-align: center;
-                    background-color: #ff6600;
-                    color: #fff;
-                    padding: 10px 0;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    font-weight: bold;
-                    margin-top: 20px;
-                    transition: background-color 0.3s;
-                }
-                .back-button:hover {
-                    background-color: #e65c00;
-                }
-                .preview {
-                    margin-top: 15px;
-                    text-align: center;
-                }
-                .preview img {
-                    max-width: 100px;
-                    border-radius: 5px;
-                    margin-top: 10px;
-                }
-
-                .modal {
-        display: none; /* Oculto por defecto */
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
-    }
-    .modal-contenido {
-        background-color: #fff;
-        margin: 10% auto; /* Centrado vertical y horizontal */
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 400px;
-        text-align: center;
-    }
-    .modal h2 {
-        color: #ff6600;
-        margin-bottom: 20px;
-    }
-    .btn-confirmar, .btn-cancelar {
-        padding: 10px 20px;
-        margin: 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-    .btn-confirmar {
-        background-color: #dc3545;
-        color: #fff;
-    }
-    .btn-cancelar {
-        background-color: #6c757d;
-        color: #fff;
-    }
-    /* From Uiverse.io by Na3ar-17 */ 
-.card {
-  width: 200px;
-  /* background-color: rgba(36, 40, 50, 1);
-background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
-
-  background-color: ffffff;
-  background-image: none;
-    139deg,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(37, 28, 40, 1) 100%
-  ;
-
-  border-radius: 10px;
-  padding: 15px 0px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.card .separator {
-  border-top: 1.5px solid #e65c00;
-}
-
-.card .list {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0px 10px;
-}
-
-.card .list .element {
-  display: flex;
-  align-items: center;
-  color: #e65c00;
-  gap: 10px;
-  transition: all 0.3s ease-out;
-  padding: 4px 7px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.card .list .element svg {
-  width: 19px;
-  height: 19px;
-  transition: all 0.3s ease-out;
-}
-
-.card .list .element .label {
-  font-weight: 600;
-}
-
-.card .list .element:hover {
-  background-color: #e65c00;
-  color: #ffffff;
-  transform: translate(1px, -1px);
-}
-.card .list .delete:hover {
-  background-color: #8e2a2a;
-}
-
-.card .list .element:active {
-  transform: scale(0.99);
-}
-
-.card .list:not(:last-child) .element:hover svg {
-  stroke: #ffffff;
-}
-
-.card .list:last-child svg {
-  stroke: #e65c00;
-}
-.card .list:last-child .element {
-  color: #e65c00;
-}
-
-.card .list:last-child .element:hover {
-  background-color: rgba(56, 45, 71, 0.836);
-}
-.download-button {
-    display: inline-block;
-    padding: 5px 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #ff5722; /* Color naranja */
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    cursor: pointer;
-}
-
-.download-button:hover {
-    background-color: #e64a19; /* Color naranja oscuro */
-    transform: translateY(-2px);
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.download-button:active {
-    background-color: #d84315; /* Color aún más oscuro */
-    transform: translateY(0);
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
-}
-.menu-opciones {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-}
-/* Estilos para el botón y el menú desplegable */
-
-.paste-button {
-  position: relative;
-  display: inline-block;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.button {
-  background-color: #4CAF50;
-  color: #212121;
-  padding: 10px 15px;
-  font-size: 15px;
-  font-weight: bold;
-  border: 2px solid transparent;
-  border-radius: 15px;
-  cursor: pointer;
-}
-
-.dropdown-content {
-  display: none;
-  font-size: 13px;
-  position: absolute;
-  z-index: 1;
-  min-width: 200px;
-  background-color: #212121;
-  border: 2px solid #4CAF50;
-  border-radius: 0px 15px 15px 15px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-}
-
-.dropdown-content a {
-  color: #4CAF50;
-  padding: 8px 10px;
-  text-decoration: none;
-  display: block;
-  transition: 0.1s;
-}
-
-.dropdown-content a:hover {
-  background-color: #4CAF50;
-  color: #212121;
-}
-
-
-    </style>
+    <link rel="stylesheet" href="css/estiloTarea.css">
 </head>
 <body>
     
@@ -461,6 +102,37 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
             <span class="detail-label">Archivo Adjunto:</span>
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
+
+          <!-- Esto es para las rubricas -->
+        <?php if (isset($rubrica) && count($rubrica) > 0): ?>
+          <h3 style="text-align: center;">Rúbricas</h3>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+        <table border="1" cellspacing="0" cellpadding="10" style="margin-top: 20px; width: 80%; max-width: 800px;">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Descripción</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rubrica as $criterio): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($criterio['criterio']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['descripcion']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['puntos']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <p>No hay criterios definidos para esta rúbrica.</p>
+<?php endif; ?>
+
+  <!-- Aqui termino lo de  -->
+
+
         
         <div class="container">
     <div class="card">
@@ -584,6 +256,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </div>
 </div>
 
+<a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
 
 <script>
     function toggleMenu() {
@@ -661,7 +334,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </div>
 </div>
 
-        <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+        
     </div>
     
 
