@@ -256,6 +256,7 @@ if ($id_tarea > 0) {
     </div>
 </div>
 
+<a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
 
 <script>
     function toggleMenu() {
@@ -333,7 +334,7 @@ if ($id_tarea > 0) {
     </div>
 </div>
 
-        <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+        
     </div>
     
 
