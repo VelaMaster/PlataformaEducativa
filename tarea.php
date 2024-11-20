@@ -28,6 +28,7 @@ if ($id_tarea > 0) {
                 JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
                 WHERE tareas.id_tarea = $id_tarea
                 AND grupo_alumnos.num_control = $id_alumno";
+                
 
         $resultado = $conexion->query($sql);
 
@@ -52,6 +53,16 @@ if ($id_tarea > 0) {
             }
 
             $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+
+             // **CONSULTAR LA RÚBRICA**
+             $sqlRubrica = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+             $resultadoRubrica = $conexion->query($sqlRubrica);
+             $rubrica = [];
+             if ($resultadoRubrica && $resultadoRubrica->num_rows > 0) {
+                 while ($fila = $resultadoRubrica->fetch_assoc()) {
+                     $rubrica[] = $fila;
+                 }
+             }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -91,6 +102,34 @@ if ($id_tarea > 0) {
             <span class="detail-label">Archivo Adjunto:</span>
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
+
+        <?php if (isset($rubrica) && count($rubrica) > 0): ?>
+          <h3 style="text-align: center;">Rúbrica de Evaluación</h3>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+        <table border="1" cellspacing="0" cellpadding="10" style="margin-top: 20px; width: 80%; max-width: 800px;">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Descripción</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rubrica as $criterio): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($criterio['criterio']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['descripcion']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['puntos']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <p>No hay criterios definidos para esta rúbrica.</p>
+<?php endif; ?>
+
+
         
         <div class="container">
     <div class="card">
