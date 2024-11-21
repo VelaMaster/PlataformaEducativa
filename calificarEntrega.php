@@ -105,7 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -154,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="card-body">
             <?php if ($result_rubrica->num_rows > 0): ?>
-                <form method="POST" oninput="actualizarCalificacionTotal()">
+                <form method="POST" id="formCalificarEntrega" oninput="actualizarCalificacionTotal()">
                     <table class="table">
                         <thead>
                             <tr>
@@ -205,24 +206,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         let total = 0;
 
         inputs.forEach(input => {
-            const maxValue = parseInt(input.getAttribute('max')) || 0;
             const value = parseInt(input.value) || 0;
-
-            // Validar si la calificación excede el máximo permitido
-            if (value > maxValue) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: `La calificación no puede exceder los puntos máximos (${maxValue}) asignados.`,
-                });
-                input.value = maxValue; // Restablecer al valor máximo
-            }
-
             total += value;
         });
 
         document.getElementById('calificacion_total').value = total > 100 ? 100 : total; // Máximo de 100
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('formCalificarEntrega');
+        var calificacionTotalInput = document.getElementById('calificacion_total');
+
+        form.addEventListener('submit', function(event) {
+            var calificacionTotal = calificacionTotalInput.value.trim();
+
+            // Verificar si la calificación total está vacía o no es un número válido
+            if (calificacionTotal === '' || isNaN(calificacionTotal)) {
+                event.preventDefault(); // Evitar el envío del formulario
+                alert('Error: La calificación total no puede estar vacía o contener valores inválidos.');
+            }
+
+            // Opcional: Verificar si la calificación total está dentro del rango 0-100
+            if (calificacionTotal !== '' && !isNaN(calificacionTotal)) {
+                var calificacionValue = parseInt(calificacionTotal, 10);
+                if (calificacionValue < 0 || calificacionValue > 100) {
+                    event.preventDefault(); // Evitar el envío del formulario
+                    alert('Error: La calificación total debe estar entre 0 y 100.');
+                }
+            }
+        });
+    });
 </script>
 
 </body>

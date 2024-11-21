@@ -203,6 +203,25 @@ if ($id_tarea_seleccionada > 0) {
             <div class="alert alert-info">No hay tareas que cumplan con el filtro seleccionado.</div>
         <?php endif; ?>
     <?php endif; ?>
+    <!-- Modal de Confirmación para Recalificar -->
+<div class="modal fade" id="confirmRecalificarModal" tabindex="-1" aria-labelledby="confirmRecalificarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"> 
+        <h5 class="modal-title" id="confirmRecalificarModalLabel">Recalificar Entrega</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas volver a calificar esta entrega?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <a href="#" id="confirmRecalificarBtn" class="btn btn-primary">Sí, recalificar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <!-- Tabla de entregas -->
     <?php if ($id_tarea_seleccionada): ?>
@@ -232,12 +251,22 @@ if ($id_tarea_seleccionada > 0) {
                             <td><?= $entrega['calificacion'] !== null ? htmlspecialchars($entrega['calificacion']) : 'Sin Calificar' ?></td>
                             <td><?= htmlspecialchars($entrega['alumno_nombre']) ?></td>
                             <td>
-                                <?php if ($entrega['id_entrega'] && $entrega['calificacion'] === null): ?>
-                                    <a href="calificarEntrega.php?id_entrega=<?= $entrega['id_entrega'] ?>" class="btn btn-success">Calificar</a>
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
-                            </td>
+    <?php if ($entrega['id_entrega']): ?>
+        <?php if ($entrega['calificacion'] !== null): ?>
+            <span class="badge bg-info ms-2 calificada-badge" data-bs-toggle="modal" data-bs-target="#confirmRecalificarModal" data-id-entrega="<?= $entrega['id_entrega'] ?>" style="cursor: pointer;">
+                Calificada
+            </span>
+        <?php else: ?>
+            <a href="calificarEntrega.php?id_entrega=<?= $entrega['id_entrega'] ?>" class="btn btn-success btn-sm">Calificar</a>
+        <?php endif; ?>
+    <?php else: ?>
+        -
+    <?php endif; ?>
+</td>
+
+
+
+
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -247,6 +276,24 @@ if ($id_tarea_seleccionada > 0) {
         <?php endif; ?>
     <?php endif; ?>
 </div>
+<script>
+// Espera a que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function () {
+    var confirmRecalificarModal = document.getElementById('confirmRecalificarModal');
+    var confirmRecalificarBtn = document.getElementById('confirmRecalificarBtn');
+
+    // Escucha el evento que se dispara cuando el modal se muestra
+    confirmRecalificarModal.addEventListener('show.bs.modal', function (event) {
+        // Obtiene el elemento que disparó el modal
+        var triggerElement = event.relatedTarget;
+        // Extrae el id_entrega del atributo data
+        var idEntrega = triggerElement.getAttribute('data-id-entrega');
+
+        // Actualiza el href del botón de confirmación
+        confirmRecalificarBtn.setAttribute('href', 'calificarEntrega.php?id_entrega=' + idEntrega);
+    });
+});
+</script>
 
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>

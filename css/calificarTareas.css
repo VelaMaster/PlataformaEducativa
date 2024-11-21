@@ -85,3 +85,26 @@ footer {
     text-align: center;
     padding: 10px 0;
 }
+/* calificarTareas.css */
+
+/* Estilo para el badge "Calificada" */
+.calificada-badge {
+    background-color: #f88e2b !important; /* Reemplaza con el color de tu paleta */
+    color: #ffffff; /* Color del texto, ajusta según necesidad */
+    cursor: pointer !important;
+    padding: 0.5em 0.75em;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.calificada-badge:hover {
+    background-color: #e6b966ee !important; /* Color al pasar el mouse, ajusta según tu paleta */
+    transform: scale(1.05);
+}
+
+.calificada-badge:active {
+    transform: scale(0.95);
+}
