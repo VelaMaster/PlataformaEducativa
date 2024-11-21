@@ -74,7 +74,7 @@ if (!$conexion) {
                     <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="calendarioProfesor.php">Calendario</a>
+                    <a class="nav-link" href="calendarioDocente.php">Calendario</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>

@@ -1,0 +1,196 @@
+body{
+    background-color: rgba(37, 37, 37, 0.1);
+}
+/* Contenedor principal del calendario */
+.calendario-container {
+    width: 90%; /* Ancho del calendario */
+    margin: 20px auto; /* Centrado horizontal con margen superior */
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para darle profundidad */
+    padding: 0px; /* Espaciado interno */
+    overflow: hidden; /* Oculta cualquier contenido que sobresalga */
+}
+.calendario-header {
+    display: flex;
+    justify-content: space-between; /* Botones y título en lados opuestos */
+    align-items: center; /* Alinear verticalmente los elementos */
+    padding: 10px 20px;
+    background-color: #e88f13; /* Color de fondo similar a la navbar */
+    color: white; /* Texto blanco */
+    border-radius: 10px 10px 0 0; /* Bordes redondeados superiores */
+}
+
+.calendario-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.calendario-header button {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    color: #e88f13;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+}
+.calendario-header button:hover {
+    background-color: #f9a94c;
+    color: white;
+}
+.calendario-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columnas para los días */
+    gap: 5px; /* Espacio entre los días */
+    grid-auto-rows: minmax(90px, auto);
+    background-color: #e6ae60; /* Color de fondo del grid */
+    padding: 10px;
+}
+
+.calendario-dia {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* Alinear fecha y tareas en columna */
+    justify-content: flex-start;
+    padding: 10px;
+    background-color: #fdf1e6; /* Color de fondo claro */
+    border: 1px solid #e88f13; /* Bordes */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+.calendario-dia:hover {
+    background-color: #f4b96f; /* Fondo al pasar el cursor */
+    color: white;
+}
+/* Encabezado de los días de la semana */
+.calendario-dia-header {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+/* Estilo de los días con eventos */
+.evento {
+    background-color: #ff5722;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+/* Modal para mostrar detalles del evento */
+.modal-calendario {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.modal-calendario.active {
+    visibility: visible;
+    opacity: 1;
+}
+.modal-contenido {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-contenido h3 {
+    margin: 0 0 10px;
+}
+
+.modal-contenido button {
+    background-color: #e88f13;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.modal-contenido button:hover {
+    background-color: #f9a94c;
+} 
+.calendario-dia .evento {
+    padding: 5px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  /* Colores de las tareas por materia */
+  .evento.materia-1 {
+    background-color: #ff5722; /* Naranja */
+  }
+  .evento.materia-2 {
+    background-color: #17af1c; /* Verde */
+  }
+  .evento.materia-3 {
+    background-color: #2196f3; /* Azul */
+  }
+  .evento.materia-4 {
+    background-color: #9c27b0; /* Púrpura */
+  }
+  .evento.materia-5 {
+    background-color: #8acce0; /* Púrpura */
+  }
+  .evento.materia-6 {
+    background-color: #88648f; /* Púrpura */
+  }
+  .evento.materia-7 {
+    background-color: #c77171; /* Púrpura */
+  }
+  .evento.materia-8 {
+    background-color: #ff9100; /* Púrpura */
+  }
+  .evento.materia-9 {
+    background-color: #fbff21; /* Púrpura */
+  }
+  .evento.materia-10 {
+    background-color: #b5df68; /* Púrpura */
+  }
+  
+  #nombreCurso {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e88f13; /* Resalta el curso con el color del tema */
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  #tituloEvento {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  .modal-contenido p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  
