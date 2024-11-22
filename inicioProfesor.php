@@ -94,7 +94,7 @@ if (!$conexion) {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
         <li><a class="dropdown-item" href="verPerfilDocente.php">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarperfilDocente.php">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="soporte.php">Ayuda y soporte</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="logout.php">Salir</a></li>
     </ul>
