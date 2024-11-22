@@ -1,0 +1,77 @@
+/* General para la sección de Soporte */
+.text-center h5 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Botón FAQ y Contáctanos en tonos naranjas */
+.btn-primary {
+    background-color: #f57c00; /* Naranja principal */
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #e65100; /* Naranja más oscuro al hover */
+    color: white;
+    transform: scale(1.05); /* Efecto ligero de zoom */
+}
+
+.btn-secondary {
+    background-color: #ffcc80; /* Naranja claro para botones secundarios */
+    color: #333;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #ffb74d; /* Naranja más intenso al hover */
+    color: #000;
+    transform: scale(1.05);
+}
+
+/* Botón de enviar en el formulario */
+.btn-success {
+    background-color: #f57c00; /* Naranja principal */
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #e65100; /* Naranja más oscuro al hover */
+    transform: translateY(-2px); /* Efecto ligero de elevación */
+}
+
+/* Iconos de redes sociales */
+.icon-link {
+    font-size: 3rem; /* Tamaño del icono */
+    color: #6c757d; /* Gris oscuro por defecto */
+    text-decoration: none; /* Sin subrayado */
+    margin: 0 15px;
+    transition: all 0.3s ease;
+}
+
+/* Icono de Facebook */
+.icon-link.facebook:hover {
+    color: #1877f2; /* Azul de Facebook */
+    transform: scale(1.2); /* Aumentar ligeramente el tamaño al pasar el mouse */
+}
+
+/* Icono de GitHub */
+.icon-link.github:hover {
+    color: #333; /* Gris oscuro de GitHub */
+    transform: scale(1.2); /* Aumentar ligeramente el tamaño al pasar el mouse */
+}
+
+/* Centrado de los iconos */
+.text-center {
+    text-align: center;
+    margin-top: 30px;
+}

@@ -48,6 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("Número de filas encontradas: " . $filas);
 
     if ($filas > 0) {
+        // Añadir las siguientes líneas para obtener y almacenar 'nombre' y 'num_control'
+        $row = mysqli_fetch_assoc($resultado);
+        $_SESSION['nombre'] = $row['nombre']; // Almacena el nombre del usuario
+        $_SESSION['num_control'] = $row['num_control']; // Almacena el número de control
+
         $_SESSION['usuario'] = $usuario; // Guardar sesión
         if ($role == "Estudiante") {
             header("Location: inicioAlumno.php");
