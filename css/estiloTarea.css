@@ -128,6 +128,7 @@
 }
 
                 .eliminar-btn {
+                    margin-bottom: 20px; /* Agrega espacio adicional debajo del botón */
                     background-color: #dc3545;
                     color: #fff;
                     border: none;
@@ -212,20 +213,6 @@
   /* background-color: rgba(36, 40, 50, 1);
 background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
 
-  background-color: ffffff;
-  background-image: none;
-    139deg,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(37, 28, 40, 1) 100%
-  ;
-
-  border-radius: 10px;
-  padding: 15px 0px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 .card .separator {
   border-top: 1.5px solid #e65c00;
@@ -287,13 +274,30 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
 .card .list:last-child .element:hover {
   background-color: rgba(56, 45, 71, 0.836);
 }
+.menu-opciones {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: none; /* Oculto por defecto */
+    position: absolute; /* Posiciona el menú respecto al botón */
+    top: 100%; /* Alinea debajo del botón */
+    left: 0;
+    z-index: 1000; /* Asegura que el menú esté sobre otros elementos */
+}
+
+.card {
+    position: relative; /* Hace que el menú esté posicionado respecto al botón */
+}
+
 .download-button {
     display: inline-block;
     padding: 5px 15px;
     font-size: 16px;
     font-weight: bold;
     color: #ffffff;
-    background-color: #ff5722; /* Color naranja */
+    background-color: #ff5722;
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
@@ -302,6 +306,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     transition: background-color 0.3s ease, transform 0.2s ease;
     cursor: pointer;
 }
+
 
 .download-button:hover {
     background-color: #e64a19; /* Color naranja oscuro */
@@ -315,13 +320,23 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
 }
 .menu-opciones {
+    position: absolute; /* No afecta el flujo de la página */
+    top: 100%; /* Alinea el menú debajo del botón */
+    left: 0;
+    z-index: 1000; /* Garantiza que esté sobre otros elementos */
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
+    margin-top: 5px;
+    display: none; /* Oculto inicialmente */
 }
+
+.card {
+    position: relative; /* Necesario para que el menú se posicione correctamente dentro del contenedor */
+}
+
 /* Estilos para el botón y el menú desplegable */
 
 .paste-button {
@@ -366,5 +381,3 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
   color: #212121;
 }
 
-
-    
