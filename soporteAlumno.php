@@ -4,7 +4,7 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
-$nombreUsuario = $_SESSION['nombre'] ?? 'Usuario no registrado';
+$nombreUsuario = $_SESSION['nombre'] ?? 'Alumno no registrado';
 $numControl = $_SESSION['num_control'] ?? 'Sin número de control';
 
 // Obtener parámetros de la URL
@@ -16,7 +16,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soporte y Ayuda</title>
+    <title>Ayuda y Soporte</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
@@ -46,16 +46,13 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                            <a class="nav-link active" aria-current="page" href="inicioAlumno.php">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="calendarioDocente.php">Calendario</a>
+                            <a class="nav-link" href="calendarioAlumno.php">Calendario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                            <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>
                         </li>
                     </ul>
                 </div>
@@ -65,7 +62,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
 
     <!-- Contenido Principal -->
     <div class="container mt-5">
-        <h2 class="mb-4">Soporte y Ayuda</h2>
+        <h2 class="mb-4">Ayuda y Soporte</h2>
         <div class="d-flex mb-4">
             <button id="btn-faq" class="btn btn-primary me-2">FAQ</button>
             <button id="btn-contacto" class="btn btn-secondary">Contáctanos</button>
@@ -79,13 +76,13 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                     <h2 class="accordion-header" id="headingOne">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" 
                                 data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            ¿Cómo puedo asignar una nueva tarea?
+                            ¿Cómo puedo ver mis tareas asignadas?
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" 
                          aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Para asignar una nueva tarea, dirígete a la sección "Asignar tareas" en el menú principal y completa el formulario con los detalles de la tarea.
+                            Para ver tus tareas asignadas, ve a la sección "Tareas" en el menú principal. Allí encontrarás una lista de todas las tareas con sus respectivas fechas de entrega y detalles.
                         </div>
                     </div>
                 </div>
@@ -93,13 +90,13 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                     <h2 class="accordion-header" id="headingTwo">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
                                 data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            ¿Cómo califico las tareas de mis alumnos?
+                            ¿Cómo puedo enviar una tarea?
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" 
                          aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Para calificar las tareas, ve a la sección "Calificar tareas", selecciona la tarea correspondiente y asigna las calificaciones necesarias.
+                            Para enviar una tarea, dirígete a la sección "Tareas", selecciona la tarea correspondiente y haz clic en "Enviar". Completa el formulario de envío y adjunta los archivos necesarios.
                         </div>
                     </div>
                 </div>
@@ -134,7 +131,6 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                 </button>
             </form>
             <div class="mt-4 text-center">
-                <h5 class="mb-3"></h5>
                 <a href="https://www.facebook.com/profile.php?id=100064684089409" target="_blank" class="icon-link facebook me-3">
                     <i class="bi bi-facebook"></i>
                 </a>

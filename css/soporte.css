@@ -1,4 +1,6 @@
-/* General para la sección de Soporte */
+body{
+    background-color: #e7d6bf;
+}
 .text-center h5 {
     font-size: 1.5rem;
     font-weight: bold;
