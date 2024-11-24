@@ -103,7 +103,6 @@ if ($id_tarea > 0) {
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
 
-<<<<<<< HEAD
         <?php if ($entregado): ?>
     <?php 
     // Obtener los datos de la entrega
@@ -160,8 +159,6 @@ if ($id_tarea > 0) {
 </div>
 
     
-=======
->>>>>>> 6f0c5e5099df24425fb563cb65038a4b9195c15e
           <!-- Esto es para las rubricas -->
         <?php if (isset($rubrica) && count($rubrica) > 0): ?>
           <h3 style="text-align: center;">Rúbricas</h3>
