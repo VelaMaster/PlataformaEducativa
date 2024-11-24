@@ -1,5 +1,9 @@
 body{
+<<<<<<< HEAD
     background-color: rgba(37, 37, 37, 0.1);
+=======
+  background-color: #e7d6bf;
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 }
 /* Contenedor principal del calendario */
 .calendario-container {

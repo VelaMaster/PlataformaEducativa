@@ -20,7 +20,11 @@ if (!$conexion) {
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
+<<<<<<< HEAD
     <link rel="stylesheet" href="css/barraNavegacion.css">
+=======
+    <link rel="stylesheet" href="css/barradeNavegacion.css">
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     <style>
         .profile-img {
             width: 60px;
@@ -90,11 +94,11 @@ if (!$conexion) {
 
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="img/Logoito120.png" alt="Foto de perfil" class="profile-img">
+        <img src="img/perfil120.png" alt="Foto de perfil" class="profile-img">
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
         <li><a class="dropdown-item" href="verPerfilDocente.php">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarperfilDocente.php">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="soporte.php">Ayuda y soporte</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="logout.php">Salir</a></li>
     </ul>

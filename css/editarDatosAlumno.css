@@ -1,0 +1,115 @@
+/* Fondo general */
+body {
+    background-color: #e7d6bf;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Botón de "Volver" */
+#logoutBtn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background-color: #ff6f61;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#logoutBtn:hover {
+    background-color: #ff5a4c;
+    transform: scale(1.1);
+}
+
+/* Tarjeta del perfil */
+.profile-card {
+    max-width: 550px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 1s ease-out;
+}
+
+/* Imagen de perfil */
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #ff6f61;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: bounceIn 1s ease-out;
+}
+
+.profile-img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(255, 111, 97, 0.5);
+}
+
+/* Botón de confirmar (Naranja) */
+.btn-confirmar {
+    width: 50%;
+    margin: 0 auto;
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-confirmar:hover {
+    background-color: #ff5a4c;
+    transform: scale(1.05);
+}
+
+/* Botón de cancelar */
+.btn-cancelar {
+    width: 50%;
+    margin: 0 auto;
+    background-color: #aaa;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancelar:hover {
+    background-color: #888;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-15px);
+    }
+    60% {
+        transform: translateY(-8px);
+    }
+}

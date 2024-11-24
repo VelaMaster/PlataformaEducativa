@@ -28,7 +28,11 @@ body {
 
 /* Tarjeta del perfil */
 .profile-card {
+<<<<<<< HEAD
     max-width: 500px;
+=======
+    max-width: 550px;
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     width: 100%;
     padding: 30px;
     border-radius: 20px;
@@ -55,6 +59,11 @@ body {
 
 /* Botón de confirmar (Naranja) */
 .btn-confirmar {
+<<<<<<< HEAD
+=======
+    width: 50%;
+    margin: 0 auto;
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     background-color: #ff6f61;
     color: white;
     border: none;
@@ -72,6 +81,11 @@ body {
 
 /* Botón de cancelar */
 .btn-cancelar {
+<<<<<<< HEAD
+=======
+    width: 50%;
+    margin: 0 auto;
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     background-color: #aaa;
     color: white;
     border: none;

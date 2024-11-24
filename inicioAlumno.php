@@ -70,6 +70,7 @@ if (!$conexion) {
     font-size: 16px;
     transition: background-color 0.3s;
 }
+<<<<<<< HEAD
 
 .btn-ver-mas:hover {
     background-color: #FF8C00;
@@ -78,6 +79,12 @@ if (!$conexion) {
 
         
     </style>
+=======
+.btn-ver-mas:hover {
+    background-color: #FF8C00;
+}
+</style>
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </head>
 <body>
 <!-- Barra de navegación -->
@@ -104,7 +111,6 @@ if (!$conexion) {
     </div>
  </div>
 </div>
-
 <!-- Contenedor de la imagen de perfil fuera de la barra de navegación -->
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,7 +118,7 @@ if (!$conexion) {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
         <li><a class="dropdown-item" href="verPerfilAlumno.php">Ver perfil</a></li>
-        <li><a class="dropdown-item" href="editarperfilAlumno.php">Editar perfil</a></li>
+        <li><a class="dropdown-item" href="soporteAlumno.php">Ayuda y soporte</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="logout.php">Salir</a></li>
     </ul>
@@ -146,13 +152,16 @@ try {
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
             echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
-            echo "<p class='card-subtitle'>Grupo: " . $row['grupo'] . "</p>"; // Muestra el grupo
+            echo "<p class='card-subtitle'>" . $row['grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
             echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
             echo "</div>";
             echo "</div>";
         }
@@ -167,11 +176,7 @@ mysqli_free_result($resultado_materias);
 
 mysqli_close($conexion);
 ?>
-
-
 </div>
-
-<!-- Pie de página -->
 <footer class="text-center py-3">
     <p>© 2024 PE-ISC</p>
 </footer>
