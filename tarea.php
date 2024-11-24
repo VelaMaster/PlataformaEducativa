@@ -103,6 +103,62 @@ if ($id_tarea > 0) {
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
 
+        <?php if ($entregado): ?>
+    <?php 
+    // Obtener los datos de la entrega
+    $entrega = $resultadoEntrega->fetch_assoc();
+    $nombre_archivo = basename($entrega['archivo_entrega']); // Usa basename para obtener solo el nombre del archivo
+    $ruta_archivo = 'uploads/' . $nombre_archivo;
+    ?>
+    <div class="detail-item">
+        <span class="detail-label">Archivo Entregado:</span>
+        <a href="<?php echo htmlspecialchars($ruta_archivo); ?>" target="_blank" class="download-button">
+          <?php echo htmlspecialchars($nombre_archivo); ?>
+        </a>
+    </div>
+
+    <!-- Previsualización del archivo -->
+    <div class="preview-container" onclick="abrirModal('<?php echo $ruta_archivo; ?>', '<?php echo $nombre_archivo; ?>')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto; cursor: pointer;">
+        <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
+
+        <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nombre_archivo)): ?>
+            <img src="<?php echo htmlspecialchars($ruta_archivo); ?>" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
+        <?php elseif (preg_match('/\.pdf$/i', $nombre_archivo)): ?>
+            <embed src="<?php echo htmlspecialchars($ruta_archivo); ?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="180" height="180" style="border-radius: 8px; border: none;">
+        <?php else: ?>
+            <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Botón para eliminar la tarea -->
+    <div style="display: flex; justify-content: center; margin-top: 15px;">
+    <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST" onsubmit="return confirmarEliminacion();">
+        <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
+        <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
+    </form>
+</div>
+
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.");
+    }
+</script>
+
+<?php endif; ?>
+<!-- Código de la ventana modal -->
+<div id="modalConfirmacion" class="modal">
+    <div class="modal-contenido">
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
+        <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
+            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+            <button type="submit" class="btn-confirmar">Sí, eliminar</button>
+            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+    
           <!-- Esto es para las rubricas -->
         <?php if (isset($rubrica) && count($rubrica) > 0): ?>
           <h3 style="text-align: center;">Rúbricas</h3>
@@ -215,39 +271,37 @@ if ($id_tarea > 0) {
     <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
 
     <!-- SVG Ícono y Texto que disparan el input de archivo -->
-    <label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
-      <svg
-        class="lucide lucide-users-round"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#7e8590"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
+    <!-- Input para seleccionar archivo -->
+<label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
+    <svg
         xmlns="http://www.w3.org/2000/svg"
-      >
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        fill="#7e8590">
         <path d="M18 21a8 8 0 0 0-16 0"></path>
         <circle r="5" cy="8" cx="10"></circle>
         <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
-      </svg>
-      <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
-    </label>
+    </svg>
+    <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
+</label>
+<input 
+   type="file" 
+   id="file-upload" 
+   name="archivo" 
+   required 
+   style="display: none;" 
+   onchange="mostrarPrevisualizacion(this)">
 
-    <!-- Input de archivo oculto -->
-    <input 
-      type="file" 
-      id="file-upload" 
-      name="archivo" 
-      required 
-      style="display: none;"
-    >
+
+<!-- Contenedor para la previsualización -->
+<div id="preview-container" style="margin-top: 20px;"></div>
+<script src="tuArchivo.js"></script>
 
     <!-- Botón de enviar -->
     <button type="submit" style="margin-top: 8px; padding: 6px 12px; background-color: #7e8590; color: white; border: none; border-radius: 4px; cursor: pointer;">
       Enviar
-    </button>
+</button>
   </form>
 </li>
 
@@ -321,23 +375,10 @@ if ($id_tarea > 0) {
 <?php endif; ?>
 
 
-<!-- Código de la ventana modal -->
-<div id="modalConfirmacion" class="modal">
-    <div class="modal-contenido">
-        <h2>Confirmar Eliminación</h2>
-        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
-        <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-            <button type="submit" class="btn-confirmar">Sí, eliminar</button>
-            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
-        </form>
-    </div>
-</div>
+
 
         
     </div>
-    
-
     <script>
     // Función para mostrar el modal
     function mostrarModal() {
