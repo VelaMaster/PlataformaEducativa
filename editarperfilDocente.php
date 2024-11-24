@@ -19,7 +19,7 @@ try {
     $conexion = mysqli_connect("localhost", "root", "", "peis");
 
     // Preparar la consulta para obtener datos del usuario
-    $query = "SELECT nombre, segundo_nombre, apellido_p, apellido_m, correo FROM alumnos WHERE num_control = ?";
+    $query = "SELECT nombre, segundo_nombre, apellido_p, apellido_m, correo FROM docentes WHERE num_control = ?";
     $stmt = mysqli_prepare($conexion, $query);
     mysqli_stmt_bind_param($stmt, 's', $num_control);
     mysqli_stmt_execute($stmt);
@@ -29,7 +29,6 @@ try {
     mysqli_close($conexion);
 } catch (mysqli_sql_exception $e) {
     $errorMessage = "Error al obtener los datos del usuario.";
-    // Registrar el error en el log
     error_log($e->getMessage());
 }
 // Obtener mensajes de notificación
@@ -58,6 +57,47 @@ if (isset($_SESSION['error'])) {
     <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="css/editarDatosAlumno.css?v=<?php echo time(); ?>">
 </head>
+<style>
+    /* Estilo del botón "Confirmar" */
+.btn-primary {
+    width: 40%;
+    margin: 0 auto;
+    background-color: #FFA500; /* Naranja */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #FF8C00; /* Naranja más oscuro */
+}
+.btn-primary:active,
+.btn-primary:focus{
+    background-color: #FF7F50 !important; /* Coral oscuro para el estado activo o enfocado */
+    outline: none !important; /* Elimina el borde azul predeterminado */
+    box-shadow: 0 0 5px rgba(255, 127, 80, 0.5) !important; /* Agrega un efecto sutil */
+}
+/* Estilo del botón "Cancelar" */
+.btn-secondary {
+    width: 40%;
+    margin: 0 auto;
+    background-color: #A9A9A9; /* Gris */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-gray:hover {
+    background-color: #808080; /* Gris oscuro para hover */
+}
+
+</style>
 <body>
     <!-- Botón de "Volver" -->
     <button id="logoutBtn" class="btn btn-danger animate__animated animate__fadeInDown" onclick="window.history.back();">
@@ -71,7 +111,7 @@ if (isset($_SESSION['error'])) {
             </div>
             <h4 class="welcome-text">Editar Perfil</h4>
             <h5 class="fw-bold text-muted"><?php echo htmlspecialchars($nombre . ' ' . $segundo_nombre . ' ' . $apellido_p . ' ' . $apellido_m); ?></h5>
-            <form id="editProfileForm" action="procesarActualizarPerfil.php" method="POST">
+            <form id="editProfileForm" action="procesarActualizarPerfilDocente.php" method="POST">
                 <div class="mb-3 text-start">
                     <label for="txtCorreo" class="form-label">Correo Electrónico</label>
                     <input type="email" class="form-control" id="txtCorreo" name="correo" value="<?php echo htmlspecialchars($correo); ?>" required>
@@ -88,7 +128,7 @@ if (isset($_SESSION['error'])) {
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle"></i> Confirmar
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='verPerfilAlumno.php';">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='verPerfilDocente.php';">
                         <i class="bi bi-x-circle"></i> Cancelar
                     </button>
                 </div>
@@ -178,7 +218,7 @@ document.getElementById('editProfileForm').addEventListener('submit', function (
     var successModal = new bootstrap.Modal(document.getElementById('successModal'));
     successModal.show();
     document.getElementById('successModalButton').addEventListener('click', function () {
-        window.location.href = 'verPerfilAlumno.php';
+        window.location.href = 'verPerfilDocente.php';
     });
 <?php } ?>
 
