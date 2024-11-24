@@ -21,49 +21,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Escapa las entradas para prevenir inyección SQL
     $usuario = mysqli_real_escape_string($conexion, $usuario);
-    $contrasena = mysqli_real_escape_string($conexion, $contrasena);
 
-    // Realiza la consulta según el rol
+    // Consulta según el rol
     if ($role == "Estudiante") {
-        $consulta = "SELECT * FROM alumnos WHERE num_control = '$usuario' AND contrasena = '$contrasena'";
+        $consulta = "SELECT * FROM alumnos WHERE num_control = ?";
     } elseif ($role == "Docente") {
-        $consulta = "SELECT * FROM docentes WHERE num_control = '$usuario' AND contrasena = '$contrasena'";
+        $consulta = "SELECT * FROM docentes WHERE num_control = ?";
     } else {
         // Si el rol no es válido, redirigir con error
         header("Location: index.php?error=invalid_role");
         exit();
     }
 
-    // Depuración: imprime la consulta en el log de errores de PHP
-    error_log("Consulta ejecutada: " . $consulta);
+    // Preparar la consulta
+    $stmt = mysqli_prepare($conexion, $consulta);
+    mysqli_stmt_bind_param($stmt, 's', $usuario);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
-    $resultado = mysqli_query($conexion, $consulta);
-    if (!$resultado) {
-        die("Error en la consulta: " . mysqli_error($conexion));
-    }
-
-    $filas = mysqli_num_rows($resultado);
-
-    // Depuración: imprime el número de filas encontradas
-    error_log("Número de filas encontradas: " . $filas);
-
-    if ($filas > 0) {
-        // Añadir las siguientes líneas para obtener y almacenar 'nombre' y 'num_control'
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        // Obtén la fila
         $row = mysqli_fetch_assoc($resultado);
-        $_SESSION['nombre'] = $row['nombre']; // Almacena el nombre del usuario
-        $_SESSION['num_control'] = $row['num_control']; // Almacena el número de control
 
-        $_SESSION['usuario'] = $usuario; // Guardar sesión
-        if ($role == "Estudiante") {
+        // Verifica si la contraseña está encriptada
+        if (password_verify($contrasena, $row['contrasena'])) {
+            // Contraseña encriptada válida
+            $_SESSION['nombre'] = $row['nombre']; // Nombre del usuario
+            $_SESSION['num_control'] = $row['num_control']; // Número de control
+            $_SESSION['usuario'] = $usuario; // Usuario en sesión
             header("Location: inicioAlumno.php");
-        } elseif ($role == "Docente") {
-            header("Location: inicioProfesor.php");
+            exit();
+        } elseif ($contrasena === $row['contrasena']) {
+            // Contraseña no encriptada: mostrar mensaje de advertencia
+            $_SESSION['nombre'] = $row['nombre']; // Nombre del usuario
+            $_SESSION['num_control'] = $row['num_control']; // Número de control
+            $_SESSION['usuario'] = $usuario; // Usuario en sesión
+            $_SESSION['password_plain'] = true; // Marcar que la contraseña no está encriptada
+            header("Location: inicioAlumno.php");
+            exit();
+        } else {
+            // Contraseña incorrecta
+            header("Location: index.php?error=auth");
+            exit();
         }
     } else {
-        header("Location: index.php?error=auth"); // Redirigir en caso de fallo
+        // Usuario no encontrado
+        header("Location: index.php?error=auth");
+        exit();
     }
 
+    // Liberar recursos y cerrar conexión
     mysqli_free_result($resultado);
+    mysqli_stmt_close($stmt);
     mysqli_close($conexion);
 } else {
     // Si se accede al archivo sin enviar datos por POST, redirigir al index

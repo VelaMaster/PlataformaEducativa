@@ -1,12 +1,17 @@
 <?php
 session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
+$passwordPlain = isset($_SESSION['password_plain']) ? $_SESSION['password_plain'] : false;
+unset($_SESSION['password_plain']); // Limpiar después de mostrar el modal
+
 $num_control = $_SESSION['usuario'];
 $conexion = mysqli_connect("localhost", "root", "", "peis");
+
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
 }
@@ -17,9 +22,10 @@ if (!$conexion) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio Estudiante</title>
-    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/estilostarjetas.css">
-    <link rel="stylesheet" href="css/iniciosesionalumno.css">
+    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/estilostarjetas.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
         /* Estilo de la imagen circular para el perfil */
         .profile-img {
@@ -42,14 +48,17 @@ if (!$conexion) {
     flex-direction: column; /* Organiza el contenido en columna */
     justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
     overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
-
+.card:hover {
+    transform: scale(1.05); /* Agranda la tarjeta un 5% */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Incrementa la sombra */
+}
 .card img {
     width: 100%;
     height: auto; /* Asegura que la imagen mantenga su proporción */
     flex: 1; /* La imagen toma el espacio disponible en el medio */
 }
-
 .card-content {
     background-color: rgb(102, 102, 102);
     color: white;
@@ -66,12 +75,51 @@ if (!$conexion) {
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    text-align: center;
+    text-align: center !important;
     font-size: 16px;
     transition: background-color 0.3s;
 }
 .btn-ver-mas:hover {
     background-color: #FF8C00;
+}
+.btn-orange {
+    background-color: #FFA500; /* Color naranja */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-orange:hover {
+    background-color: #FF8C00; /* Naranja más oscuro para hover */
+}
+/* Estilo del enlace al pasar el ratón */
+.dropdown-item:hover {
+    background-color: #F1AA3D;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    transform: scale(1.1); /* Aumenta el tamaño */
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+/* Estilo del enlace al estar activo o enfocado */
+.dropdown-item:active,
+.dropdown-item:focus {
+    background-color: #FFA500; /* Naranja */
+    color: white;
+    text-decoration: none;
+    transform: scale(1); /* Mantiene el tamaño normal */
+}
+
+/* Elimina el borde azul predeterminado */
+.dropdown-item:focus {
+    outline: none;
+}
+.dropdown-menu{
+    text-align: center;
 }
 </style>
 </head>
@@ -100,6 +148,26 @@ if (!$conexion) {
     </div>
  </div>
 </div>
+<!-- Modal de advertencia de seguridad -->
+<?php if ($passwordPlain): ?>
+    <div class="modal fade" id="passwordWarningModal" tabindex="-1" aria-labelledby="passwordWarningLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordWarningLabel">¡Atención!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    Tu contraseña no está encriptada. Por tu seguridad, te recomendamos cambiarla lo antes posible.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-orange" onclick="window.location.href='editarperfilAlumno.php';">Cambiar Contraseña</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 <!-- Contenedor de la imagen de perfil fuera de la barra de navegación -->
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -117,21 +185,24 @@ if (!$conexion) {
 <?php
 try {
     $consulta_materias = "
-        SELECT c.nombre_curso AS nombre_materia, 
-               CONCAT(d.nombre, ' ', d.apellido_p, ' ', d.apellido_m) AS nombre_profesor, 
-               c.imagen_url,
-               g.horario,
-               g.aula,
-               g.nombre_grupo AS grupo,
-               g.id_curso  /* Asegúrate de incluir el id_grupo */
-        FROM cursos c
-        JOIN grupos g ON c.id_curso = g.id_curso
-        JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
-        JOIN docentes d ON g.id_docente = d.num_control
-        WHERE ga.num_control = '$num_control'
-    ";
+    SELECT c.nombre_curso AS nombre_materia, 
+           CONCAT(d.nombre, ' ', d.apellido_p, ' ', d.apellido_m) AS nombre_profesor, 
+           c.imagen_url,
+           g.horario,
+           g.aula,
+           g.nombre_grupo AS grupo,
+           g.id_curso
+    FROM cursos c
+    JOIN grupos g ON c.id_curso = g.id_curso
+    JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
+    JOIN docentes d ON g.id_docente = d.num_control
+    WHERE ga.num_control = ?
+";
+$stmt = mysqli_prepare($conexion, $consulta_materias);
+mysqli_stmt_bind_param($stmt, 's', $num_control);
+mysqli_stmt_execute($stmt);
+$resultado_materias = mysqli_stmt_get_result($stmt);
 
-    $resultado_materias = mysqli_query($conexion, $consulta_materias);
 
     if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
         echo "<div class='card-container'>";
@@ -164,5 +235,11 @@ mysqli_close($conexion);
 </footer>
 
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    <?php if ($passwordPlain): ?>
+        var passwordWarningModal = new bootstrap.Modal(document.getElementById('passwordWarningModal'));
+        passwordWarningModal.show();
+    <?php endif; ?>
+</script>
 </body>
 </html>

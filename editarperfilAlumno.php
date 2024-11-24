@@ -58,6 +58,47 @@ if (isset($_SESSION['error'])) {
     <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="css/editarDatosAlumno.css?v=<?php echo time(); ?>">
 </head>
+<style>
+    /* Estilo del botón "Confirmar" */
+.btn-primary {
+    width: 40%;
+    margin: 0 auto;
+    background-color: #FFA500; /* Naranja */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #FF8C00; /* Naranja más oscuro */
+}
+.btn-primary:active,
+.btn-primary:focus{
+    background-color: #FF7F50 !important; /* Coral oscuro para el estado activo o enfocado */
+    outline: none !important; /* Elimina el borde azul predeterminado */
+    box-shadow: 0 0 5px rgba(255, 127, 80, 0.5) !important; /* Agrega un efecto sutil */
+}
+/* Estilo del botón "Cancelar" */
+.btn-secondary {
+    width: 40%;
+    margin: 0 auto;
+    background-color: #A9A9A9; /* Gris */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-gray:hover {
+    background-color: #808080; /* Gris oscuro para hover */
+}
+
+</style>
 <body>
     <!-- Botón de "Volver" -->
     <button id="logoutBtn" class="btn btn-danger animate__animated animate__fadeInDown" onclick="window.history.back();">
