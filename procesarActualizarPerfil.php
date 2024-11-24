@@ -7,16 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: index.php");
     exit();
 }
-<<<<<<< HEAD
-
-// Conectar a la base de datos
-$conexion = mysqli_connect("localhost", "root", "", "peis");
-
-if (!$conexion) {
-    die("Conexión fallida: " . mysqli_connect_error());
-}
-
-=======
 $conexion = mysqli_connect("localhost", "root", "", "peis");
 
 if (!$conexion) {
@@ -24,7 +14,6 @@ if (!$conexion) {
     header("Location: editarPerfilAlumno.php");
     exit();
 }
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 $num_control = $_SESSION['usuario'];
 $correo = $_POST['correo'];
 $password = $_POST['password'];
@@ -32,7 +21,6 @@ $confirm_password = $_POST['confirm_password'];
 
 // Validar que las contraseñas coincidan
 if ($password !== $confirm_password) {
-<<<<<<< HEAD
     $error_message = "Las contraseñas no coinciden.";
     echo "<script>
         alert('$error_message');
@@ -123,7 +111,6 @@ mysqli_close($conexion);
     </div>
 </body>
 </html>
-=======
     $_SESSION['error'] = "Las contraseñas no coinciden.";
     header("Location: editarPerfilAlumno.php");
     exit();
@@ -160,4 +147,3 @@ mysqli_close($conexion);
 header("Location: editarPerfilAlumno.php");
 exit();
 ?>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19

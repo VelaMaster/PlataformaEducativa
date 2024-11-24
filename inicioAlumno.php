@@ -70,21 +70,10 @@ if (!$conexion) {
     font-size: 16px;
     transition: background-color 0.3s;
 }
-<<<<<<< HEAD
-
-.btn-ver-mas:hover {
-    background-color: #FF8C00;
-}
-
-
-        
-    </style>
-=======
 .btn-ver-mas:hover {
     background-color: #FF8C00;
 }
 </style>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </head>
 <body>
 <!-- Barra de navegación -->
@@ -155,13 +144,6 @@ try {
             echo "<p class='card-subtitle'>" . $row['grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
             echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
             echo "</div>";
             echo "</div>";
         }

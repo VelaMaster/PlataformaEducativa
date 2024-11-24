@@ -20,11 +20,8 @@ if (!$conexion) {
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
-<<<<<<< HEAD
     <link rel="stylesheet" href="css/barraNavegacion.css">
-=======
     <link rel="stylesheet" href="css/barradeNavegacion.css">
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     <style>
         .profile-img {
             width: 60px;

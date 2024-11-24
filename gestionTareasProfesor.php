@@ -32,7 +32,6 @@ $resultado = $conexion->query($sql);
     <link rel="stylesheet" href="css/gestionTareasprofesor.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
-<<<<<<< HEAD
     <style>
         .button-container {
             display: flex;
@@ -96,9 +95,6 @@ $resultado = $conexion->query($sql);
             cursor: pointer;
         }
     </style>
-=======
-    <link rel="stylesheet" href="css/seleccionarArchivo.css?v=<?php echo time(); ?>">
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </head>
 <body>
 <div class="barranavegacion">
@@ -160,7 +156,6 @@ $resultado = $conexion->query($sql);
                 Seleccionar archivo
                 <input type="file" id="archivo" name="archivo" onchange="previewFile()">
             </label>
-<<<<<<< HEAD
 
             <div class="button-container">
                 <div class="dropdown">
@@ -216,15 +211,6 @@ $resultado = $conexion->query($sql);
                     <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
                 </div>
                 <p>Total de Puntos Asignados: <span id="totalPuntos">100</span>/100</p>
-=======
-            <div class="file-upload-preview" id="filePreview" style="display: none;">
-                <img src="" alt="Previsualización de archivo" id="fileIcon" onclick="abrirModal(this.src)" ondblclick="window.open(this.src, '_blank')">
-                <p id="fileName">Ningún archivo seleccionado</p>
-            </div>
-
-            <div class="button-container">
-            <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
             </div>
 
             <div id="rubricaContainer" style="display: none;">
@@ -260,27 +246,12 @@ $resultado = $conexion->query($sql);
     <p>© 2024 PE-ISC</p>
 </footer>
 
-<<<<<<< HEAD
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var fechaHoy = new Date().toISOString().split('T')[0];
         document.getElementById('fechaEntrega').setAttribute('min', fechaHoy);
     });
-=======
-<div id="previewModal" class="modal" onclick="cerrarModal()">
-    <span class="close" onclick="cerrarModal()">&times;</span>
-    <img class="modal-content" id="modalImage" style="display: none;">
-    <div id="modalText" style="display: none; white-space: pre-wrap; padding: 20px; background-color: #fff; border-radius: 25px;"></div>
-    <iframe id="modalIframe" style="display: none; width: 100%; height: 80vh; border: none;"></iframe>
-    <p id="unsupportedText" style="display: none; padding: 80px; text-align: center;">Este tipo de archivo no es compatible con la previsualización.</p>
-</div>
-<script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
-<script src="js/seleccionarArchivos.js"></script>
-<script src="js/rubrica.js"></script>
-
-<script>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 
     document.addEventListener('DOMContentLoaded', function() {
         var fechaHoy = new Date().toISOString().split('T')[0];
@@ -295,7 +266,6 @@ $resultado = $conexion->query($sql);
         }
         return true;
     }
-<<<<<<< HEAD
 
     function mostrarRubrica() {
         document.getElementById('rubricaContainer').style.display = 'block';
@@ -342,12 +312,6 @@ $resultado = $conexion->query($sql);
         document.getElementById('totalPuntos').textContent = "100";
     }
 </script>
-=======
-</script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </body>
 </html>
 <?php

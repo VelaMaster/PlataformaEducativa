@@ -103,46 +103,6 @@ if ($id_tarea > 0) {
             <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
         </div>
 
-<<<<<<< HEAD
-=======
-        <?php if ($entregado): ?>
-    <?php 
-    // Obtener los datos de la entrega
-    $entrega = $resultadoEntrega->fetch_assoc();
-    $nombre_archivo = basename($entrega['archivo_entrega']); // Usa basename para obtener solo el nombre del archivo
-    $ruta_archivo = 'uploads/' . $nombre_archivo;
-    ?>
-    <div class="detail-item">
-        <span class="detail-label">Archivo Entregado:</span>
-        <a href="<?php echo htmlspecialchars($ruta_archivo); ?>" target="_blank" class="download-button">
-          <?php echo htmlspecialchars($nombre_archivo); ?>
-        </a>
-    </div>
-
-    <!-- Previsualización del archivo -->
-    <div class="preview-container" onclick="abrirModal('<?php echo $ruta_archivo; ?>', '<?php echo $nombre_archivo; ?>')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto; cursor: pointer;">
-        <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
-
-        <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nombre_archivo)): ?>
-            <img src="<?php echo htmlspecialchars($ruta_archivo); ?>" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
-        <?php elseif (preg_match('/\.pdf$/i', $nombre_archivo)): ?>
-            <embed src="<?php echo htmlspecialchars($ruta_archivo); ?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="180" height="180" style="border-radius: 8px; border: none;">
-        <?php else: ?>
-            <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
-        <?php endif; ?>
-    </div>
-
-    <!-- Botón para eliminar la tarea -->
-    <div style="display: flex; justify-content: center; margin-top: 15px;">
-        <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-            <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
-            <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
-        </form>
-    </div>
-<?php endif; ?>
-
-    
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
           <!-- Esto es para las rubricas -->
         <?php if (isset($rubrica) && count($rubrica) > 0): ?>
           <h3 style="text-align: center;">Rúbricas</h3>
@@ -175,7 +135,6 @@ if ($id_tarea > 0) {
 
         
         <div class="container">
-<<<<<<< HEAD
     <div class="card">
         <button onclick="toggleMenu()" class="download-button">+ Agregar o crear</button>
         
@@ -204,22 +163,6 @@ if ($id_tarea > 0) {
         <p class="label">Google Drive</p>
       </a>
     </li>
-=======
-        <div class="card" style="position: relative;">
-    <button onclick="toggleMenu(event)" class="download-button">+ Agregar o crear</button>
-    <div id="menuOpciones" class="menu-opciones" style="display: none; position: absolute; top: 100%; left: 0; z-index: 1000;">
-        <ul class="list">
-            <li class="element">
-                <a href="https://drive.google.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#7e8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-google-drive" style="margin-right: 8px;">
-                        <path d="M12 2L2 12l5 8h10l5-8L12 2z" fill="#4285F4"></path>
-                        <path d="M12 2L2 12h10l5-8z" fill="#0F9D58"></path>
-                        <path d="M17 12h-5l5 8h5l-5-8z" fill="#F4B400"></path>
-                    </svg>
-                    <p class="label">Google Drive</p>
-                </a>
-            </li>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
     <li class="element">
   <a href="https://www.canva.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
     <!-- Ícono de Canva -->
@@ -327,7 +270,6 @@ if ($id_tarea > 0) {
 </div>
 
 
-<<<<<<< HEAD
 <?php if ($entregado): ?>
     <?php 
     // Obtener los datos de la entrega
@@ -356,16 +298,6 @@ if ($id_tarea > 0) {
     <?php else: ?>
         <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
     <?php endif; ?>
-=======
-
-
-
-<div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
-    <span onclick="cerrarModal()" style="position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; cursor: pointer;">&times;</span>
-    <div id="modal-content" style="background-color: #fff; padding: 20px; border-radius: 8px;">
-        <!-- Contenido del archivo (imagen o PDF) se cargará aquí -->
-    </div>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </div>
 
 <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
@@ -379,7 +311,6 @@ if ($id_tarea > 0) {
 
     <!-- Botón para abrir la ventana modal de confirmación -->
     <div style="display: flex; justify-content: center; margin-top: 15px;">
-<<<<<<< HEAD
     <button type="button" class="eliminar-btn" onclick="mostrarModal()" style="padding: 10px 20px; background-color: #ff4c4c; color: white; border: none; border-radius: 5px; cursor: pointer;">
         Eliminar Tarea
     </button>
@@ -389,12 +320,6 @@ if ($id_tarea > 0) {
 <!-- Aqui va el codigo que borre de enviar -->
 <?php endif; ?>
 
-=======
-    <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-        <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
-    </form>
-</div>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 
 <!-- Código de la ventana modal -->
 <div id="modalConfirmacion" class="modal">
@@ -447,16 +372,6 @@ if ($id_tarea > 0) {
 function cerrarModal() {
     document.getElementById("modal").style.display = "none";
 }
-<<<<<<< HEAD
-=======
-<script>
-    function toggleMenu(event) {
-        event.preventDefault(); // Previene el comportamiento predeterminado
-        const menu = document.getElementById("menuOpciones");
-        menu.style.display = menu.style.display === "none" ? "block" : "none";
-    }
-</script>
->>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </script>
 
   <!-- Pie de página --> 
