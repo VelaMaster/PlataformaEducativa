@@ -35,6 +35,10 @@ $resultado = $conexion->query($sql);
 if ($resultado->num_rows > 0) {
     $tarea = $resultado->fetch_assoc();
     $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+
+    // Consultar las rúbricas asociadas a la tarea
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+    $resultado_rubricas = $conexion->query($sql_rubricas);
     ?>
 
     <!DOCTYPE html>
@@ -50,17 +54,19 @@ if ($resultado->num_rows > 0) {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                flex-direction: column;
                 height: 100vh;
                 margin: 0;
             }
             .card {
                 background-color: #ffffff;
-                max-width: 600px;
+                max-width: 800px;
                 width: 100%;
                 padding: 30px;
                 border-radius: 12px;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
                 text-align: center;
+                margin-bottom: 20px;
             }
             .card h2 {
                 color: #ff9900;
@@ -94,30 +100,30 @@ if ($resultado->num_rows > 0) {
                 border-radius: 5px;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
             }
-            .file-preview {
-                display: flex;
-                align-items: center;
-                background-color: #f1f1f1;
+            .table-container {
+                max-width: 800px;
+                width: 100%;
+                margin-top: 20px;
+                text-align: left;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            table th, table td {
                 border: 1px solid #ddd;
                 padding: 10px;
-                border-radius: 8px;
-                margin-top: 15px;
-                justify-content: start;
+                text-align: left;
             }
-            .file-preview img {
-                width: 36px;
-                height: 36px;
-                margin-right: 10px;
-                border-radius: 4px;
-                object-fit: cover;
-            }
-            .file-preview a {
-                color: #007bff;
-                text-decoration: none;
+            table th {
+                background-color: #ff9900;
+                color: white;
                 font-weight: bold;
+                text-align: center;
             }
-            .file-preview a:hover {
-                text-decoration: underline;
+            table td {
+                background-color: #ffffff;
             }
             .back-button-container {
                 text-align: center;
@@ -164,25 +170,39 @@ if ($resultado->num_rows > 0) {
                 <label>Fecha de Entrega:</label>
                 <p><?php echo htmlspecialchars($tarea['fecha_limite']); ?></p>
             </div>
-            <?php if (!empty($tarea['archivo_tarea'])): ?>
-                <div class="file-preview">
-                    <?php
-                    // Check if the file is an image
-                    $file_path = htmlspecialchars($tarea['archivo_tarea']);
-                    $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
-                    $image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                    if (in_array(strtolower($file_extension), $image_extensions)) {
-                        echo "<img src='$file_path' alt='Archivo'>";
-                    } else {
-                        echo "<img src='file-icon.png' alt='Archivo'>";
-                    }
-                    ?>
-                    <a href="<?php echo $file_path; ?>" target="_blank"><?php echo basename($file_path); ?></a>
-                </div>
-            <?php endif; ?>
-            <div class="back-button-container">
-                <a href="listarTareas.php" class="back-button">Regresar a Tareas Asignadas</a>
-            </div>
+        </div>
+
+        <!-- Tabla de rúbricas -->
+        <div class="table-container">
+            <h3>Rúbrica Asignada</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterio</th>
+                        <th>Descripción</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($resultado_rubricas->num_rows > 0): ?>
+                        <?php while ($rubrica = $resultado_rubricas->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                                <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
+                                <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" style="text-align: center;">No hay rúbricas asignadas a esta tarea.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="back-button-container">
+            <a href="listarTareas.php" class="back-button">Regresar a Tareas Asignadas</a>
         </div>
     </body>
     </html>

@@ -77,8 +77,31 @@ mysqli_close($conexion);
             </form>
         </div>
     </div>
+<<<<<<< HEAD
+    <br>
+    <h4>Bienvenido, <?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_p . ' ' . $apellido_m; ?></h4>
+    <br>
+    <div class="mb-3">
+        <label for="txtNombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="txtNombre" value="<?php echo $nombre . ' ' . $segundo_nombre . ' ' . $apellido_p . ' ' . $apellido_m; ?>" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="txtNumControl" class="form-label">Número de control</label>
+        <input type="text" class="form-control" id="txtNumControl" value="<?php echo $num_control; ?>" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="txtCorreo" class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" id="txtCorreo" value="<?php echo $correo; ?>" readonly>
+    </div>
+    <br>
+    <div class="botones">
+        <button type="button" class="btn btn-success" onclick='window.location.href = "editarperfilAlumno.php"'>Editar mis datos</button>
+    </div>
+</form>
+=======
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> f5f1defea1ff424cfed960e68aa29dc87d5a2a19
 </body>
 </html>

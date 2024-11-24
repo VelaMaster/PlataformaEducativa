@@ -20,6 +20,7 @@ if (!$conexion) {
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
+    <link rel="stylesheet" href="css/barraNavegacion.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
     <style>
         .profile-img {

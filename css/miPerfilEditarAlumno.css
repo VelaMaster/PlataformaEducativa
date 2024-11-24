@@ -1,3 +1,4 @@
+/* Fondo general */
 body {
     background-color: #e7d6bf;
 }
@@ -23,6 +24,7 @@ body {
 
 /* Tarjeta del perfil */
 .profile-card {
+    width: 80%;
     width: 60%;
     padding: 40px;
     border-radius: 15px;

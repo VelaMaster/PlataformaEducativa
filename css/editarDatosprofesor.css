@@ -28,7 +28,7 @@ body {
 
 /* Tarjeta del perfil */
 .profile-card {
-    max-width: 550px;
+    max-width: 500px;
     width: 100%;
     padding: 30px;
     border-radius: 20px;
@@ -55,8 +55,6 @@ body {
 
 /* Botón de confirmar (Naranja) */
 .btn-confirmar {
-    width: 50%;
-    margin: 0 auto;
     background-color: #ff6f61;
     color: white;
     border: none;
@@ -74,8 +72,6 @@ body {
 
 /* Botón de cancelar */
 .btn-cancelar {
-    width: 50%;
-    margin: 0 auto;
     background-color: #aaa;
     color: white;
     border: none;
