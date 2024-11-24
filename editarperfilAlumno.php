@@ -32,7 +32,6 @@ try {
     // Registrar el error en el log
     error_log($e->getMessage());
 }
-
 // Obtener mensajes de notificación
 if (isset($_SESSION['success'])) {
     $successMessage = $_SESSION['success'];
@@ -47,13 +46,16 @@ if (isset($_SESSION['error'])) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Metadatos y enlaces de estilos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar mi Perfil - Alumno</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animaciones y iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="css/editarDatosAlumno.css?v=<?php echo time(); ?>">
 </head>
 <body>
@@ -93,29 +95,98 @@ if (isset($_SESSION['error'])) {
             </form>
         </div>
     </div>
+    <!-- Modal de Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header"> 
+            <h5 class="modal-title" id="errorModalLabel">Error</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <?php echo htmlspecialchars($errorMessage); ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal para Errores de Validación -->
+    <div class="modal fade" id="validationErrorModal" tabindex="-1" aria-labelledby="validationErrorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header"> 
+            <h5 class="modal-title" id="validationErrorModalLabel">Error de Validación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body" id="validationErrorMessage">
+            <!-- El mensaje será establecido por JavaScript -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Modal de Éxito -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">¡Éxito!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <?= htmlspecialchars($successMessage) ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="successModalButton" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Tu código JavaScript -->
     <script>
-        document.getElementById('editProfileForm').addEventListener('submit', function (e) {
-            const password = document.getElementById('txtPassword').value;
-            const confirmPassword = document.getElementById('txtConfirmPassword').value;
+document.getElementById('editProfileForm').addEventListener('submit', function (e) {
+    const password = document.getElementById('txtPassword').value;
+    const confirmPassword = document.getElementById('txtConfirmPassword').value;
 
-            // Expresión regular para validar la contraseña
-            const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-            // Validar si cumple con los requisitos
-            if (!passwordRegex.test(password)) {
-                e.preventDefault(); // Detener el envío del formulario
-                alert("La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.");
-                return;
-            }
+    if (!passwordRegex.test(password)) {
+        e.preventDefault();
+        document.getElementById('validationErrorMessage').textContent = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.";
+        var validationErrorModal = new bootstrap.Modal(document.getElementById('validationErrorModal'));
+        validationErrorModal.show();
+        return;
+    }
 
-            // Validar si las contraseñas coinciden
-            if (password !== confirmPassword) {
-                e.preventDefault(); // Detener el envío del formulario
-                alert("Las contraseñas no coinciden.");
-                return;
-            }
-        });
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        document.getElementById('validationErrorMessage').textContent = "Las contraseñas no coinciden.";
+        var validationErrorModal = new bootstrap.Modal(document.getElementById('validationErrorModal'));
+        validationErrorModal.show();
+        return;
+    }
+});
+<?php if (!empty($successMessage)) { ?>
+    var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+    document.getElementById('successModalButton').addEventListener('click', function () {
+        window.location.href = 'verPerfilAlumno.php';
+    });
+<?php } ?>
+
+<?php if (!empty($errorMessage)) { ?>
+    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    errorModal.show();
+<?php } ?>
+
     </script>
 </body>
 </html>
