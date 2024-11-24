@@ -28,6 +28,7 @@ if ($id_tarea > 0) {
                 JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
                 WHERE tareas.id_tarea = $id_tarea
                 AND grupo_alumnos.num_control = $id_alumno";
+                
 
         $resultado = $conexion->query($sql);
 
@@ -52,6 +53,16 @@ if ($id_tarea > 0) {
             }
 
             $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+
+             // **CONSULTAR LA RÚBRICA**
+             $sqlRubrica = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+             $resultadoRubrica = $conexion->query($sqlRubrica);
+             $rubrica = [];
+             if ($resultadoRubrica && $resultadoRubrica->num_rows > 0) {
+                 while ($fila = $resultadoRubrica->fetch_assoc()) {
+                     $rubrica[] = $fila;
+                 }
+             }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -60,298 +71,7 @@ if ($id_tarea > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de la Tarea</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-         * {
-                    box-sizing: border-box;
-                    margin: 0;
-                    padding: 0;
-                }
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f8f9fa;
-                    color: #333;
-                    line-height: 1.6;
-                    padding: 20px;
-                }
-                .navbar, .footer {
-                    background-color: #333;
-                    color: #fff;
-                    text-align: center;
-                    padding: 10px 0;
-                }
-                .navbar a, .footer {
-                    color: #fff;
-                    text-decoration: none;
-                    margin: 0 20px;
-                    font-weight: bold;
-                }
-                footer {
-                  background-color: #333;
-                  color: white;
-                  text-align: center;
-                  padding: 10px 0;
-                 position: fixed;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
-                }
-
-                .footer { 
-                  position: relative;
-                  padding-top: 10px;
-                }
-                .container {
-                    max-width: 900px;
-                    margin: 20px auto;
-                    background: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-                    padding: 30px;
-                }
-                h1 {
-                    text-align: center;
-                    color: #ff6600;
-                    margin-bottom: 20px;
-                }
-                .line {
-                    border-bottom: 2px solid #ff6600;
-                    margin-bottom: 20px;
-                }
-                .detail-item {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 10px 0;
-                    border-bottom: 1px solid #ddd;
-                }
-                .detail-item:last-child {
-                    border-bottom: none;
-                }
-                .detail-label {
-                    font-weight: bold;
-                }
-                .upload-section {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    margin-top: 25px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.upload-section h3 {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.upload-section input[type="file"] {
-    display: block;
-    margin: 15px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 90%;
-    font-size: 15px;
-    color: #555;
-    transition: border-color 0.3s;
-}
-
-.upload-section input[type="file"]:hover, .upload-section input[type="file"]:focus {
-    border-color: #ff6600;
-    outline: none;
-}
-
-.upload-section button {
-    background-color: #ff6600;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-
-.upload-section button:hover {
-    background-color: #e65c00;
-    transform: scale(1.05);
-}
-
-.upload-section button:active {
-    background-color: #cc5200;
-    transform: scale(1.02);
-}
-
-                .eliminar-btn {
-                    background-color: #dc3545;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    margin-top: 10px;
-                    transition: background-color 0.3s;
-                }
-                .eliminar-btn:hover {
-                    background-color: #c82333;
-                }
-                .back-button {
-                    display: block;
-                    width: 100%;
-                    text-align: center;
-                    background-color: #ff6600;
-                    color: #fff;
-                    padding: 10px 0;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    font-weight: bold;
-                    margin-top: 20px;
-                    transition: background-color 0.3s;
-                }
-                .back-button:hover {
-                    background-color: #e65c00;
-                }
-                .preview {
-                    margin-top: 15px;
-                    text-align: center;
-                }
-                .preview img {
-                    max-width: 100px;
-                    border-radius: 5px;
-                    margin-top: 10px;
-                }
-
-                .modal {
-        display: none; /* Oculto por defecto */
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
-    }
-    .modal-contenido {
-        background-color: #fff;
-        margin: 10% auto; /* Centrado vertical y horizontal */
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 400px;
-        text-align: center;
-    }
-    .modal h2 {
-        color: #ff6600;
-        margin-bottom: 20px;
-    }
-    .btn-confirmar, .btn-cancelar {
-        padding: 10px 20px;
-        margin: 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-    .btn-confirmar {
-        background-color: #dc3545;
-        color: #fff;
-    }
-    .btn-cancelar {
-        background-color: #6c757d;
-        color: #fff;
-    }
-    /* From Uiverse.io by Na3ar-17 */ 
-.card {
-  width: 200px;
-  /* background-color: rgba(36, 40, 50, 1);
-background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
-
-  background-color: rgba(36, 40, 50, 1);
-  background-image: linear-gradient(
-    139deg,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(36, 40, 50, 1) 0%,
-    rgba(37, 28, 40, 1) 100%
-  );
-
-  border-radius: 10px;
-  padding: 15px 0px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.card .separator {
-  border-top: 1.5px solid #e65c00;
-}
-
-.card .list {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0px 10px;
-}
-
-.card .list .element {
-  display: flex;
-  align-items: center;
-  color: #e65c00;
-  gap: 10px;
-  transition: all 0.3s ease-out;
-  padding: 4px 7px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.card .list .element svg {
-  width: 19px;
-  height: 19px;
-  transition: all 0.3s ease-out;
-}
-
-.card .list .element .label {
-  font-weight: 600;
-}
-
-.card .list .element:hover {
-  background-color: #e65c00;
-  color: #ffffff;
-  transform: translate(1px, -1px);
-}
-.card .list .delete:hover {
-  background-color: #8e2a2a;
-}
-
-.card .list .element:active {
-  transform: scale(0.99);
-}
-
-.card .list:not(:last-child) .element:hover svg {
-  stroke: #ffffff;
-}
-
-.card .list:last-child svg {
-  stroke: #e65c00;
-}
-.card .list:last-child .element {
-  color: #e65c00;
-}
-
-.card .list:last-child .element:hover {
-  background-color: rgba(56, 45, 71, 0.836);
-}
-
-    </style>
+    <link rel="stylesheet" href="css/estiloTarea.css">
 </head>
 <body>
     
@@ -378,11 +98,49 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
             <span class="detail-label">Fecha de Entrega:</span>
             <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
         </div>
+        <div class="detail-item">
+            <span class="detail-label">Archivo Adjunto:</span>
+            <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
+        </div>
 
-      
-        <div class="card">
-  <ul class="list">
-    <li class="element">
+          <!-- Esto es para las rubricas -->
+        <?php if (isset($rubrica) && count($rubrica) > 0): ?>
+          <h3 style="text-align: center;">Rúbricas</h3>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+        <table border="1" cellspacing="0" cellpadding="10" style="margin-top: 20px; width: 80%; max-width: 800px;">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Descripción</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rubrica as $criterio): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($criterio['criterio']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['descripcion']); ?></td>
+                        <td><?php echo htmlspecialchars($criterio['puntos']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <p>No hay criterios definidos para esta rúbrica.</p>
+<?php endif; ?>
+
+  <!-- Aqui termino lo de  -->
+
+
+        
+        <div class="container">
+    <div class="card">
+        <button onclick="toggleMenu()" class="download-button">+ Agregar o crear</button>
+        
+        <div id="menuOpciones" class="menu-opciones" style="display: none;">
+            <ul class="list">
+            <li class="element">
       <a href="https://drive.google.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
         <!-- Ícono de Google Drive -->
         <svg
@@ -405,9 +163,6 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         <p class="label">Google Drive</p>
       </a>
     </li>
-   
-  
-
     <li class="element">
   <a href="https://www.canva.com" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
     <!-- Ícono de Canva -->
@@ -423,7 +178,6 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <p class="label">‎ ‎   Canva</p>
   </a>
 </li>
-
 <li class="element">
   <a href="https://docs.google.com/presentation/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
     <!-- Ícono de PowerPoint -->
@@ -439,10 +193,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <span style="margin-left: 10px; color: #D24726;">Presentación</span>
   </a>
 </li>
-
-
-    
-    <li class="element">
+<li class="element">
   <a href="https://docs.google.com/document/u/1/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
     <!-- Ícono de archivo de Word -->
     <svg
@@ -457,11 +208,14 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <span style="margin-left: 10px; color: #e65c00;">Documento</span>
   </a>
 </li>
+<li class="element">
+  <!-- Formulario de subida de archivos -->
+  <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; align-items: center;">
+    <!-- Input oculto para el id_tarea -->
+    <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
 
-  </ul>
-  <div class="separator"></div>
-  <ul class="list">
-    <li class="element">
+    <!-- SVG Ícono y Texto que disparan el input de archivo -->
+    <label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
       <svg
         class="lucide lucide-users-round"
         stroke-linejoin="round"
@@ -478,10 +232,40 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
         <circle r="5" cy="8" cx="10"></circle>
         <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
       </svg>
-      <p class="label">Seleccionar Archivo</p>
-      
-    </li>
-    
+      <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
+    </label>
+
+    <!-- Input de archivo oculto -->
+    <input 
+      type="file" 
+      id="file-upload" 
+      name="archivo" 
+      required 
+      style="display: none;"
+    >
+
+    <!-- Botón de enviar -->
+    <button type="submit" style="margin-top: 8px; padding: 6px 12px; background-color: #7e8590; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Enviar
+    </button>
+  </form>
+</li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+<a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById("menuOpciones");
+        menu.style.display = menu.style.display === "none" ? "block" : "none";
+    }
+</script>
+
+   <!-- aqui va el otro botom yo o poñgo -->
   </ul>
 </div>
 
@@ -496,15 +280,15 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <div class="detail-item">
         <span class="detail-label">Archivo Entregado:</span>
         <!-- Nombre del archivo que puede ser clickeado para ver o descargar -->
-        <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank">
-            <?php echo htmlspecialchars($nombre_archivo); ?>
-        </a>
+        <a href="download.php?file=<?php echo urlencode($nombre_archivo); ?>" target="_blank" class="download-button">
+          <?php echo htmlspecialchars($nombre_archivo); ?>
+         </a>
     </div>
 
     <!-- Previsualización del archivo -->
-    <div class="preview-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto;">
+<div class="preview-container" onclick="abrirModal('<?php echo $ruta_archivo; ?>', '<?php echo $nombre_archivo; ?>')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto; cursor: pointer;">
     <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
-    
+
     <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nombre_archivo)): ?>
         <!-- Imagen centrada con bordes redondeados -->
         <img src="<?php echo $ruta_archivo; ?>" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
@@ -516,6 +300,13 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     <?php endif; ?>
 </div>
 
+<div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
+    <span onclick="cerrarModal()" style="position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; cursor: pointer;">&times;</span>
+    <div id="modal-content" style="background-color: #fff; padding: 20px; border-radius: 8px;">
+        <!-- Contenido del archivo (imagen o PDF) se cargará aquí -->
+    </div>
+</div>
+
 
 
     <!-- Botón para abrir la ventana modal de confirmación -->
@@ -525,16 +316,8 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </button>
 </div>
 <?php else: ?>
- <div class="upload-section">
-    <h3>Subir tu archivo</h3>
-    <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-        <input type="file" name="archivo" required>
-        <button type="submit">Enviar</button>
-    </form>
-</div>
-
-
+ 
+<!-- Aqui va el codigo que borre de enviar -->
 <?php endif; ?>
 
 
@@ -551,7 +334,7 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     </div>
 </div>
 
-        <a href="gestionTareasAlumno.php" class="back-button">Regresar a Tareas Asignadas</a>
+        
     </div>
     
 
@@ -565,6 +348,30 @@ background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 5
     function cerrarModal() {
         document.getElementById("modalConfirmacion").style.display = "none";
     }
+
+    function abrirModal(ruta, nombre) {
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+    
+    // Limpiar contenido previo
+    modalContent.innerHTML = "";
+
+    // Verificar el tipo de archivo y agregar contenido apropiado
+    if (/\.(jpg|jpeg|png|gif)$/i.test(nombre)) {
+        modalContent.innerHTML = `<img src="${ruta}" style="width: 100%; max-width: 600px; border-radius: 8px;">`;
+    } else if (/\.pdf$/i.test(nombre)) {
+        modalContent.innerHTML = `<embed src="${ruta}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="600" height="500" style="border-radius: 8px; border: none;">`;
+    } else {
+        modalContent.innerHTML = "<p style='color: #333; text-align: center;'>Vista previa no disponible</p>";
+    }
+
+    // Mostrar el modal
+    modal.style.display = "flex";
+}
+
+function cerrarModal() {
+    document.getElementById("modal").style.display = "none";
+}
 </script>
 
   <!-- Pie de página --> 

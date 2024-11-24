@@ -14,19 +14,18 @@ if ($conexion->connect_error) {
 
 $id_tarea = $_GET['id'];
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+// Actualizar tarea principal
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) {
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $fecha_limite = $_POST['fecha_limite'];
     $archivoPath = null;
 
-    // Check if a file is uploaded
     if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
         $archivoNombre = $_FILES['archivo']['name'];
         $archivoTmp = $_FILES['archivo']['tmp_name'];
         $archivoPath = "uploads/" . basename($archivoNombre);
 
-        // Move file to the uploads directory
         if (move_uploaded_file($archivoTmp, $archivoPath)) {
             $archivoPath = $conexion->real_escape_string($archivoPath);
         } else {
@@ -34,7 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Update the task with or without a new file
     if ($archivoPath) {
         $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ?, archivo_tarea = ? WHERE id_tarea = ?";
         $stmt = $conexion->prepare($sql);
@@ -54,179 +52,271 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->close();
 }
 
+// Manejar rúbricas: agregar/eliminar
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['accion_rubrica'])) {
+    $accion = $_POST['accion_rubrica'];
+
+    if ($accion === 'agregar') {
+        $criterio = $_POST['criterio'];
+        $descripcion = $_POST['descripcion_rubrica'];
+
+        // Calcular los puntos por rúbrica
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id_tarea";
+        $resultado = $conexion->query($sql);
+        $total_rubricas = $resultado->fetch_assoc()['total'] + 1;
+        $puntos = round(100 / $total_rubricas, 2);
+
+        // Actualizar puntos de rúbricas existentes
+        $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id_tarea = ?";
+        $stmt_actualizar = $conexion->prepare($sql_actualizar);
+        $stmt_actualizar->bind_param("ii", $puntos, $id_tarea);
+        $stmt_actualizar->execute();
+
+        // Insertar nueva rúbrica
+        $sql_insertar = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) VALUES (?, ?, ?, ?)";
+        $stmt_insertar = $conexion->prepare($sql_insertar);
+        $stmt_insertar->bind_param("issi", $id_tarea, $criterio, $descripcion, $puntos);
+        $stmt_insertar->execute();
+        $stmt_insertar->close();
+    } elseif ($accion === 'eliminar') {
+        $id_rubrica = $_POST['id_rubrica'];
+        $sql_eliminar = "DELETE FROM rubricas WHERE id_rubrica = ?";
+        $stmt_eliminar = $conexion->prepare($sql_eliminar);
+        $stmt_eliminar->bind_param("i", $id_rubrica);
+        $stmt_eliminar->execute();
+
+        // Recalcular los puntos restantes
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id_tarea";
+        $resultado = $conexion->query($sql);
+        $total_rubricas = $resultado->fetch_assoc()['total'];
+        if ($total_rubricas > 0) {
+            $puntos = round(100 / $total_rubricas, 2);
+            $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id_tarea = ?";
+            $stmt_actualizar = $conexion->prepare($sql_actualizar);
+            $stmt_actualizar->bind_param("ii", $puntos, $id_tarea);
+            $stmt_actualizar->execute();
+        }
+    }
+}
+
+// Consultar datos de la tarea y sus rúbricas
 $sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
 $resultado = $conexion->query($sql);
 
 if ($resultado->num_rows > 0) {
     $fila = $resultado->fetch_assoc();
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+    $resultado_rubricas = $conexion->query($sql_rubricas);
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Tarea</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             background-color: #f4f6f9;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .form-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            max-width: 500px;
+        .container {
             width: 100%;
-            text-align: center;
-        }
-        .form-container h2 {
-            color: #ff9900;
-            font-size: 24px;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             margin-bottom: 20px;
-            border-bottom: 2px solid #ff9900;
-            padding-bottom: 10px;
+        }
+        h2, h3 {
+            color: #ff9900;
+            text-align: center;
+            margin-bottom: 20px;
         }
         .form-group {
-            margin-bottom: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            margin-bottom: 15px;
         }
         .form-group label {
             font-weight: bold;
-            color: #ff9900;
-            margin-right: 10px;
+            margin-bottom: 5px;
+            color: #555;
         }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
+        .form-group input, .form-group textarea {
+            padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #ffffff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
         }
-        .file-preview {
-            display: flex;
-            align-items: center;
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            justify-content: start;
-        }
-        .file-preview img {
-            width: 36px;
-            height: 36px;
-            margin-right: 10px;
-            border-radius: 4px;
-            object-fit: cover;
-        }
-        .file-preview a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .file-preview a:hover {
-            text-decoration: underline;
-        }
-        .form-container button {
-            margin-top: 20px;
+        .btn {
+            background-color: #ff9900;
+            color: white;
+            border: none;
             padding: 10px 20px;
             font-size: 16px;
-            font-weight: bold;
-            color: #fff;
-            background-color: #ff9900;
-            border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
         }
-        .form-container button:hover {
+        .btn:hover {
             background-color: #e68a00;
         }
-        .back-button {
-            background-color: #555;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 16px;
+        .btn-red {
+            background-color: #ff4d4d;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
         }
-        .back-button:hover {
-            background-color: #333;
+        .btn-red:hover {
+            background-color: #e60000;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #ff9900;
+            color: white;
+        }
+        table td {
+            background-color: #fff;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        input.error {
+            border-color: red;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
         }
     </style>
+    <script>
+        function validarCampos() {
+            const criterio = document.getElementById('criterio');
+            const descripcion = document.getElementById('descripcion_rubrica');
+            const errorCriterio = document.getElementById('error-criterio');
+            const errorDescripcion = document.getElementById('error-descripcion');
+
+            let valido = true;
+
+            if (/\d/.test(criterio.value)) {
+                errorCriterio.textContent = "El criterio no puede contener números.";
+                valido = false;
+            } else {
+                errorCriterio.textContent = "";
+            }
+
+            if (/\d/.test(descripcion.value)) {
+                errorDescripcion.textContent = "La descripción no puede contener números.";
+                valido = false;
+            } else {
+                errorDescripcion.textContent = "";
+            }
+
+            return valido;
+        }
+    </script>
 </head>
 <body>
-
-<div class="form-container">
-    <h2>Editar Tarea</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="titulo">Título:</label>
-            <input type="text" id="titulo" name="titulo" value="<?php echo $fila['titulo']; ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="4" required><?php echo $fila['descripcion']; ?></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="fecha_limite">Fecha de Entrega:</label>
-            <input type="date" id="fecha_limite" name="fecha_limite" value="<?php echo $fila['fecha_limite']; ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="archivo">Archivo (opcional):</label>
-            <input type="file" id="archivo" name="archivo">
-        </div>
-
-        <?php if (!empty($fila['archivo_tarea'])): ?>
-            <div class="file-preview">
-                <?php
-                $file_path = htmlspecialchars($fila['archivo_tarea']);
-                $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
-                $image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                if (in_array(strtolower($file_extension), $image_extensions)) {
-                    echo "<img src='$file_path' alt='Archivo'>";
-                } else {
-                    echo "<img src='file-icon.png' alt='Archivo'>";
-                }
-                ?>
-                <a href="<?php echo $file_path; ?>" target="_blank"><?php echo basename($file_path); ?></a>
+    <div class="container">
+        <h2>Editar Tarea</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" value="<?php echo $fila['titulo']; ?>" required>
             </div>
-        <?php endif; ?>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required><?php echo $fila['descripcion']; ?></textarea>
+            </div>
+            <div class="form-group">
+                <label for="fecha_limite">Fecha de Entrega:</label>
+                <input type="date" id="fecha_limite" name="fecha_limite" value="<?php echo $fila['fecha_limite']; ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="archivo">Archivo (opcional):</label>
+                <input type="file" id="archivo" name="archivo">
+            </div>
+            <button type="submit" name="actualizar_tarea" class="btn">Actualizar Tarea</button>
+        </form>
+    </div>
 
-        <button type="submit">Actualizar Tarea</button>
-    </form>
-    <button class="back-button" onclick="window.location.href='listarTareas.php'">Regresar a Tareas Asignadas</button>
-</div>
-
+    <div class="container">
+        <h3>Rúbricas Asociadas</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Descripción</th>
+                    <th>Puntos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($resultado_rubricas->num_rows > 0): ?>
+                    <?php while ($rubrica = $resultado_rubricas->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                            <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
+                            <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                            <td>
+                                <form method="POST" style="display:inline-block;">
+                                    <input type="hidden" name="id_rubrica" value="<?php echo $rubrica['id_rubrica']; ?>">
+                                    <button type="submit" name="accion_rubrica" value="eliminar" class="btn-red">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">No hay rúbricas asignadas.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <form method="POST" onsubmit="return validarCampos()" class="actions">
+            <input type="hidden" name="accion_rubrica" value="agregar">
+            <div>
+                <input type="text" id="criterio" name="criterio" placeholder="Criterio" required>
+                <span id="error-criterio" class="error-message"></span>
+            </div>
+            <div>
+                <input type="text" id="descripcion_rubrica" name="descripcion_rubrica" placeholder="Descripción" required>
+                <span id="error-descripcion" class="error-message"></span>
+            </div>
+            <button type="submit" class="btn">Agregar Rúbrica</button>
+        </form>
+    </div>
 </body>
 </html>
 
 <?php
 } else {
-    echo "Tarea no encontrada";
+    echo "Tarea no encontrada.";
 }
 $conexion->close();
 ?>

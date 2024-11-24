@@ -4,10 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/estilosIndex.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-            integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <title>Iniciar Sesion</title>
     </head>
 
@@ -59,6 +61,56 @@
         </div>
 
         <script src="js/ScriptIndex.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        // Función para obtener el valor de un parámetro en la URL
+        function getParameterByName(name) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var url = window.location.href;
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+            var results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+        window.onload = function() {
+            var error = getParameterByName('error');
+            if (error === 'auth') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos vacíos',
+                    text: 'Por favor, complete todos los campos.',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Eliminar el parámetro 'error' de la URL
+                    window.history.replaceState(null, null, window.location.pathname);
+                });
+            }
+        };
+    </script>
+    <script>
+    window.onload = function() {
+        var error = getParameterByName('error');
+        if (error === 'auth') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Datos incorrectos',
+                text: 'El usuario o la contraseña son incorrectos.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#FF9800', // Color naranja para el botón
+                background: '#f0f0f0', // Color del fondo de la alerta
+                backdrop: 'rgba(0, 0, 0, 0.8)', // Fondo tenue para evitar que el formulario se desplace
+                allowOutsideClick: false, // Evita que la alerta se cierre al hacer clic fuera
+                allowEscapeKey: false, // Evita que la alerta se cierre con la tecla Escape
+                focusConfirm: false // Evita que el botón de confirmación reciba el foco automáticamente
+            }).then(() => {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        
+        }
+    };
+</script>
+
     </body>
 
 </html>

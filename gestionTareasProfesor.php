@@ -6,20 +6,15 @@ if (isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
-
-// Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $baseDatos = "peis";
-
 $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
-
-// Obtener materias del profesor
 $sql = "
     SELECT c.id_curso, c.nombre_curso 
     FROM cursos c 
@@ -28,269 +23,106 @@ $sql = "
 ";
 $resultado = $conexion->query($sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Tareas - Profesor</title>
-    <link rel="stylesheet" href="css/estiloProfesor.css">
+    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/gestionTareasprofesor.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
-        /* Estilos incluidos */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9fbfd;
-            color: #333;
-            overflow-x: hidden;
-            min-height: 100vh;
+        .button-container {
             display: flex;
-            flex-direction: column;
-        }
-
-        header nav {
-            background-color: #ff9900;
-            padding: 15px 0;
-        }
-
-        header nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        header nav ul li {
-            margin: 0 20px;
-        }
-
-        header nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        header nav ul li a:hover {
-            color: #ffd966;
-        }
-
-        main {
-            max-width: 1000px;
-            margin: 30px auto;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 28px;
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 25px;
-        }
-
-        h2 {
-            font-size: 22px;
-            color: #ff9900;
-            border-bottom: 2px solid #ff9900;
-            padding-bottom: 8px;
-            font-weight: 600;
-            margin-top: 0;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        form label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        form input, form select, form textarea {
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        form input:focus, form select:focus, form textarea:focus {
-            border-color: #ff9900;
-        }
-
-        .button-container, .button-container-rubric {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .assign-button, .show-tasks-button, .rubric-button, .add-rubric-button, .remove-rubric-button {
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            border: none;
-            min-width: 150px;
-            text-align: center;
-        }
-
-        .assign-button, .rubric-button, .add-rubric-button {
-            background-color: #ff9900;
-            color: white;
-            border: 2px solid #ff8303;
-        }
-
-        .assign-button:hover, .rubric-button:hover, .add-rubric-button:hover {
-            background-color: #ff8303;
-            color: #ffffff;
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .show-tasks-button, .remove-rubric-button {
-            background-color: #333;
-            color: white;
-            border: 2px solid #444;
-        }
-
-        .show-tasks-button:hover, .remove-rubric-button:hover {
-            background-color: #444;
-            color: #ffffff;
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #ff9900;
-            color: white;
-        }
-
-        .file-upload-preview {
-            display: none;
-            border: 2px dashed #ff9900;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #fff4e6;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
             gap: 10px;
-            transition: all 0.3s ease;
-            justify-content: center;
-        }
-
-        .file-upload-preview img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .file-upload-preview p {
-            margin: 0;
-            color: #555;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #333;
-            color: #fff;
-            font-size: 14px;
-            border-top: 4px solid #ff9900;
-        }
-
-        #rubrica-dinamica {
-            display: none;
-        }
-
-        /* Estilos del modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
             align-items: center;
         }
 
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 400px;
+        .dropdown {
+            position: relative;
+            display: inline-block;
         }
 
-        .modal-content p {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .modal-content button {
-            background-color: #ff9900;
+        .dropdown-toggle {
+            background-color: #ff5722;
             color: #fff;
             border: none;
             padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            width: 220px;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            color: #000;
+            text-decoration: none;
+            gap: 10px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .add-rubric-button, .delete-rubric-button {
+            background-color: #f8f9fa;
+            color: #000;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-
-<header>
-    <nav>
-        <ul>
-            <li><a href="inicioProfesor.php">Inicio</a></li>
-            <li><a href="calendarioProfesor.php">Calendario</a></li>
-            <li><a href="gestionTareasProfesor.php">Gestión de Tareas</a></li>
-        </ul>
-    </nav>
-</header>
+<div class="barranavegacion">
+    <div class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendarioDocente.php">Calendario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
 <main>
     <h1>Gestión de Tareas</h1>
@@ -320,16 +152,65 @@ $resultado = $conexion->query($sql);
             <label for="fechaEntrega">Fecha de Entrega:</label>
             <input type="date" id="fechaEntrega" name="fechaEntrega" required>
 
-            <label for="archivo">Subir archivo (opcional):</label>
-            <input type="file" id="archivo" name="archivo" onchange="previewFile()">
-
-            <div class="file-upload-preview" id="filePreview">
-                <img src="file-icon.png" alt="Archivo" id="fileIcon">
-                <p id="fileName">Ningún archivo seleccionado</p>
-            </div>
+            <label class="custom-file-upload">
+                Seleccionar archivo
+                <input type="file" id="archivo" name="archivo" onchange="previewFile()">
+            </label>
 
             <div class="button-container">
-                <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rubrica</button>
+                <div class="dropdown">
+                    <button class="dropdown-toggle">+ Agregar o crear</button>
+                    <div class="dropdown-menu">
+                        <a href="https://drive.google.com" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#4285F4" viewBox="0 0 24 24">
+                                <path d="M12 2L2 12l5 8h10l5-8L12 2z"></path>
+                                <path d="M12 2L2 12h10l5-8z" fill="#0F9D58"></path>
+                                <path d="M17 12h-5l5 8h5l-5-8z" fill="#F4B400"></path>
+                            </svg>
+                            Google Drive
+                        </a>
+                        <a href="https://www.canva.com" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#00C4CC" viewBox="0 0 24 24">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.29 16.36c-.703.563-1.446.996-2.173 1.12-.583.1-1.14-.046-1.603-.397-.247-.19-.515-.375-.797-.562-.098-.066-.198-.123-.297-.19-.4-.255-.857-.417-1.33-.47-.517-.06-1.034.034-1.548.15-.273.064-.547.146-.82.236a9.56 9.56 0 01-.297.085c-.272.084-.494.002-.683-.17-.092-.085-.152-.193-.212-.3-.063-.115-.123-.23-.174-.347-.157-.364-.245-.732-.353-1.106-.223-.763-.47-1.517-.722-2.272-.156-.484-.3-.968-.467-1.447-.063-.184-.13-.37-.207-.556-.055-.137-.116-.27-.186-.4-.047-.086-.106-.17-.17-.25-.103-.124-.2-.112-.302-.01-.047.048-.087.102-.127.156-.287.385-.563.77-.88 1.14-.283.333-.62.618-1.04.77-.23.08-.465.144-.693.227a.83.83 0 01-.97-.234c-.35-.417-.445-.916-.44-1.42.008-.767.326-1.48.836-2.058.588-.66 1.3-1.148 2.13-1.455a6.24 6.24 0 012.222-.41c.817.006 1.606.187 2.368.482.472.177.93.394 1.378.626.425.22.85.447 1.266.688.358.206.732.345 1.138.42.395.073.787.063 1.173-.012.275-.054.545-.146.805-.263.246-.11.478-.266.7-.43.36-.268.61-.614.85-.96.088-.13.174-.26.262-.39.02-.03.056-.062.086-.063.06-.002.1.034.14.07.187.18.37.368.54.562.22.25.402.53.553.826.34.666.527 1.376.638 2.108.08.532.046 1.054-.164 1.565-.158.386-.372.746-.683 1.015-.3.26-.664.42-1.028.53a3.568 3.568 0 01-1.27.087c-.542-.04-.98-.242-1.398-.566z"></path>
+                            </svg>
+                            Canva
+                        </a>
+                        <a href="https://docs.google.com/presentation" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#D24726" viewBox="0 0 24 24">
+                                <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z"></path>
+                            </svg>
+                            Presentación
+                        </a>
+                        <a href="https://docs.google.com/document" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#2B579A" viewBox="0 0 24 24">
+                                <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z"></path>
+                            </svg>
+                            Documento
+                        </a>
+                    </div>
+                </div>
+                <button type="button" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
+                <button type="button" class="delete-rubric-button" id="deleteRubricButton" style="display: none;" onclick="eliminarRubrica()">Eliminar Rúbrica</button>
+            </div>
+
+            <div id="rubricaContainer" style="display: none;">
+                <h3>Rúbrica de Evaluación</h3>
+                <table id="rubricaTable">
+                    <thead>
+                        <tr>
+                            <th>Criterio</th>
+                            <th>Descripción</th>
+                            <th>Puntos</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
+                </div>
+                <p>Total de Puntos Asignados: <span id="totalPuntos">100</span>/100</p>
             </div>
 
             <div class="button-container">
@@ -338,152 +219,76 @@ $resultado = $conexion->query($sql);
             </div>
         </form>
     </section>
-
-    <section id="rubrica-dinamica">
-        <h2>Crear Rubrica Dinámica</h2>
-        <table id="rubricaTable">
-            <thead>
-                <tr>
-                    <th>Criterios</th>
-                    <th>Puntos a cubrir</th>
-                    <th>Puntos</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" placeholder="Criterio" oninput="validarTexto(this)"></td>
-                    <td><input type="text" placeholder="Descripción del criterio" oninput="validarTexto(this)"></td>
-                    <td><input type="number" class="puntos" value="0" min="0" readonly></td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2"><strong>TOTAL</strong></td>
-                    <td><input type="number" id="totalPuntos" value="100" min="0" oninput="actualizarPuntajes()"></td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <div class="button-container-rubric">
-            <button class="rubric-button" onclick="agregarFila()">Agregar Fila</button>
-            <button class="rubric-button" onclick="quitarFila()">Quitar Fila</button>
-            <button class="remove-rubric-button" onclick="ocultarRubrica()">Eliminar Rubrica</button>
-        </div>
-    </section>
 </main>
 
 <footer>
     <p>© 2024 PE-ISC</p>
 </footer>
 
-<!-- Modal -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <p id="modalMessage"></p>
-        <button onclick="cerrarModal()">Aceptar</button>
-    </div>
-</div>
-
+<script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
-    function previewFile() {
-        const fileInput = document.getElementById('archivo');
-        const filePreview = document.getElementById('filePreview');
-        const fileName = document.getElementById('fileName');
-        const fileIcon = document.getElementById('fileIcon');
-
-        if (fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            fileName.textContent = file.name;
-            filePreview.style.display = 'flex';
-
-            if (file.type.startsWith('image/')) {
-                fileIcon.src = URL.createObjectURL(file);
-            } else {
-                fileIcon.src = 'file-icon.png';
-            }
-        } else {
-            filePreview.style.display = 'none';
-        }
-    }
-
-    function mostrarRubrica() {
-        document.getElementById("rubrica-dinamica").style.display = "block";
-        document.querySelector(".add-rubric-button").style.display = "none";
-        actualizarPuntajes();
-    }
-
-    function ocultarRubrica() {
-        document.getElementById("rubrica-dinamica").style.display = "none";
-        document.querySelector(".add-rubric-button").style.display = "inline-block";
-    }
-
-    function agregarFila() {
-        const tableBody = document.querySelector("#rubricaTable tbody");
-        const newRow = document.createElement("tr");
-
-        newRow.innerHTML = `
-            <td><input type="text" placeholder="Criterio" oninput="validarTexto(this)"></td>
-            <td><input type="text" placeholder="Descripción del criterio" oninput="validarTexto(this)"></td>
-            <td><input type="number" class="puntos" value="0" min="0" readonly></td>
-        `;
-        tableBody.appendChild(newRow);
-        actualizarPuntajes();
-    }
-
-    function quitarFila() {
-        const tableBody = document.querySelector("#rubricaTable tbody");
-        if (tableBody.rows.length > 1) {
-            tableBody.deleteRow(tableBody.rows.length - 1);
-            actualizarPuntajes();
-        } else {
-            mostrarModal("Debe haber al menos una fila.");
-        }
-    }
-
-    function actualizarPuntajes() {
-        const puntosInputs = document.querySelectorAll(".puntos");
-        const totalPuntos = parseFloat(document.getElementById("totalPuntos").value) || 0;
-        const numFilas = puntosInputs.length;
-        const puntosPorFila = totalPuntos / numFilas;
-
-        puntosInputs.forEach(input => {
-            input.value = puntosPorFila.toFixed(2);
-        });
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaEntrega').setAttribute('min', fechaHoy);
+    });
 
     function validarFecha() {
-        const fechaEntrega = document.getElementById("fechaEntrega").value;
-        const fechaActual = new Date().toISOString().split("T")[0];
-
-        if (fechaEntrega < fechaActual) {
-            mostrarModal("La fecha debe ser actual o futura.");
+        var fechaSeleccionada = document.getElementById('fechaEntrega').value;
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        if (fechaSeleccionada < fechaHoy) {
+            alert('La fecha de entrega no puede ser una fecha pasada.');
             return false;
         }
         return true;
     }
 
-    function validarTexto(input) {
-        const texto = input.value;
-        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/; // solo letras y espacios
-        if (!regex.test(texto)) {
-            input.value = texto.slice(0, -1); // elimina el último carácter si no es válido
-            mostrarModal("Solo se permiten letras en este campo.");
-        }
+    function mostrarRubrica() {
+        document.getElementById('rubricaContainer').style.display = 'block';
+        document.getElementById('deleteRubricButton').style.display = 'inline-block';
     }
 
-    function mostrarModal(mensaje) {
-        document.getElementById("modalMessage").textContent = mensaje;
-        document.getElementById("modal").style.display = "flex";
+    function eliminarRubrica() {
+        document.getElementById('rubricaContainer').style.display = 'none';
+        document.getElementById('deleteRubricButton').style.display = 'none';
+        document.querySelector('#rubricaTable tbody').innerHTML = '';
+        document.getElementById('totalPuntos').textContent = '100';
     }
 
-    function cerrarModal() {
-        document.getElementById("modal").style.display = "none";
+    function agregarFilaRubrica() {
+        const tabla = document.querySelector('#rubricaTable tbody');
+        const fila = document.createElement('tr');
+
+        fila.innerHTML = `
+            <td><input type="text" name="criterio[]" placeholder="Criterio" required></td>
+            <td><input type="text" name="descripcion[]" placeholder="Descripción" required></td>
+            <td><input type="number" name="puntos[]" readonly></td>
+            <td><button type="button" onclick="eliminarFila(this)">Eliminar</button></td>
+        `;
+
+        tabla.appendChild(fila);
+        actualizarTotalPuntos();
+    }
+
+    function eliminarFila(boton) {
+        boton.closest('tr').remove();
+        actualizarTotalPuntos();
+    }
+
+    function actualizarTotalPuntos() {
+        const filas = document.querySelectorAll('#rubricaTable tbody tr');
+        const totalFilas = filas.length;
+        const puntosPorFila = totalFilas > 0 ? (100 / totalFilas).toFixed(2) : 0;
+
+        filas.forEach((fila) => {
+            const puntosInput = fila.querySelector('input[name="puntos[]"]');
+            puntosInput.value = puntosPorFila;
+        });
+
+        document.getElementById('totalPuntos').textContent = "100";
     }
 </script>
-
 </body>
 </html>
-
 <?php
 $conexion->close();
 ?>

@@ -1,0 +1,85 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+/* Botones */
+.btn-primary {
+    background-color: #e67e22; /* Naranja */
+    border-color: #d35400; /* Contorno naranja oscuro */
+}
+
+.btn-primary:hover {
+    background-color: #d35400; /* Naranja oscuro */
+    border-color: #a04000; /* Contorno más oscuro */
+}
+
+.btn-secondary {
+    background-color: #f4d03f; /* Amarillo suave */
+    border-color: #f1c40f;
+}
+
+.btn-secondary:hover {
+    background-color: #f1c40f; /* Amarillo más intenso */
+    border-color: #d4ac0d;
+}
+
+/* Contenedores y tarjetas */
+.card {
+    border: 1px solid #f39c12; /* Contorno naranja tenue */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+.card-header {
+    background-color: #f39c12; /* Fondo naranja tenue */
+    color: white; /* Texto blanco */
+    font-weight: bold;
+    border-bottom: 2px solid #d35400; /* Contorno más oscuro */
+}
+
+/* Tablas */
+.table thead th {
+    background-color: #f7dc6f; /* Fondo amarillo tenue */
+    color: #6e2c00; /* Texto oscuro */
+    font-weight: bold;
+    border-bottom: 2px solid #f39c12; /* Contorno naranja */
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #f39c12; /* Contorno naranja */
+}
+
+.table tbody tr:hover {
+    background-color: #fef9e7; /* Fondo amarillo claro */
+}
+
+/* Formularios */
+.form-control {
+    border: 1px solid #f39c12; /* Contorno naranja tenue */
+    box-shadow: none; /* Sin sombra */
+}
+
+.form-control:focus {
+    border-color: #e67e22; /* Contorno naranja intenso */
+    box-shadow: 0 0 4px rgba(230, 126, 34, 0.5); /* Resplandor naranja */
+}
+
+/* Calificación total */
+#calificacion_total {
+    font-weight: bold;
+    color: #d35400; /* Texto naranja oscuro */
+    background-color: #fef9e7; /* Fondo amarillo claro */
+    border: 1px solid #f39c12;
+}
+
+/* Retroalimentación */
+textarea#retroalimentacion {
+    border: 1px solid #f39c12;
+    background-color: #fcf3cf; /* Fondo amarillo pálido */
+}
+.btn-primary {
+    background-color: #ffa726 !important; /* Naranja más apagado */
+    border-color: #ffa726 !important;
+}

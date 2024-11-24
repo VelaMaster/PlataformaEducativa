@@ -59,6 +59,21 @@ if (!$conexion) {
     justify-content: center;
     align-items: flex-start;
 }
+.btn-ver-mas {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: #FFA500;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-ver-mas:hover {
+    background-color: #FF8C00;
+}
 
 
         
@@ -134,6 +149,8 @@ try {
             echo "<p class='card-subtitle'>Grupo: " . $row['grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
             echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
+
+
 
 
             echo "</div>";
