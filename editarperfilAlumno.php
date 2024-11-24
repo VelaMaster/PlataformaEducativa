@@ -1,5 +1,9 @@
 <?php
 session_start();
+// Configuración para registrar errores en un archivo de log
+ini_set('log_errors', 1);
+ini_set('error_log', '/ruta/a/tu/archivo_de_error.log'); // Reemplaza con una ruta válida
+error_reporting(E_ALL);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // Verificar si el usuario está autenticado
@@ -7,33 +11,38 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
+$successMessage = '';
+$errorMessage = '';
 
-$num_control = $_SESSION['usuario'];
+try {
+    $num_control = $_SESSION['usuario'];
+    $conexion = mysqli_connect("localhost", "root", "", "peis");
 
-// Conectar a la base de datos
-$conexion = mysqli_connect("localhost", "root", "", "peis");
-
-if (!$conexion) {
-    die("Conexión fallida: " . mysqli_connect_error());
+    // Preparar la consulta para obtener datos del usuario
+    $query = "SELECT nombre, segundo_nombre, apellido_p, apellido_m, correo FROM alumnos WHERE num_control = ?";
+    $stmt = mysqli_prepare($conexion, $query);
+    mysqli_stmt_bind_param($stmt, 's', $num_control);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $nombre, $segundo_nombre, $apellido_p, $apellido_m, $correo);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($conexion);
+} catch (mysqli_sql_exception $e) {
+    $errorMessage = "Error al obtener los datos del usuario.";
+    // Registrar el error en el log
+    error_log($e->getMessage());
 }
 
-// Preparar la consulta para evitar inyecciones SQL
-$query = "SELECT nombre, segundo_nombre, apellido_p, apellido_m, correo FROM alumnos WHERE num_control = ?";
-$stmt = mysqli_prepare($conexion, $query);
-mysqli_stmt_bind_param($stmt, 's', $num_control);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $nombre, $segundo_nombre, $apellido_p, $apellido_m, $correo);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-mysqli_close($conexion);
+// Obtener mensajes de notificación
+if (isset($_SESSION['success'])) {
+    $successMessage = $_SESSION['success'];
+    unset($_SESSION['success']);
+}
 
-// Obtener mensajes de notificación si existen
-$successMessage = isset($_SESSION['success']) ? $_SESSION['success'] : '';
-$errorMessage = isset($_SESSION['error']) ? $_SESSION['error'] : '';
-
-// Limpiar mensajes de notificación
-unset($_SESSION['success']);
-unset($_SESSION['error']);
+if (isset($_SESSION['error'])) {
+    $errorMessage = $_SESSION['error'];
+    unset($_SESSION['error']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -52,7 +61,6 @@ unset($_SESSION['error']);
     <button id="logoutBtn" class="btn btn-danger animate__animated animate__fadeInDown" onclick="window.history.back();">
         <i class="bi bi-arrow-left"></i> Volver
     </button>
-
     <!-- Contenedor principal -->
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="profile-card text-center animate__animated animate__fadeInUp">
@@ -68,11 +76,11 @@ unset($_SESSION['error']);
                 </div>
                 <div class="mb-3 text-start">
                     <label for="txtPassword" class="form-label">Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="txtPassword" name="password" placeholder="Ingrese nueva contraseña">
+                    <input type="password" class="form-control" id="txtPassword" name="password" placeholder="Ingrese nueva contraseña" required>
                 </div>
                 <div class="mb-3 text-start">
                     <label for="txtConfirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="txtConfirmPassword" name="confirm_password" placeholder="Confirme nueva contraseña">
+                    <input type="password" class="form-control" id="txtConfirmPassword" name="confirm_password" placeholder="Confirme nueva contraseña" required>
                 </div>
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">
@@ -86,59 +94,27 @@ unset($_SESSION['error']);
         </div>
     </div>
 
-    <!-- Modales de Notificación -->
-
-    <!-- Modal de Éxito -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="successModalLabel"><i class="bi bi-check-circle"></i> Éxito</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body"><?php echo htmlspecialchars($successMessage); ?></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="errorModalLabel"><i class="bi bi-exclamation-triangle"></i> Error</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body"><?php echo htmlspecialchars($errorMessage); ?></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            <?php if (!empty($successMessage)): ?>
-                new bootstrap.Modal(document.getElementById('successModal')).show();
-            <?php endif; ?>
+        document.getElementById('editProfileForm').addEventListener('submit', function (e) {
+            const password = document.getElementById('txtPassword').value;
+            const confirmPassword = document.getElementById('txtConfirmPassword').value;
 
-            <?php if (!empty($errorMessage)): ?>
-                new bootstrap.Modal(document.getElementById('errorModal')).show();
-            <?php endif; ?>
+            // Expresión regular para validar la contraseña
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-            document.getElementById('editProfileForm').addEventListener('submit', function (e) {
-                var password = document.getElementById('txtPassword').value;
-                var confirmPassword = document.getElementById('txtConfirmPassword').value;
-                if (password !== confirmPassword) {
-                    e.preventDefault();
-                    alert('Las contraseñas no coinciden.');
-                }
-            });
+            // Validar si cumple con los requisitos
+            if (!passwordRegex.test(password)) {
+                e.preventDefault(); // Detener el envío del formulario
+                alert("La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.");
+                return;
+            }
+
+            // Validar si las contraseñas coinciden
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Detener el envío del formulario
+                alert("Las contraseñas no coinciden.");
+                return;
+            }
         });
     </script>
 </body>
