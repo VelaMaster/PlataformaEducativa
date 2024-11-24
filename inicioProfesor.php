@@ -1,12 +1,17 @@
 <?php
 session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
+$passwordPlain = isset($_SESSION['password_plain']) ? $_SESSION['password_plain'] : false;
+unset($_SESSION['password_plain']); // Limpiar después de mostrar el modal
+
 $num_control = $_SESSION['usuario'];
 $conexion = mysqli_connect("localhost", "root", "", "peis");
+
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
 }
@@ -44,11 +49,21 @@ if (!$conexion) {
             justify-content: flex-end;
             overflow: hidden;
         }
-        .card img {
-            width: 100%;
-            height: auto;
-            flex: 1;
-        }
+        .card {
+    width: 320px;
+    height: 270px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Organiza el contenido en columna */
+    justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.card:hover {
+    transform: scale(1.05); /* Agranda la tarjeta un 5% */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Incrementa la sombra */
+}
         .card-content {
             background-color: rgb(102, 102, 102);
             color: white;
@@ -58,6 +73,44 @@ if (!$conexion) {
             justify-content: center;
             align-items: flex-start;
         }
+        .btn-orange {
+    background-color: #FFA500; /* Color naranja */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-orange:hover {
+    background-color: #FF8C00; /* Naranja más oscuro para hover */
+}
+.dropdown-item:hover {
+    background-color: #F1AA3D;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    transform: scale(1.1); /* Aumenta el tamaño */
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+/* Estilo del enlace al estar activo o enfocado */
+.dropdown-item:active,
+.dropdown-item:focus {
+    background-color: #FFA500; /* Naranja */
+    color: white;
+    text-decoration: none;
+    transform: scale(1); /* Mantiene el tamaño normal */
+}
+
+/* Elimina el borde azul predeterminado */
+.dropdown-item:focus {
+    outline: none;
+}
+.dropdown-menu{
+    text-align: center;
+}
     </style>
 </head>
 <body>
@@ -88,7 +141,26 @@ if (!$conexion) {
     </div>
  </div>
 </div>
-
+<!-- Modal de advertencia de seguridad -->
+<?php if ($passwordPlain): ?>
+    <div class="modal fade" id="passwordWarningModal" tabindex="-1" aria-labelledby="passwordWarningLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordWarningLabel">¡Atención!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    Tu contraseña no está encriptada. Por tu seguridad, te recomendamos cambiarla lo antes posible.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-orange" onclick="window.location.href='editarperfilAlumno.php';">Cambiar Contraseña</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="img/perfil120.png" alt="Foto de perfil" class="profile-img">
@@ -188,5 +260,12 @@ if (!$conexion) {
         document.getElementById("tasksModal").style.display = "none";
     }
 </script>
+<script>
+    <?php if ($passwordPlain): ?>
+        var passwordWarningModal = new bootstrap.Modal(document.getElementById('passwordWarningModal'));
+        passwordWarningModal.show();
+    <?php endif; ?>
+</script>
+</body>
 </body>
 </html>
