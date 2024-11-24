@@ -49,15 +49,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['nombre'] = $row['nombre']; // Nombre del usuario
             $_SESSION['num_control'] = $row['num_control']; // Número de control
             $_SESSION['usuario'] = $usuario; // Usuario en sesión
-            header("Location: inicioAlumno.php");
+
+            if ($role == "Estudiante") {
+                header("Location: inicioAlumno.php");
+            } elseif ($role == "Docente") {
+                header("Location: inicioDocente.php");
+            }
             exit();
         } elseif ($contrasena === $row['contrasena']) {
-            // Contraseña no encriptada: mostrar mensaje de advertencia
-            $_SESSION['nombre'] = $row['nombre']; // Nombre del usuario
-            $_SESSION['num_control'] = $row['num_control']; // Número de control
-            $_SESSION['usuario'] = $usuario; // Usuario en sesión
-            $_SESSION['password_plain'] = true; // Marcar que la contraseña no está encriptada
-            header("Location: inicioAlumno.php");
+            $_SESSION['nombre'] = $row['nombre'];
+            $_SESSION['num_control'] = $row['num_control'];
+            $_SESSION['usuario'] = $usuario;
+            $_SESSION['password_plain'] = true;
+            if ($role == "Estudiante") {
+                header("Location: inicioAlumno.php");
+            } elseif ($role == "Docente") {
+                header("Location: inicioProfesor.php");
+            }
             exit();
         } else {
             // Contraseña incorrecta
