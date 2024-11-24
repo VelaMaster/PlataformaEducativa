@@ -132,12 +132,31 @@ if ($id_tarea > 0) {
 
     <!-- Botón para eliminar la tarea -->
     <div style="display: flex; justify-content: center; margin-top: 15px;">
+    <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST" onsubmit="return confirmarEliminacion();">
+        <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
+        <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
+    </form>
+</div>
+
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.");
+    }
+</script>
+
+<?php endif; ?>
+<!-- Código de la ventana modal -->
+<div id="modalConfirmacion" class="modal">
+    <div class="modal-contenido">
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
         <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-            <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
-            <button type="submit" class="eliminar-btn">Eliminar Tarea</button>
+            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
+            <button type="submit" class="btn-confirmar">Sí, eliminar</button>
+            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
         </form>
     </div>
-<?php endif; ?>
+</div>
 
     
           <!-- Esto es para las rubricas -->
@@ -238,39 +257,37 @@ if ($id_tarea > 0) {
     <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
 
     <!-- SVG Ícono y Texto que disparan el input de archivo -->
-    <label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
-      <svg
-        class="lucide lucide-users-round"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#7e8590"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
+    <!-- Input para seleccionar archivo -->
+<label for="file-upload" style="display: flex; align-items: center; cursor: pointer;">
+    <svg
         xmlns="http://www.w3.org/2000/svg"
-      >
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        fill="#7e8590">
         <path d="M18 21a8 8 0 0 0-16 0"></path>
         <circle r="5" cy="8" cx="10"></circle>
         <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path>
-      </svg>
-      <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
-    </label>
+    </svg>
+    <p class="label" style="margin-left: 8px;">Seleccionar Archivo</p>
+</label>
+<input 
+   type="file" 
+   id="file-upload" 
+   name="archivo" 
+   required 
+   style="display: none;" 
+   onchange="mostrarPrevisualizacion(this)">
 
-    <!-- Input de archivo oculto -->
-    <input 
-      type="file" 
-      id="file-upload" 
-      name="archivo" 
-      required 
-      style="display: none;"
-    >
+
+<!-- Contenedor para la previsualización -->
+<div id="preview-container" style="margin-top: 20px;"></div>
+<script src="tuArchivo.js"></script>
 
     <!-- Botón de enviar -->
     <button type="submit" style="margin-top: 8px; padding: 6px 12px; background-color: #7e8590; color: white; border: none; border-radius: 4px; cursor: pointer;">
       Enviar
-    </button>
+</button>
   </form>
 </li>
 
@@ -312,23 +329,10 @@ if ($id_tarea > 0) {
     </form>
 </div>
 
-<!-- Código de la ventana modal -->
-<div id="modalConfirmacion" class="modal">
-    <div class="modal-contenido">
-        <h2>Confirmar Eliminación</h2>
-        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
-        <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-            <input type="hidden" name="id_tarea" value="<?php echo $id_tarea; ?>">
-            <button type="submit" class="btn-confirmar">Sí, eliminar</button>
-            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
-        </form>
-    </div>
-</div>
+
 
         
     </div>
-    
-
     <script>
     // Función para mostrar el modal
     function mostrarModal() {

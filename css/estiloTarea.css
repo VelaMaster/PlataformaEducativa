@@ -39,13 +39,15 @@
                   padding-top: 10px;
                 }
                 .container {
-                    max-width: 900px;
-                    margin: 20px auto;
-                    background: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-                    padding: 30px;
-                }
+                  max-width: 1000px; /* Ancho máximo del contenedor */
+                  margin: 20px auto 150px auto; /* Espacio superior (20px) e inferior (60px) */
+                  background: #fff;
+                  border-radius: 100px;
+                  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                  padding: 40px; /* Mantiene el espacio interno */
+              }
+              
+              
                 h1 {
                     text-align: center;
                     color: #ff6600;
@@ -208,15 +210,7 @@
         color: #fff;
     }
     /* From Uiverse.io by Na3ar-17 */ 
-.card {
-  width: 200px;
-  /* background-color: rgba(36, 40, 50, 1);
-background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
 
-
-.card .separator {
-  border-top: 1.5px solid #e65c00;
-}
 
 .card .list {
   list-style-type: none;

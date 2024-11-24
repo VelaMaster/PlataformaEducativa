@@ -80,3 +80,31 @@ function cerrarModal() {
     document.getElementById("modalImage").src = "";
     document.getElementById("modalIframe").src = "";
 }
+function mostrarPrevisualizacion(input) {
+    const archivo = input.files[0]; // Obtén el archivo seleccionado
+    const previewContainer = document.getElementById('preview-container');
+
+    // Limpia el contenido previo
+    previewContainer.innerHTML = '';
+
+    if (archivo) {
+        const tipoArchivo = archivo.type;
+        const url = URL.createObjectURL(archivo); // Crear URL temporal para previsualizar el archivo
+
+        let contenidoPreview = `
+            <div class="preview-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f9f9f9; padding: 15px; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); max-width: 200px; margin: 20px auto; cursor: pointer;">
+                <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: bold; color: #333; text-align: center;">Vista previa</h4>
+        `;
+
+        if (tipoArchivo.startsWith('image/')) {
+            contenidoPreview += `<img src="${url}" alt="Previsualización de Imagen" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">`;
+        } else if (tipoArchivo === 'application/pdf') {
+            contenidoPreview += `<embed src="${url}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="180" height="180" style="border-radius: 8px; border: none;">`;
+        } else {
+            contenidoPreview += `<p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>`;
+        }
+
+        contenidoPreview += '</div>';
+        previewContainer.innerHTML = contenidoPreview;
+    }
+}
