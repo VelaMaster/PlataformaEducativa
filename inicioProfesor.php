@@ -25,7 +25,7 @@ if (!$conexion) {
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
-    <link rel="stylesheet" href="css/barraNavegacion.css">
+    <link rel="stylesheet" href="css/barradeNavegacion.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
     <style>
         .profile-img {
@@ -38,16 +38,6 @@ if (!$conexion) {
             position: absolute;
             top: 15px;
             right: 15px;
-        }
-        .card {
-            width: 320px;
-            height: 270px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            overflow: hidden;
         }
         .card {
     width: 320px;
@@ -63,6 +53,20 @@ if (!$conexion) {
 .card:hover {
     transform: scale(1.05); /* Agranda la tarjeta un 5% */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Incrementa la sombra */
+}
+.card img {
+    width: 100%;
+    height: auto; /* Asegura que la imagen mantenga su proporción */
+    flex: 1; /* La imagen toma el espacio disponible en el medio */
+}
+.card-content {
+    background-color: rgb(102, 102, 102);
+    color: white;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
 }
         .card-content {
             background-color: rgb(102, 102, 102);
@@ -205,7 +209,7 @@ if (!$conexion) {
                 echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
                 echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
                 echo "<p class='card-subtitle'>Horario: " . $row['horario'] . ' ' . $row['aula'] . "</p>";
-                echo "<button class='view-more' onclick='showTasks($id_curso)'>Ver más</button>";
+                echo "<button class='view-more' onclick=\"window.location.href='vermasProfesor.php?id_curso=$id_curso'\">Ver más</button>";
                 echo "</div>";
                 echo "</div>";
             }
