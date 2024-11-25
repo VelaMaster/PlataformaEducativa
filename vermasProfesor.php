@@ -185,7 +185,6 @@
         <?php endforeach; ?>
     <?php endforeach; ?>
 </div>
-
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
 function toggleVerMas(element) {
@@ -195,7 +194,6 @@ function toggleVerMas(element) {
             tarea.classList.remove('active'); // Quita la clase de otros elementos
         }
     });
-
     element.classList.toggle('active'); // Alterna la clase en el elemento clicado
 }
 </script>

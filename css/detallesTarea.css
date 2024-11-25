@@ -1,0 +1,145 @@
+/* estilos generales */
+body {
+    background-color: #e7d6bf;
+}
+h1,
+h3,
+h4 {
+    color: black;
+    
+}
+.detalles-tarea{
+    width: 70%;
+    margin: 0 auto;
+}
+h1.text-center {
+    color: black;
+    text-align: center; /* Asegurar centrado del título */
+}
+
+h4 {
+    text-align: center !important;
+}
+.col-md-8{
+    width: 90%;
+    margin: 0 auto;
+}
+.archivo-adjunto-container {
+    margin: 0 auto;
+    width: 70%;
+    height: auto; /* Deja que la altura se ajuste automáticamente al contenido */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.archivo-adjunto {
+    height: auto; /* Altura automática para ajustar al contenido */
+    max-height: 600px; /* Limita la altura máxima para evitar desbordes */
+    width: 100%; /* Ocupa el ancho completo del contenedor */
+    background-color: #ffe4b3;
+    border: 2px solid #ff8c00;
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden; /* Esconde cualquier contenido que exceda la altura máxima */
+}
+
+.archivo-adjunto embed {
+    height: 500px; /* Altura específica para archivos PDF */
+    width: 100%; /* Ancho completo del contenedor */
+    border-radius: 10px;
+}
+
+.col-md-4{
+    width: 90%;
+    height: 100%;
+    margin: 0 auto;
+}
+/* Estilos para los contenedores */
+.tarea-detalles{
+    background-color: #ffe4b3;
+    border: 2px solid #ff8c00;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px; /* Separación entre los contenedores */
+    width: 100%; /* Ocupa todo el ancho permitido */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+    text-align: center; /* Centrar contenido */
+}
+
+.tarea-detalles h3,
+.archivo-adjunto h3 {
+    margin-top: 0;
+}
+
+.tarea-detalles ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tarea-detalles ul li {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Ajuste para el contenido del archivo adjunto */
+.archivo-adjunto img,
+.archivo-adjunto video,
+.archivo-adjunto audio,
+.archivo-adjunto embed {
+    max-width: 100%; /* Ajustar tamaño máximo */
+    border-radius: 10px; /* Bordes redondeados */
+    height: auto; /* Mantener proporción */
+}
+
+.archivo-adjunto pre {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    max-height: 400px;
+    overflow: auto;
+    text-align: left;
+}
+
+/* Estilos para la tabla de rúbricas */
+.rubricas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #ffe4b3;
+    border: 2px solid #ff8c00;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.rubricas-table th,
+.rubricas-table td {
+    padding: 12px;
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid #ff8c00;
+}
+
+.rubricas-table th {
+    background-color: #ffb347;
+    font-weight: bold;
+}
+
+.rubricas-table tr:nth-child(even) {
+    background-color: #ffedcc;
+}
+
+.rubricas-table tr:hover {
+    background-color: #ffdfa6;
+}
+
+.rubricas-table caption {
+    caption-side: top;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+.rubricas-tarea{
+    width: 70%;
+    height: auto;
+}
