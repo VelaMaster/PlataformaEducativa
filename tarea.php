@@ -101,7 +101,7 @@ if ($id_tarea > 0) {
         <div class="detail-item">
     <span class="detail-label">Archivo Adjunto:</span>
     <a href="download.php?file=<?php echo urlencode($tarea['archivo_tarea']); ?>" target="_blank">
-        Descargar Archivo
+        Ver Archivo
     </a>
 </div>
 
