@@ -2,33 +2,45 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
+
 if (!isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
 
+// Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $baseDatos = "peis";
 
 $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
-
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $materia = $conexion->real_escape_string($_POST['materia']);
-    $titulo = $conexion->real_escape_string($_POST['titulo']);
-    $descripcion = $conexion->real_escape_string($_POST['descripcion']);
-    $fechaEntrega = $conexion->real_escape_string($_POST['fechaEntrega']);
-    $archivoPath = null;
+// Procesar el formulario
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Función para manejar valores que puedan ser arreglos
+    function obtenerValor($dato) {
+        if (is_array($dato)) {
+            return $dato[0]; // Tomar el primer valor del arreglo
+        }
+        return $dato; // Retornar el valor si no es un arreglo
+    }
 
-    if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
-        $archivoNombre = $_FILES['archivo']['name'];
+    // Recibir datos del formulario y procesar posibles arreglos
+    $materia = $conexion->real_escape_string(obtenerValor($_POST['materia'] ?? ''));
+    $titulo = $conexion->real_escape_string(obtenerValor($_POST['titulo'] ?? ''));
+    $descripcion = $conexion->real_escape_string(obtenerValor($_POST['descripcion'] ?? ''));
+    $fechaEntrega = $conexion->real_escape_string(obtenerValor($_POST['fechaEntrega'] ?? ''));
+
+    // Manejar archivo adjunto
+    $archivoPath = null;
+    if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === UPLOAD_ERR_OK) {
+        $archivoNombre = basename($_FILES['archivo']['name']);
         $archivoTmp = $_FILES['archivo']['tmp_name'];
-        $archivoPath = "uploads/" . basename($archivoNombre);
+        $archivoPath = "uploads/" . $archivoNombre;
 
         if (!is_dir('uploads')) {
             mkdir('uploads', 0777, true);
@@ -40,32 +52,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $sql = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_creacion, fecha_limite, archivo_tarea) VALUES ('$materia', '$titulo', '$descripcion', NOW(), '$fechaEntrega', '$archivoPath')";
+    // Insertar tarea en la base de datos
+    $sqlTarea = "INSERT INTO tareas (id_curso, titulo, descripcion, fecha_creacion, fecha_limite, archivo_tarea) 
+                 VALUES ('$materia', '$titulo', '$descripcion', NOW(), '$fechaEntrega', '$archivoPath')";
 
-    if ($conexion->query($sql) === TRUE) {
-        $tarea_id = $conexion->insert_id;
+    if ($conexion->query($sqlTarea) === TRUE) {
+        $tareaId = $conexion->insert_id;
 
-        if (isset($_POST['criterio']) && isset($_POST['descripcionCriterio']) && isset($_POST['puntos'])) {
+        // Insertar rúbricas asociadas (si existen)
+        if (!empty($_POST['criterio']) && !empty($_POST['descripcionCriterio']) && !empty($_POST['puntos'])) {
             $criterios = $_POST['criterio'];
             $descripciones = $_POST['descripcionCriterio'];
             $puntos = $_POST['puntos'];
 
-            for ($i = 0; $i < count($criterios); $i++) {
-                $criterio = $conexion->real_escape_string($criterios[$i]);
-                $descripcionRubrica = $conexion->real_escape_string($descripciones[$i]);
-                $puntaje_maximo = (int)$puntos[$i];
+            foreach ($criterios as $index => $criterio) {
+                $criterio = $conexion->real_escape_string(obtenerValor($criterio));
+                $descripcionRubrica = $conexion->real_escape_string(obtenerValor($descripciones[$index]));
+                $puntosRubrica = (int)obtenerValor($puntos[$index]);
 
-                $sqlRubrica = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) VALUES ('$tarea_id', '$criterio', '$descripcionRubrica', '$puntaje_maximo')";
+                $sqlRubrica = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) 
+                               VALUES ('$tareaId', '$criterio', '$descripcionRubrica', '$puntosRubrica')";
+
                 if (!$conexion->query($sqlRubrica)) {
                     echo "Error al insertar rúbrica: " . $conexion->error . "<br>";
                 }
             }
-            $mensajeExito = 'Tarea y rúbrica asignadas con éxito.';
-        } else {
-            $mensajeExito = 'Tarea asignada sin rúbrica.';
         }
 
-        // Mostrar mensaje de éxito con SweetAlert2
+        // Confirmación de éxito con SweetAlert
         echo "<!DOCTYPE html>
         <html lang='es'>
         <head>
@@ -78,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Swal.fire({
                 icon: 'success',
                 title: '¡Éxito!',
-                text: '$mensajeExito',
+                text: 'Tarea y rúbricas asignadas correctamente.',
                 confirmButtonText: 'Aceptar'
             }).then((result) => {
                 window.location.href = 'gestionTareasProfesor.php';
@@ -86,11 +100,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </script>
         </body>
         </html>";
-        exit();
+        exit;
     } else {
         echo "<script>alert('Error al asignar la tarea: " . $conexion->error . "');</script>";
     }
-
-    $conexion->close();
 }
+
+$conexion->close();
 ?>
