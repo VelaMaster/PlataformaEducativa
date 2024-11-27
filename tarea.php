@@ -1,7 +1,4 @@
 <?php 
-// tarea.php
-
-// Conexión a la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -12,35 +9,24 @@ $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
-
-// Obtener ID de la tarea y asegurarse de que es un número entero
 $id_tarea = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-// Verificar si el ID de la tarea es válido
 if ($id_tarea > 0) {
-    // Obtener el ID del alumno desde la sesión
     session_start();
     $id_alumno = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 0;
 
     if ($id_alumno > 0) {
-        // Consulta para verificar si el alumno tiene acceso a esta tarea
         $sql = "SELECT * FROM tareas
                 JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
                 WHERE tareas.id_tarea = $id_tarea
                 AND grupo_alumnos.num_control = $id_alumno";
                 
-
         $resultado = $conexion->query($sql);
 
         if ($resultado && $resultado->num_rows > 0) {
             $tarea = $resultado->fetch_assoc();
-
-            // Verificar si el alumno ya entregó la tarea
             $sqlEntrega = "SELECT * FROM entregas WHERE id_tarea = $id_tarea AND id_alumno = $id_alumno";
             $resultadoEntrega = $conexion->query($sqlEntrega);
             $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
-
-            // Obtener el nombre de la materia
             function obtenerNombreMateria($id_curso, $conexion) {
                 $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
                 $resultado = $conexion->query($consulta);
