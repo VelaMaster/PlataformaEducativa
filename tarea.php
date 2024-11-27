@@ -85,9 +85,14 @@ if ($id_tarea > 0) {
             <span><?php echo htmlspecialchars($tarea['fecha_limite']); ?></span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Archivo Adjunto:</span>
-            <span><?php echo htmlspecialchars($tarea['archivo_tarea']); ?></span>
-        </div>
+    <span class="detail-label">Archivo Adjunto:</span>
+    <a href="download.php?file=<?php echo urlencode($tarea['archivo_tarea']); ?>" target="_blank">
+        Ver Archivo
+    </a>
+</div>
+
+
+
 
         <?php if ($entregado): ?>
     <?php 
