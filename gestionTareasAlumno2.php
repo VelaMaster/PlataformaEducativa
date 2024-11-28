@@ -156,7 +156,7 @@ $resultado = $conexion->query($sql);
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td>" . $fila["estado_entrega"] . "</td>";
-                echo "<td class='acciones'> <a href='tarea2.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
+                echo "<td class='acciones'> <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
                 echo "</tr>";
             }
         } else {
