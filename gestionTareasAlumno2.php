@@ -16,34 +16,51 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-$id_curso = $_GET['id_curso']; // Asegúrate de que esta variable está definida y validada correctamente
-// Verificar si se ha pasado el id_grupo por URL
-if (isset($_GET['id_curso'])) {
-    $id_curso = $_GET['id_curso'];
-} else {
-    echo "No se especificó un cursito.";
+// Validar y sanitizar id_curso
+$id_curso = isset($_GET['id_curso']) ? intval($_GET['id_curso']) : 0;
+if ($id_curso <= 0) {
+    echo "ID de curso inválido.";
     exit;
 }
 
-// Consulta para obtener las tareas asignadas al alumno actual y su estado de entrega, filtrando por el grupo específico
-$sql = "SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
-               CASE WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' ELSE 'No entregado' END AS estado_entrega
-        FROM tareas
-        JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
-        LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
-        WHERE grupo_alumnos.num_control = '$num_control'
-        AND tareas.id_curso = '$id_curso'";
+// Consulta preparada para obtener tareas
+$stmt = $conexion->prepare("SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
+                                   CASE 
+                                       WHEN tareas.fecha_limite < CURDATE() THEN 'Vencida' 
+                                       ELSE 'En plazo' 
+                                   END AS estado_fecha,
+                                   CASE 
+                                       WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' 
+                                       ELSE 'No entregado' 
+                                   END AS estado_entrega
+                            FROM tareas
+                            JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
+                            LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
+                            WHERE grupo_alumnos.num_control = ? AND tareas.id_curso = ?");
+$stmt->bind_param("si", $num_control, $id_curso);
+$stmt->execute();
+$resultado = $stmt->get_result();
 
-
-
-
-$resultado = $conexion->query($sql);
+// Función para obtener el nombre de la materia
+function obtenerNombreMateria($id_curso, $conexion) {
+    $stmt = $conexion->prepare("SELECT nombre_curso FROM cursos WHERE id_curso = ?");
+    $stmt->bind_param("i", $id_curso);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        return $fila['nombre_curso'];
+    } else {
+        return "Desconocido";
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tareas Asignadas</title>
     <style>
         body {
@@ -75,17 +92,19 @@ $resultado = $conexion->query($sql);
             border-collapse: collapse;
         }
 
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
         th {
             background-color: #ff9900;
             color: #fff;
             font-weight: bold;
-            text-align: left;
-            padding: 12px;
             font-size: 16px;
         }
 
         td {
-            padding: 12px;
             border-bottom: 1px solid #ddd;
             font-size: 15px;
         }
@@ -96,6 +115,16 @@ $resultado = $conexion->query($sql);
 
         tr:hover {
             background-color: #f1f1f1;
+        }
+
+        .estado-vencida {
+            color: red;
+            font-weight: bold;
+        }
+
+        .estado-en-plazo {
+            color: green;
+            font-weight: bold;
         }
 
         .acciones a {
@@ -130,6 +159,25 @@ $resultado = $conexion->query($sql);
         .back-button:hover {
             background-color: #e68a00;
         }
+
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .back-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -140,15 +188,13 @@ $resultado = $conexion->query($sql);
     <table>
         <tr>
             <th>Materia</th>
-            <th>Título de la Tarea</th>
+            <th>Título</th>
             <th>Fecha de Entrega</th>
+            <th>Entrega</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
         <?php
-
-
-
         if ($resultado->num_rows > 0) {
             while ($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
@@ -156,11 +202,12 @@ $resultado = $conexion->query($sql);
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td>" . $fila["estado_entrega"] . "</td>";
-                echo "<td class='acciones'> <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
+                echo "<td class='" . ($fila["estado_fecha"] === "Vencida" ? "estado-vencida" : "estado-en-plazo") . "'>" . $fila["estado_fecha"] . "</td>";
+                echo "<td class='acciones'><a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a></td>";
                 echo "</tr>";
             }
         } else {
-            echo "<tr><td colspan='5'>No hay tareas asignadas</td></tr>";
+            echo "<tr><td colspan='6'>No hay tareas asignadas</td></tr>";
         }
         $conexion->close();
         ?>
@@ -173,18 +220,4 @@ $resultado = $conexion->query($sql);
 
 </body>
 </html>
-
-<?php
-// Función para obtener el nombre de la materia basado en el id_curso
-function obtenerNombreMateria($id_curso, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
-    $resultado = $conexion->query($consulta);
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        return $fila['nombre_curso'];
-    } else {
-        return "Desconocido";
-    }
-}
-
-?>
+<?
