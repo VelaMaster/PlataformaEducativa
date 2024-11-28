@@ -65,7 +65,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            background-color: #e7d6bf;
             color: #333;
             margin: 0;
             padding: 0;
