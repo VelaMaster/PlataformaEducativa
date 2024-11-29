@@ -11,9 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?error=empty_fields");
         exit();
     }
-
-    // Conexión a la base de datos
-    $conexion = mysqli_connect("localhost", "root", "", "peis");
+    $conexion = mysqli_connect("127.0.0.1:3306", "root", "", "peis");
 
     if (!$conexion) {
         die("Conexión fallida: " . mysqli_connect_error());

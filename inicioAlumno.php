@@ -7,10 +7,10 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 $passwordPlain = isset($_SESSION['password_plain']) ? $_SESSION['password_plain'] : false;
-unset($_SESSION['password_plain']); // Limpiar después de mostrar el modal
+unset($_SESSION['password_plain']);
 
 $num_control = $_SESSION['usuario'];
-$conexion = mysqli_connect("localhost", "root", "", "peis");
+$conexion = mysqli_connect("127.0.0.1:3306", "root", "", "peis");
 
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
@@ -27,13 +27,12 @@ if (!$conexion) {
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
-        /* Estilo de la imagen circular para el perfil */
         .profile-img {
             width: 60px;
             height: 60px;
             border-radius: 50%;
             object-fit: cover;
-        }        /* Ajustes de la posición de la foto de perfil */
+        }
         .profile-container {
             position: absolute;
             top: 15px; /* Ajusta según la altura que prefieras */
