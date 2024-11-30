@@ -359,3 +359,19 @@
   background-color: #4CAF50;
   color: #212121;
 }
+.detail-item {
+  margin: 10px 0;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.detail-item span {
+  color: #555;
+}

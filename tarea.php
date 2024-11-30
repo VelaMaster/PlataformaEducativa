@@ -49,6 +49,23 @@ if ($id_tarea > 0) {
                      $rubrica[] = $fila;
                  }
              }
+             // Obtener la calificación y retroalimentación de la tabla entregas
+$sqlCalificacion = "SELECT calificacion, retroalimentacion 
+FROM entregas 
+WHERE id_tarea = $id_tarea 
+AND id_alumno = $id_alumno";
+
+$resultadoCalificacion = $conexion->query($sqlCalificacion);
+$calificacion = null;
+$retroalimentacion = null;
+
+if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
+$filaCalificacion = $resultadoCalificacion->fetch_assoc();
+$calificacion = $filaCalificacion['calificacion'];
+$retroalimentacion = $filaCalificacion['retroalimentacion'];
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -91,6 +108,22 @@ if ($id_tarea > 0) {
     </a>
 </div>
 
+
+<?php if ($calificacion !== null): ?>
+    <div class="detail-item">
+        <span class="detail-label">Calificación:</span>
+        <span><?php echo htmlspecialchars($calificacion); ?> / 100</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Retroalimentación:</span>
+        <span><?php echo htmlspecialchars($retroalimentacion); ?></span>
+    </div>
+<?php else: ?>
+    <div class="detail-item">
+        <span class="detail-label">Calificación:</span>
+        <span>Aún no calificada</span>
+    </div>
+<?php endif; ?>
 
 
 
