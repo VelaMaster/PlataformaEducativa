@@ -18,12 +18,14 @@ if ($conexion->connect_error) {
 
 // Consulta para obtener las tareas asignadas al alumno actual y su estado de entrega
 $sql = "SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
-               CASE WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' ELSE 'No entregado' END AS estado_entrega
+               CASE WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' ELSE 'No entregado' END AS estado_entrega,
+               CASE WHEN entregas.calificacion IS NOT NULL THEN 'Calificada' ELSE 'No calificada' END AS estado_calificacion
         FROM tareas
         JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
         LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
         WHERE grupo_alumnos.num_control = '$num_control'
         AND tareas.fecha_limite >= CURDATE()";
+
 
 $resultado = $conexion->query($sql);
 ?>
@@ -142,29 +144,32 @@ $resultado = $conexion->query($sql);
 
 <div class="table-container">
     <table>
-        <tr>
-            <th>Materia</th>
-            <th>Título de la Tarea</th>
-            <th>Fecha de Entrega</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-        <?php
-        if ($resultado->num_rows > 0) {
-            while ($fila = $resultado->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
-                echo "<td>" . $fila["titulo"] . "</td>";
-                echo "<td>" . $fila["fecha_limite"] . "</td>";
-                echo "<td>" . $fila["estado_entrega"] . "</td>";
-                echo "<td class='acciones'> <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='4'>No hay tareas asignadas</td></tr>";
-        }
-        $conexion->close();
-        ?>
+    <tr>
+    <th>Materia</th>
+    <th>Título de la Tarea</th>
+    <th>Fecha de Entrega</th>
+    <th>Estado de Entrega</th>
+    <th>Estado de Calificación</th> <!-- Nueva columna -->
+    <th>Acciones</th>
+</tr>
+<?php
+if ($resultado->num_rows > 0) {
+    while ($fila = $resultado->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
+        echo "<td>" . $fila["titulo"] . "</td>";
+        echo "<td>" . $fila["fecha_limite"] . "</td>";
+        echo "<td>" . $fila["estado_entrega"] . "</td>";
+        echo "<td>" . $fila["estado_calificacion"] . "</td>"; // Muestra el estado de calificación
+        echo "<td class='acciones'> <a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='5'>No hay tareas asignadas</td></tr>";
+}
+$conexion->close();
+?>
+
     </table>
 </div>
 
