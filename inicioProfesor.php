@@ -26,7 +26,6 @@ if (!$conexion) {
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
-    <link rel="stylesheet" href="css/barradeNavegacion.css">
     <style>
         .profile-img {
             width: 60px;
@@ -40,34 +39,25 @@ if (!$conexion) {
             right: 15px;
         }
         .card {
-    width: 320px;
-    height: 270px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column; /* Organiza el contenido en columna */
-    justify-content: flex-end; /* Empuja el contenido hacia la parte inferior */
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-.card:hover {
-    transform: scale(1.05); /* Agranda la tarjeta un 5% */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Incrementa la sombra */
-}
-.card img {
-    width: 100%;
-    height: auto; /* Asegura que la imagen mantenga su proporción */
-    flex: 1; /* La imagen toma el espacio disponible en el medio */
-}
-.card-content {
-    background-color: rgb(102, 102, 102);
-    color: white;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
+            width: 320px;
+            height: 270px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+            flex: 1;
+        }
         .card-content {
             background-color: rgb(102, 102, 102);
             color: white;
@@ -78,43 +68,30 @@ if (!$conexion) {
             align-items: flex-start;
         }
         .btn-orange {
-    background-color: #FFA500; /* Color naranja */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.btn-orange:hover {
-    background-color: #FF8C00; /* Naranja más oscuro para hover */
-}
-.dropdown-item:hover {
-    background-color: #F1AA3D;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    text-align: center;
-    transform: scale(1.1); /* Aumenta el tamaño */
-    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
-}
-/* Estilo del enlace al estar activo o enfocado */
-.dropdown-item:active,
-.dropdown-item:focus {
-    background-color: #FFA500; /* Naranja */
-    color: white;
-    text-decoration: none;
-    transform: scale(1); /* Mantiene el tamaño normal */
-}
-
-/* Elimina el borde azul predeterminado */
-.dropdown-item:focus {
-    outline: none;
-}
-.dropdown-menu{
-    text-align: center;
-}
+            background-color: #FFA500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-orange:hover {
+            background-color: #FF8C00;
+        }
+        .dropdown-item:hover {
+            background-color: #F1AA3D;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            transform: scale(1.1);
+            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+        .dropdown-menu {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +115,9 @@ if (!$conexion) {
                     <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a> <!-- Nueva opción -->
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
                 </li>
             </ul>
@@ -145,7 +125,7 @@ if (!$conexion) {
     </div>
  </div>
 </div>
-<!-- Modal de advertencia de seguridad -->
+
 <?php if ($passwordPlain): ?>
     <div class="modal fade" id="passwordWarningModal" tabindex="-1" aria-labelledby="passwordWarningLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -165,6 +145,7 @@ if (!$conexion) {
         </div>
     </div>
 <?php endif; ?>
+
 <div class="profile-container">
     <a href="#" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="img/perfil120.png" alt="Foto de perfil" class="profile-img">
@@ -232,44 +213,10 @@ if (!$conexion) {
 
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
-    function showTasks(courseId) {
-        fetch(`getTasks.php?id_curso=${courseId}`)
-            .then(response => response.json())
-            .then(data => {
-                const tasksList = document.getElementById("tasksList").querySelector("tbody");
-                tasksList.innerHTML = "";
-
-                if (data.length > 0) {
-                    data.forEach(task => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${task.titulo}</td>
-                            <td>${task.descripcion}</td>
-                            <td>${task.fecha_creacion || 'Sin fecha'}</td>
-                            <td>${task.fecha_limite || 'Sin fecha'}</td>
-                        `;
-                        tasksList.appendChild(row);
-                    });
-                } else {
-                    const row = document.createElement("tr");
-                    row.innerHTML = "<td colspan='4'>No hay tareas asignadas.</td>";
-                    tasksList.appendChild(row);
-                }
-
-                document.getElementById("tasksModal").style.display = "flex";
-            });
-    }
-
-    function closeModal() {
-        document.getElementById("tasksModal").style.display = "none";
-    }
-</script>
-<script>
     <?php if ($passwordPlain): ?>
         var passwordWarningModal = new bootstrap.Modal(document.getElementById('passwordWarningModal'));
         passwordWarningModal.show();
     <?php endif; ?>
 </script>
-</body>
 </body>
 </html>
