@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'db.php'; // Incluye el archivo db.php para la conexión
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'];
@@ -10,11 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($usuario) || empty($contrasena) || empty($role)) {
         header("Location: index.php?error=empty_fields");
         exit();
-    }
-    $conexion = mysqli_connect("127.0.0.1:3306", "root", "", "peis");
-
-    if (!$conexion) {
-        die("Conexión fallida: " . mysqli_connect_error());
     }
 
     // Escapa las entradas para prevenir inyección SQL
@@ -51,10 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($role == "Estudiante") {
                 header("Location: inicioAlumno.php");
             } elseif ($role == "Docente") {
-                header("Location: inicioDocente.php");
+                header("Location: inicioProfesor.php");
             }
             exit();
         } elseif ($contrasena === $row['contrasena']) {
+            // Contraseña sin encriptar válida
             $_SESSION['nombre'] = $row['nombre'];
             $_SESSION['num_control'] = $row['num_control'];
             $_SESSION['usuario'] = $usuario;
@@ -79,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Liberar recursos y cerrar conexión
     mysqli_free_result($resultado);
     mysqli_stmt_close($stmt);
-    mysqli_close($conexion);
 } else {
     // Si se accede al archivo sin enviar datos por POST, redirigir al index
     header("Location: index.php");

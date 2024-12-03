@@ -15,6 +15,17 @@ $conexion = mysqli_connect("localhost", "root", "", "peis");
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
 }
+
+// Obtener el 'id' del docente
+$query_docente_id = "SELECT id FROM docentes WHERE num_control = '$num_control'";
+$result_docente_id = mysqli_query($conexion, $query_docente_id);
+if ($result_docente_id && mysqli_num_rows($result_docente_id) > 0) {
+    $row_docente = mysqli_fetch_assoc($result_docente_id);
+    $id_docente = $row_docente['id'];
+} else {
+    echo "Docente no encontrado.";
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -26,73 +37,7 @@ if (!$conexion) {
     <link rel="stylesheet" href="css/iniciosesionalumno.css">
     <link rel="stylesheet" href="css/estilostarjetas.css">
     <link rel="stylesheet" href="css/barradeNavegacion.css">
-    <style>
-        .profile-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .profile-container {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-        .card {
-            width: 320px;
-            height: 270px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            overflow: hidden;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .card img {
-            width: 100%;
-            height: auto;
-            flex: 1;
-        }
-        .card-content {
-            background-color: rgb(102, 102, 102);
-            color: white;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .btn-orange {
-            background-color: #FFA500;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn-orange:hover {
-            background-color: #FF8C00;
-        }
-        .dropdown-item:hover {
-            background-color: #F1AA3D;
-            color: white;
-            border-radius: 10px;
-            text-decoration: none;
-            text-align: center;
-            transform: scale(1.1);
-            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
-        }
-        .dropdown-menu {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="css/inicioProfesor.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
@@ -159,53 +104,53 @@ if (!$conexion) {
 </div>
 
 <main>
-    <div class="card-container">
-    <?php
-    try {
-        $consulta_materias = "
-        SELECT 
-            c.id_curso,
-            c.nombre_curso AS nombre_materia,
-            g.nombre_grupo,
-            c.imagen_url,
-            g.horario,
-            g.aula
-        FROM 
-            cursos c
-        JOIN 
-            grupos g ON c.id_curso = g.id_curso
-        WHERE 
-            g.id_docente = '$num_control'
-        ORDER BY 
-            c.nombre_curso, g.nombre_grupo
-        ";
+        <div class="card-container">
+        <?php
+        try {
+            $consulta_materias = "
+            SELECT 
+                c.id AS id_curso,
+                c.nombre_curso AS nombre_materia,
+                g.nombre_grupo,
+                c.imagen_url,
+                g.horario,
+                g.aula
+            FROM 
+                cursos c
+            JOIN 
+                grupos g ON c.id = g.id_curso
+            WHERE 
+                g.id_docente = '$id_docente'
+            ORDER BY 
+                c.nombre_curso, g.nombre_grupo
+            ";
 
-        $resultado_materias = mysqli_query($conexion, $consulta_materias);
-        if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
-            while ($row = mysqli_fetch_assoc($resultado_materias)) {
-                $imagen_url = $row['imagen_url'];
-                $id_curso = $row['id_curso'];
-                echo "<div class='card' style='background-image: url($imagen_url)'>";
-                echo "<div class='card-content'>";
-                echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
-                echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
-                echo "<p class='card-subtitle'>Horario: " . $row['horario'] . ' ' . $row['aula'] . "</p>";
-                echo "<button class='view-more' onclick=\"window.location.href='vermasProfesor.php?id_curso=$id_curso'\">Ver más</button>";
-                echo "</div>";
-                echo "</div>";
+            $resultado_materias = mysqli_query($conexion, $consulta_materias);
+            if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
+                while ($row = mysqli_fetch_assoc($resultado_materias)) {
+                    $imagen_url = $row['imagen_url'];
+                    $id_curso = $row['id_curso'];
+                    echo "<div class='card' style='background-image: url($imagen_url)'>";
+                    echo "<div class='card-content'>";
+                    echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
+                    echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
+                    echo "<p class='card-subtitle'>Horario: " . $row['horario'] . ' ' . $row['aula'] . "</p>";
+                    echo "<button class='view-more' onclick=\"window.location.href='vermasProfesor.php?id_curso=$id_curso'\">Ver más</button>";
+                    echo "</div>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p class='text-center'>No tienes materias asignadas actualmente.</p>";
             }
-        } else {
-            echo "<p class='text-center'>No tienes materias asignadas actualmente.</p>";
+        } catch (mysqli_sql_exception $e) {
+            echo "Error en la consulta: " . $e->getMessage();
         }
-    } catch (mysqli_sql_exception $e) {
-        echo "Error en la consulta: " . $e->getMessage();
-    }
 
-    mysqli_free_result($resultado_materias);
-    mysqli_close($conexion);
-    ?>
-    </div>
-</main>
+        mysqli_free_result($resultado_materias);
+        mysqli_close($conexion);
+        ?>
+        </div>
+    </main>
 
 <footer>
     <p>© 2024 PE-ISC</p>

@@ -19,10 +19,10 @@ if ($conexion->connect_error) {
 
 // Consulta para obtener los foros de un docente
 $sql = "
-    SELECT f.id, f.nombre, f.descripcion, f.tipo_for, f.id_curso
+    SELECT f.id, f.nombre, f.descripcion, f.tipo_for
     FROM foros f
-    JOIN cursos c ON f.id_curso = c.id_curso
-    JOIN grupos g ON c.id_curso = g.id_curso
+    JOIN cursos c ON f.id_curso = c.id
+    JOIN grupos g ON c.id = g.id_curso
     WHERE g.id_docente = '$num_control'
 ";
 $resultado = $conexion->query($sql);
@@ -37,48 +37,39 @@ $resultado = $conexion->query($sql);
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
-        /* Estilos generales */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f7fb;
             margin: 0;
             padding: 0;
         }
-
         header, footer {
             background-color: #343a40;
             color: #fff;
             padding: 10px 0;
         }
-
         h1, h2 {
             font-size: 1.75rem;
             font-weight: 600;
             color: #333;
         }
-
         h3 {
             color: #555;
             font-weight: 500;
         }
-
         .navbar {
             background-color: #007bff;
         }
-
         .navbar a {
             color: white;
             font-weight: 600;
         }
-
         .navbar a:hover {
             color: #f1f1f1;
         }
-
         .navbar-toggler-icon {
             background-color: white;
         }
-
         .card {
             border: none;
             border-radius: 8px;
@@ -87,34 +78,28 @@ $resultado = $conexion->query($sql);
             margin-bottom: 30px;
             transition: transform 0.3s;
         }
-
         .card:hover {
             transform: translateY(-5px);
         }
-
         .card-header {
             background-color: #007bff;
             color: white;
             font-size: 1.25rem;
             padding: 15px;
         }
-
         .card-body {
             padding: 20px;
         }
-
         .card-body p {
             color: #666;
             font-size: 1rem;
             line-height: 1.6;
         }
-
         .card-footer {
             background-color: #f8f9fa;
             text-align: center;
             padding: 15px;
         }
-
         .form-container {
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -122,13 +107,11 @@ $resultado = $conexion->query($sql);
             border-radius: 8px;
             margin-bottom: 30px;
         }
-
         .form-container label {
             font-size: 1rem;
             font-weight: 600;
             color: #333;
         }
-
         .form-container input, .form-container select, .form-container textarea {
             width: 100%;
             padding: 12px;
@@ -138,18 +121,15 @@ $resultado = $conexion->query($sql);
             font-size: 1rem;
             color: #333;
         }
-
         .form-container input[type="submit"] {
             background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
         }
-
         .form-container input[type="submit"]:hover {
             background-color: #218838;
         }
-
         .btn-primary {
             background-color: #007bff;
             color: white;
@@ -157,11 +137,9 @@ $resultado = $conexion->query($sql);
             border-radius: 5px;
             font-weight: 600;
         }
-
         .btn-primary:hover {
             background-color: #0056b3;
         }
-
         footer p {
             text-align: center;
             font-size: 1rem;
@@ -201,7 +179,7 @@ $resultado = $conexion->query($sql);
                     <?php
                     if ($resultado->num_rows > 0) {
                         while ($row = $resultado->fetch_assoc()) {
-                            echo "<option value='" . $row['id_curso'] . "'>" . $row['nombre'] . "</option>";
+                            echo "<option value='" . $row['id'] . "'>" . htmlspecialchars($row['nombre']) . "</option>";
                         }
                     } else {
                         echo "<option value=''>No tiene foros asignados</option>";
