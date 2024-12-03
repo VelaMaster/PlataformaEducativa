@@ -6,7 +6,6 @@ if (isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
-
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -16,8 +15,6 @@ $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
-
-// Consulta para obtener los foros de un docente
 $sql = "
     SELECT f.id, f.nombre, f.descripcion, f.tipo_for, f.id_curso
     FROM foros f
