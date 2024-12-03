@@ -184,18 +184,27 @@ if (!$conexion) {
 <?php
 try {
     $consulta_materias = "
-    SELECT c.nombre_curso AS nombre_materia, 
-           CONCAT(d.nombre, ' ', d.apellido_p, ' ', d.apellido_m) AS nombre_profesor, 
-           c.imagen_url,
-           g.horario,
-           g.aula,
-           g.nombre_grupo AS grupo,
-           g.id_curso
-    FROM cursos c
-    JOIN grupos g ON c.id_curso = g.id_curso
-    JOIN grupo_alumnos ga ON g.id_grupo = ga.id_grupo
-    JOIN docentes d ON g.id_docente = d.num_control
-    WHERE ga.num_control = ?
+  SELECT 
+    c.id AS id_curso,
+   
+    c.nombre_curso AS nombre_materia,
+    g.nombre_grupo,
+    c.imagen_url,
+    g.horario,
+    g.aula
+FROM 
+    cursos c
+
+JOIN 
+    grupos g ON c.id = g.id_curso
+JOIN 
+    grupo_alumnos ga ON g.id = ga.id_grupo
+
+WHERE 
+    ga.num_control = ?
+ORDER BY 
+    c.nombre_curso, g.nombre_grupo;
+
 ";
 $stmt = mysqli_prepare($conexion, $consulta_materias);
 mysqli_stmt_bind_param($stmt, 's', $num_control);
@@ -210,8 +219,8 @@ $resultado_materias = mysqli_stmt_get_result($stmt);
             echo "<div class='card' style='background-image: url($imagen_url)'>"; // Aplica la imagen como fondo
             echo "<div class='card-content'>";
             echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
-            echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
-            echo "<p class='card-subtitle'>" . $row['grupo'] . "</p>"; // Muestra el grupo
+            //echo "<p class='card-subtitle'>Profesor: " . $row['nombre_profesor'] . "</p>";
+            echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>"; // Muestra el grupo
             echo "<p class='card-subtitle'>Horario: " . $row['horario'] .' '. $row['aula'] . "</p>"; // Muestra el horario
             echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
             echo "</div>";
@@ -224,7 +233,7 @@ $resultado_materias = mysqli_stmt_get_result($stmt);
 } catch (mysqli_sql_exception $e) {
     echo "Error en la consulta: " . $e->getMessage();
 }
-mysqli_free_result($resultado_materias);
+
 
 mysqli_close($conexion);
 ?>
