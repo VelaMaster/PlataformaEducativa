@@ -17,8 +17,8 @@ if ($conexion->connect_error) {
 $id = $_GET['id'];
 
 // Función para obtener el nombre de la materia
-function obtenerNombreMateria($id_curso, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
+function obtenerNombreMateria($id, $conexion) {
+    $consulta = "SELECT nombre_curso FROM cursos WHERE id = $id";
     $resultado = $conexion->query($consulta);
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
@@ -34,7 +34,7 @@ $resultado = $conexion->query($sql);
 
 if ($resultado->num_rows > 0) {
     $foro = $resultado->fetch_assoc();
-    $nombre_materia = obtenerNombreMateria($foro['id_curso'], $conexion);
+    $nombre_materia = obtenerNombreMateria($foro['id'], $conexion);
     ?>
 
     <!DOCTYPE html>

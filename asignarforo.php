@@ -1,65 +1,77 @@
 <?php
 session_start();
 
-// Verificar si el usuario está autenticado
-if (isset($_SESSION['usuario'])) {
-    $num_control = $_SESSION['usuario'];  // Número de control del docente
-} else {
+// Verificación de que el usuario está autenticado
+if (!isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
 
-// Configuración de la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $baseDatos = "peis";
 
-// Establecer conexión con la base de datos
+// Conexión a la base de datos
 $conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
-
-// Verificar si hay error en la conexión
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Consulta para obtener los foros accesibles por el docente
+// Recuperamos el ID del docente de la sesión
+$num_control = $_SESSION['usuario'];
+
+// Comprobamos si el formulario ha sido enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Sanitización de datos del formulario
+    $materia = htmlspecialchars($_POST['materia']);
+    $titulo = htmlspecialchars($_POST['titulo']);
+    $descripcion = htmlspecialchars($_POST['descripcion']);
+    $tipo_for = htmlspecialchars($_POST['tipo_for']);
+
+    // Validar que los campos no estén vacíos
+    if (empty($materia) || empty($titulo) || empty($descripcion) || empty($tipo_for)) {
+        echo "<script>alert('Todos los campos son obligatorios.'); window.location.href = 'asignarForo.php';</script>";
+        exit;
+    }
+
+    // Consulta preparada para evitar inyección SQL
+    $stmt = $conexion->prepare("INSERT INTO foros (id_curso, nombre, descripcion, tipo_for) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param('ssss', $materia, $titulo, $descripcion, $tipo_for);  // 'ssss' indica que los parámetros son cadenas
+
+    // Ejecutamos la consulta
+    if ($stmt->execute()) {
+        // Si la inserción es exitosa
+        echo "<script>alert('Foro asignado exitosamente.'); window.location.href = 'gestionForosProfesor.php';</script>";
+    } else {
+        // Si hay un error en la consulta
+        echo "<script>alert('Error al asignar el foro. Intenta nuevamente.'); window.location.href = 'asignarForo.php';</script>";
+    }
+
+    // Cerramos la declaración preparada
+    $stmt->close();
+}
+
+// Consulta para obtener las materias disponibles para el docente
 $sql = "
     SELECT f.id, f.nombre, f.descripcion, f.tipo_for
     FROM foros f
-    JOIN foro_acceso_docentes fad ON f.id = fad.id_foros
-    WHERE fad.num_control_docente = ?
+    JOIN cursos c ON f.id_curso = c.id
+    JOIN grupos g ON c.id = g.id_curso
+    WHERE g.id_docente = '$num_control'
 ";
-
-// Preparar la consulta para evitar inyección SQL
-$stmt = $conexion->prepare($sql);
-if (!$stmt) {
-    die("Error al preparar la consulta: " . $conexion->error);
-}
-
-$stmt->bind_param("i", $num_control);  // Asumiendo que $num_control es un número entero
-$stmt->execute();
-$resultado = $stmt->get_result();
-
-// Cerrar la conexión con la base de datos
-$stmt->close();
-
-// Cerrar la conexión con la base de datos
-$conexion->close();
+$resultado = $conexion->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Foros - Profesor</title>
+    <title>Asignar Foro</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/gestionForosProfesor.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
-    <style>
-        /* Tu estilo CSS aquí */
-    </style>
 </head>
 <body>
 <header>
@@ -118,15 +130,6 @@ $conexion->close();
             </form>
         </div>
     </section>
-
-    <section id="foros-asignados">
-        <h2>Foros Asignados</h2>
-        <div class="form-container">
-            <form method="POST" action="listarforos.php">
-                <input type="submit" value="Mostrar Foros Asignados" class="btn btn-primary">
-            </form>
-        </div>
-    </section>
 </main>
 
 <footer>
@@ -136,3 +139,8 @@ $conexion->close();
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<?php
+// Cerramos la conexión a la base de datos
+$conexion->close();
+?>

@@ -14,9 +14,9 @@ if ($conexion->connect_error) {
 }
 
 // Consulta para obtener los foros asignados
-$sql = "SELECT f.id, f.id_curso, f.nombre, f.descripcion, f.tipo_for 
+$sql = "SELECT f.id, f.id, f.nombre, f.descripcion, f.tipo_for 
         FROM foros f 
-        JOIN cursos c ON f.id_curso = c.id_curso";
+        JOIN cursos c ON f.id = c.id";
 $resultado = $conexion->query($sql);
 ?>
 
@@ -215,7 +215,7 @@ $resultado = $conexion->query($sql);
         if ($resultado->num_rows > 0) {
             while ($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
+                echo "<td>" . obtenerNombreMateria($fila["id"], $conexion) . "</td>";
                 echo "<td>" . $fila["nombre"] . "</td>";
                 echo "<td>" . $fila["descripcion"] . "</td>";
                 echo "<td>" . $fila["tipo_for"] . "</td>";
@@ -278,9 +278,9 @@ $resultado = $conexion->query($sql);
 </html>
 
 <?php
-// Función para obtener el nombre de la materia basado en id_curso
-function obtenerNombreMateria($id_curso, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
+// Función para obtener el nombre de la materia basado en id
+function obtenerNombreMateria($id, $conexion) {
+    $consulta = "SELECT nombre_curso FROM cursos WHERE id = $id";
     $resultado = $conexion->query($consulta);
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
