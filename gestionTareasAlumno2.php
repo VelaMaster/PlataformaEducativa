@@ -24,19 +24,20 @@ if ($id_curso <= 0) {
 }
 
 // Consulta preparada para obtener tareas
-$stmt = $conexion->prepare("SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
-                                   CASE 
-                                       WHEN tareas.fecha_limite < CURDATE() THEN 'Vencida' 
-                                       ELSE 'En plazo' 
-                                   END AS estado_fecha,
-                                   CASE 
-                                       WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' 
-                                       ELSE 'No entregado' 
-                                   END AS estado_entrega
-                            FROM tareas
-                            JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
-                            LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
-                            WHERE grupo_alumnos.num_control = ? AND tareas.id_curso = ?");
+$stmt = $conexion->prepare("SELECT tareas.id AS id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
+               CASE 
+                   WHEN tareas.fecha_limite < CURDATE() THEN 'Vencida' 
+                   ELSE 'En plazo' 
+               END AS estado_fecha,
+               CASE 
+                   WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' 
+                   ELSE 'No entregado' 
+               END AS estado_entrega
+        FROM tareas
+        JOIN cursos ON tareas.id_curso = cursos.id
+        JOIN grupo_alumnos ON cursos.id = grupo_alumnos.id_grupo
+        LEFT JOIN entregas ON tareas.id = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
+        WHERE grupo_alumnos.num_control = ? AND tareas.id_curso = ?");
 $stmt->bind_param("si", $num_control, $id_curso);
 $stmt->execute();
 $resultado = $stmt->get_result();

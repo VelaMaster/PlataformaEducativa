@@ -17,12 +17,13 @@ if ($conexion->connect_error) {
 }
 
 // Consulta para obtener las tareas asignadas al alumno actual y su estado de entrega
-$sql = "SELECT tareas.id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
+$sql = "SELECT tareas.id AS id_tarea, tareas.id_curso, tareas.titulo, tareas.fecha_limite, 
                CASE WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' ELSE 'No entregado' END AS estado_entrega,
                CASE WHEN entregas.calificacion IS NOT NULL THEN 'Calificada' ELSE 'No calificada' END AS estado_calificacion
         FROM tareas
-        JOIN grupo_alumnos ON tareas.id_curso = grupo_alumnos.id_grupo
-        LEFT JOIN entregas ON tareas.id_tarea = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
+        JOIN cursos ON tareas.id_curso = cursos.id
+        JOIN grupo_alumnos ON cursos.id = grupo_alumnos.id_grupo
+        LEFT JOIN entregas ON tareas.id = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
         WHERE grupo_alumnos.num_control = '$num_control'
         AND tareas.fecha_limite >= CURDATE()";
 
