@@ -65,6 +65,9 @@ if ($result_docente_id && mysqli_num_rows($result_docente_id) > 0) {
                 <li class="nav-item">
                     <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
+                </li>
             </ul>
         </div>
     </div>

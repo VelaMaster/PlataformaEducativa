@@ -43,8 +43,6 @@ $resultado = $stmt->get_result();
 
 // Cerrar la conexión con la base de datos
 $stmt->close();
-
-// Cerrar la conexión con la base de datos
 $conexion->close();
 ?>
 
@@ -52,13 +50,45 @@ $conexion->close();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Foros - Profesor</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/gestionForosProfesor.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
-        /* Tu estilo CSS aquí */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav.navbar {
+            margin-bottom: 20px;
+            background-color: #343a40;
+        }
+        nav .navbar-nav .nav-link {
+            color: white !important;
+        }
+        main {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #343a40;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #343a40;
+            color: white;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -84,13 +114,13 @@ $conexion->close();
     </div>
 </nav>
 
-<main class="container mt-4">
+<main class="container">
     <section id="asignar-foro">
         <h2>Asignar Nuevo Foro</h2>
-        <div class="form-container">
-            <form action="asignarForo.php" method="POST">
-                <label for="materia">Materia:</label>
-                <select id="materia" name="materia" required>
+        <form action="asignarForo.php" method="POST" class="mb-4">
+            <div class="mb-3">
+                <label for="materia" class="form-label">Materia:</label>
+                <select id="materia" name="materia" class="form-select" required>
                     <?php
                     if ($resultado->num_rows > 0) {
                         while ($row = $resultado->fetch_assoc()) {
@@ -101,31 +131,31 @@ $conexion->close();
                     }
                     ?>
                 </select>
-
-                <label for="titulo">Título del Foro:</label>
-                <input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título del foro">
-
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required placeholder="Describa los detalles del foro"></textarea>
-
-                <label for="tipo_for">Tipo de Foro:</label>
-                <select id="tipo_for" name="tipo_for" required>
+            </div>
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título del Foro:</label>
+                <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Ingrese el título del foro">
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" class="form-control" required placeholder="Describa los detalles del foro"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="tipo_for" class="form-label">Tipo de Foro:</label>
+                <select id="tipo_for" name="tipo_for" class="form-select" required>
                     <option value="general">Foro General</option>
                     <option value="tematico">Foro Temático</option>
                 </select>
-
-                <input type="submit" value="Asignar Foro">
-            </form>
-        </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Asignar Foro</button>
+        </form>
     </section>
 
     <section id="foros-asignados">
         <h2>Foros Asignados</h2>
-        <div class="form-container">
-            <form method="POST" action="listarforos.php">
-                <input type="submit" value="Mostrar Foros Asignados" class="btn btn-primary">
-            </form>
-        </div>
+        <form method="POST" action="listarforos.php">
+            <button type="submit" class="btn btn-secondary">Mostrar Foros Asignados</button>
+        </form>
     </section>
 </main>
 
