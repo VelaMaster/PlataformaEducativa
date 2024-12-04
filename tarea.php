@@ -15,21 +15,34 @@ if ($id_tarea > 0) {
     $id_alumno = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 0;
 
     if ($id_alumno > 0) {
-        $sql = "SELECT * FROM tareas
-                JOIN grupo_alumnos ON grupo_alumnos.id_grupo = tareas.id_curso
-                WHERE tareas.id_tarea = $id_tarea
-                AND grupo_alumnos.num_control = $id_alumno";
-                
-        $resultado = $conexion->query($sql);
+        $sql = "SELECT tareas.*, grupo_alumnos.num_control
+                FROM tareas
+                JOIN grupos ON grupos.id_curso = tareas.id_curso
+                JOIN grupo_alumnos ON grupo_alumnos.id_grupo = grupos.id
+                WHERE tareas.id = ? AND grupo_alumnos.num_control = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("is", $id_tarea, $id_alumno);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
         if ($resultado && $resultado->num_rows > 0) {
             $tarea = $resultado->fetch_assoc();
-            $sqlEntrega = "SELECT * FROM entregas WHERE id_tarea = $id_tarea AND id_alumno = $id_alumno";
-            $resultadoEntrega = $conexion->query($sqlEntrega);
+
+            // Consulta para verificar si ya se entregó la tarea
+            $sqlEntrega = "SELECT * FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
+            $stmtEntrega = $conexion->prepare($sqlEntrega);
+            $stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
+            $stmtEntrega->execute();
+            $resultadoEntrega = $stmtEntrega->get_result();
             $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
+
+            // Función para obtener el nombre del curso
             function obtenerNombreMateria($id_curso, $conexion) {
-                $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
-                $resultado = $conexion->query($consulta);
+                $consulta = "SELECT nombre_curso FROM cursos WHERE id = ?";
+                $stmtMateria = $conexion->prepare($consulta);
+                $stmtMateria->bind_param("i", $id_curso);
+                $stmtMateria->execute();
+                $resultado = $stmtMateria->get_result();
                 if ($resultado && $resultado->num_rows > 0) {
                     $fila = $resultado->fetch_assoc();
                     return $fila['nombre_curso'];
@@ -40,30 +53,35 @@ if ($id_tarea > 0) {
 
             $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
 
-             // **CONSULTAR LA RÚBRICA**
-             $sqlRubrica = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
-             $resultadoRubrica = $conexion->query($sqlRubrica);
-             $rubrica = [];
-             if ($resultadoRubrica && $resultadoRubrica->num_rows > 0) {
-                 while ($fila = $resultadoRubrica->fetch_assoc()) {
-                     $rubrica[] = $fila;
-                 }
-             }
-             // Obtener la calificación y retroalimentación de la tabla entregas
-$sqlCalificacion = "SELECT calificacion, retroalimentacion 
-FROM entregas 
-WHERE id_tarea = $id_tarea 
-AND id_alumno = $id_alumno";
+            // Consultar la rúbrica asociada
+            $sqlRubrica = "SELECT * FROM rubricas WHERE id_tarea = ?";
+            $stmtRubrica = $conexion->prepare($sqlRubrica);
+            $stmtRubrica->bind_param("i", $id_tarea);
+            $stmtRubrica->execute();
+            $resultadoRubrica = $stmtRubrica->get_result();
+            $rubrica = [];
+            if ($resultadoRubrica && $resultadoRubrica->num_rows > 0) {
+                while ($fila = $resultadoRubrica->fetch_assoc()) {
+                    $rubrica[] = $fila;
+                }
+            }
 
-$resultadoCalificacion = $conexion->query($sqlCalificacion);
-$calificacion = null;
-$retroalimentacion = null;
+            // Obtener calificación y retroalimentación
+            $sqlCalificacion = "SELECT calificacion
+                                 FROM entregas 
+                                 WHERE id_tarea = ? AND id_alumno = ?";
+            $stmtCalificacion = $conexion->prepare($sqlCalificacion);
+            $stmtCalificacion->bind_param("is", $id_tarea, $id_alumno);
+            $stmtCalificacion->execute();
+            $resultadoCalificacion = $stmtCalificacion->get_result();
+            $calificacion = null;
+            $retroalimentacion = null;
 
-if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
-$filaCalificacion = $resultadoCalificacion->fetch_assoc();
-$calificacion = $filaCalificacion['calificacion'];
-$retroalimentacion = $filaCalificacion['retroalimentacion'];
-}
+            if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
+                $filaCalificacion = $resultadoCalificacion->fetch_assoc();
+                $calificacion = $filaCalificacion['calificacion'];
+                
+            }
 
 
 ?>

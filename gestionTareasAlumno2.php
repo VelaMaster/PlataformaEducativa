@@ -34,10 +34,10 @@ $stmt = $conexion->prepare("SELECT tareas.id AS id_tarea, tareas.id_curso, tarea
                    ELSE 'No entregado' 
                END AS estado_entrega
         FROM tareas
-        JOIN cursos ON tareas.id_curso = cursos.id
-        JOIN grupo_alumnos ON cursos.id = grupo_alumnos.id_grupo
-        LEFT JOIN entregas ON tareas.id = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
-        WHERE grupo_alumnos.num_control = ? AND tareas.id_curso = ?");
+       JOIN grupos ON tareas.id_curso = grupos.id_curso
+    JOIN grupo_alumnos ON grupos.id = grupo_alumnos.id_grupo
+    LEFT JOIN entregas ON tareas.id = entregas.id_tarea AND entregas.id_alumno = grupo_alumnos.num_control
+    WHERE grupo_alumnos.num_control = ? AND tareas.id_curso = ?");
 $stmt->bind_param("si", $num_control, $id_curso);
 $stmt->execute();
 $resultado = $stmt->get_result();
@@ -45,7 +45,7 @@ $resultado = $stmt->get_result();
 // Función para obtener el nombre de la materia
 function obtenerNombreMateria($id_curso, $conexion) {
     $stmt = $conexion->prepare("SELECT nombre_curso FROM cursos WHERE id = ?");
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $id_curso); // Aquí debe ser $id_curso, no $id
     $stmt->execute();
     $resultado = $stmt->get_result();
     if ($resultado->num_rows > 0) {
@@ -55,6 +55,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
         return "Desconocido";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -199,7 +200,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
         if ($resultado->num_rows > 0) {
             while ($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id"], $conexion) . "</td>";
+                echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td>" . $fila["estado_entrega"] . "</td>";
