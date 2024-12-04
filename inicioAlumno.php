@@ -142,6 +142,9 @@ if (!$conexion) {
                 <li class="nav-item">
                     <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="forosAlumno.php">Foros</a>
+                </li>
             </ul>
         </div>
     </div>

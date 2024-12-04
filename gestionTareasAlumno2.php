@@ -44,8 +44,8 @@ $resultado = $stmt->get_result();
 
 // Función para obtener el nombre de la materia
 function obtenerNombreMateria($id_curso, $conexion) {
-    $stmt = $conexion->prepare("SELECT nombre_curso FROM cursos WHERE id_curso = ?");
-    $stmt->bind_param("i", $id_curso);
+    $stmt = $conexion->prepare("SELECT nombre_curso FROM cursos WHERE id = ?");
+    $stmt->bind_param("i", $id);
     $stmt->execute();
     $resultado = $stmt->get_result();
     if ($resultado->num_rows > 0) {
@@ -199,7 +199,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
         if ($resultado->num_rows > 0) {
             while ($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
+                echo "<td>" . obtenerNombreMateria($fila["id"], $conexion) . "</td>";
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td>" . $fila["estado_entrega"] . "</td>";
