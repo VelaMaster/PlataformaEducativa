@@ -1,0 +1,100 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    padding: 20px 0;
+    font-size: 24px;
+}
+
+.table-container {
+    max-width: 90%;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #ff9900;
+    color: #fff;
+    font-weight: bold;
+    text-align: left;
+    padding: 12px;
+    font-size: 16px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 15px;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+.acciones a {
+    margin: 0 5px;
+    color: #ff9900;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.acciones a:hover {
+    color: #e68a00;
+}
+
+.back-button-container {
+    text-align: center;
+    margin: 20px;
+}
+
+.back-button {
+    background-color: #ff9900;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #e68a00;
+}
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
+}
+
+.footer {
+    position: relative;
+    padding-top: 10px;
+}
