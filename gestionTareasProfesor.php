@@ -1,27 +1,26 @@
 <?php
 session_start();
+require 'db.php';
 if (isset($_SESSION['usuario'])) {
     $num_control = $_SESSION['usuario'];
 } else {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
-$servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
-$baseDatos = "peis";
-$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
-
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
-}
 $sql = "
-    SELECT c.id_curso, c.nombre_curso 
+    SELECT c.id AS id_curso, c.nombre_curso 
     FROM cursos c 
-    JOIN grupos g ON c.id_curso = g.id_curso 
-    WHERE g.id_docente = '$num_control'
+    JOIN grupos g ON c.id = g.id_curso 
+    WHERE g.id_docente = (
+        SELECT d.id 
+        FROM docentes d 
+        WHERE d.num_control = ?
+    )
 ";
-$resultado = $conexion->query($sql);
+$stmt = mysqli_prepare($conexion, $sql);
+mysqli_stmt_bind_param($stmt, 's', $num_control);
+mysqli_stmt_execute($stmt);
+$resultado = mysqli_stmt_get_result($stmt);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -126,15 +125,14 @@ $resultado = $conexion->query($sql);
 
 <main>
     <h1>Gestión de Tareas</h1>
-
     <section id="asignar-tarea">
         <h2>Asignar Nueva Tarea</h2>
-        <form action="asignarTarea.php" method="POST" enctype="multipart/form-data" onsubmit="return validarFecha() && validarTotalPuntos();">
+        <form action="asignarTarea.php" method="POST" enctype="multipart/form-data">
             <label for="materia">Materia:</label>
             <select id="materia" name="materia" required>
                 <?php
-                if ($resultado->num_rows > 0) {
-                    while ($row = $resultado->fetch_assoc()) {
+                if ($resultado && mysqli_num_rows($resultado) > 0) {
+                    while ($row = mysqli_fetch_assoc($resultado)) {
                         echo "<option value='" . $row['id_curso'] . "'>" . $row['nombre_curso'] . "</option>";
                     }
                 } else {
@@ -143,19 +141,19 @@ $resultado = $conexion->query($sql);
                 ?>
             </select>
 
-            <label for="titulo">Título de la Tarea:</label>
-            <input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título de la tarea">
+<label for="titulo">Título de la Tarea:</label>
+<input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título de la tarea">
 
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" required placeholder="Describa los detalles de la tarea"></textarea>
+<label for="descripcion">Descripción:</label>
+<textarea id="descripcion" name="descripcion" required placeholder="Describa los detalles de la tarea"></textarea>
 
-            <label for="fechaEntrega">Fecha de Entrega:</label>
-            <input type="date" id="fechaEntrega" name="fechaEntrega" required>
+<label for="fechaEntrega">Fecha de Entrega:</label>
+<input type="date" id="fechaEntrega" name="fechaEntrega" required>
 
-             <label class="custom-file-upload">
-                Seleccionar archivo
-                <input type="file" id="archivo" name="archivo" onchange="previewFile()">
-            </label>
+<label class="custom-file-upload">
+    Seleccionar archivo
+    <input type="file" id="archivo" name="archivo">
+</label>
             <div class="file-upload-preview" id="filePreview" style="display: none;">
                 <img src="" alt="Previsualización de archivo" id="fileIcon" onclick="abrirModal(this.src)" ondblclick="window.open(this.src, '_blank')">
                 <p id="fileName">Ningún archivo seleccionado</p>
@@ -252,7 +250,7 @@ $resultado = $conexion->query($sql);
 </script>
 </body>
 </html>
-
 <?php
-$conexion->close();
+mysqli_free_result($resultado);
+mysqli_stmt_close($stmt);
 ?>
