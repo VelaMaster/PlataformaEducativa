@@ -37,8 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_respuesta'])) {
     exit;
 }
 
-// Consultar las respuestas de la tabla
-$sql = "SELECT id, id_tema, id_usuario, contenido, fecha_creacion FROM respuestas";
+// Consultar las respuestas con los nombres de temas y usuarios
+$sql = "
+    SELECT 
+        respuestas.id AS id_respuesta,
+        temas.titulo AS nombre_tema,
+        CASE
+            WHEN respuestas.tipo_usuario = 'alumno' THEN CONCAT(alumnos.nombre, ' ', alumnos.apellido_p, ' ', alumnos.apellido_m)
+            WHEN respuestas.tipo_usuario = 'docente' THEN CONCAT(docentes.nombre, ' ', docentes.apellido_p, ' ', docentes.apellido_m)
+            ELSE 'Usuario no identificado'
+        END AS nombre_usuario,
+        respuestas.contenido,
+        respuestas.fecha_creacion
+    FROM respuestas
+    JOIN temas ON respuestas.id_tema = temas.id
+    LEFT JOIN alumnos ON respuestas.id_usuario = alumnos.id AND respuestas.tipo_usuario = 'alumno'
+    LEFT JOIN docentes ON respuestas.id_usuario = docentes.id AND respuestas.tipo_usuario = 'docente'
+";
 $resultado = $conexion->query($sql);
 
 // Cerrar conexión
@@ -50,57 +65,52 @@ $conexion->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calificar Respuestas de Foros</title>
+    <title>Calificar Respuestas de Foros - Profesor</title>
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/gestionForosProfesor.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #e6d5c3;
+            background-color: #f8f9fa;
         }
         header {
-            background-color: #b85c0d;
+            background-color: #343a40;
             color: white;
             padding: 10px 0;
             text-align: center;
         }
         nav.navbar {
-            background-color: #d58525;
-            padding: 10px 0;
+            margin-bottom: 20px;
+            background-color: #343a40;
         }
         nav .navbar-nav .nav-link {
             color: white !important;
-            margin: 0 15px;
-            font-weight: bold;
         }
         main {
-            padding: 20px;
             background: white;
+            padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        table {
-            background: white;
-            border-radius: 5px;
-            overflow: hidden;
+        h2 {
+            color: #343a40;
         }
         footer {
-            background-color: #b85c0d;
-            color: white;
             text-align: center;
-            padding: 10px 0;
+            padding: 10px;
+            background-color: #343a40;
+            color: white;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-<header>
-    <h1>Plataforma educativa para Ingeniería en Sistemas</h1>
-</header>
 
 <div class="barranavegacion">
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>
+        <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -116,7 +126,7 @@ $conexion->close();
                     <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a> <!-- Nueva opción -->
+                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
@@ -135,9 +145,8 @@ $conexion->close();
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
             <tr>
-                <th>ID</th>
-                <th>ID Tema</th>
-                <th>ID Usuario</th>
+                <th>Tema</th>
+                <th>Usuario</th>
                 <th>Contenido</th>
                 <th>Fecha Creación</th>
                 <th>Calificar</th>
@@ -147,18 +156,17 @@ $conexion->close();
             <?php if ($resultado->num_rows > 0): ?>
                 <?php while ($row = $resultado->fetch_assoc()): ?>
                     <tr>
-                        <td><?php echo $row['id']; ?></td>
-                        <td><?php echo $row['id_tema']; ?></td>
-                        <td><?php echo $row['id_usuario']; ?></td>
+                        <td><?php echo htmlspecialchars($row['nombre_tema']); ?></td>
+                        <td><?php echo htmlspecialchars($row['nombre_usuario']); ?></td>
                         <td><?php echo htmlspecialchars($row['contenido']); ?></td>
                         <td><?php echo $row['fecha_creacion']; ?></td>
                         <td>
                             <form action="calificarForos.php" method="POST" class="d-flex align-items-center">
-                                <input type="hidden" name="id_respuesta" value="<?php echo $row['id']; ?>">
+                                <input type="hidden" name="id_respuesta" value="<?php echo $row['id_respuesta']; ?>">
                                 <input type="number" name="calificacion" class="form-control me-2" placeholder="Calificación" required>
                                 <div class="form-check me-2">
-                                    <input class="form-check-input" type="checkbox" name="revisado" id="revisado-<?php echo $row['id']; ?>">
-                                    <label class="form-check-label" for="revisado-<?php echo $row['id']; ?>">Revisado</label>
+                                    <input class="form-check-input" type="checkbox" name="revisado" id="revisado-<?php echo $row['id_respuesta']; ?>">
+                                    <label class="form-check-label" for="revisado-<?php echo $row['id_respuesta']; ?>">Revisado</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </form>
@@ -167,7 +175,7 @@ $conexion->close();
                 <?php endwhile; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6" class="text-center">No hay respuestas disponibles.</td>
+                    <td colspan="5" class="text-center">No hay respuestas disponibles.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

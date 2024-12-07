@@ -27,8 +27,8 @@ if ($conexion->connect_error) {
 $sql = "
     SELECT f.id, f.nombre, f.descripcion, f.tipo_for
     FROM foros f
-    JOIN foro_acceso_docentes fad ON f.id = fad.id_foros
-    WHERE fad.num_control_docente = ?
+    JOIN foro_accesodocentes fad ON f.id = fad.id_foros
+    WHERE fad.num_controlDocente = ?
 ";
 
 // Preparar la consulta para evitar inyección SQL
@@ -92,27 +92,39 @@ $conexion->close();
     </style>
 </head>
 <body>
-<header>
-    <div class="container">
-        <h1>Plataforma educativa para Ingeniería en Sistemas</h1>
-    </div>
-</header>
 
-<nav class="navbar navbar-expand-lg navbar-dark">
+<div class="barranavegacion">
+ <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Inicio</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="calendarioDocente.php">Calendario</a></li>
-                <li class="nav-item"><a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a></li>
-                <li class="nav-item"><a class="nav-link" href="calificarTareas.php">Calificar tareas</a></li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calendarioDocente.php">Calendario</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a> <!-- Nueva opción -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
+                </li>
             </ul>
         </div>
     </div>
-</nav>
+ </div>
+</div>
 
 <main class="container">
     <section id="asignar-foro">
