@@ -19,8 +19,8 @@ if ($conexion->connect_error) {
 // Consulta para obtener los foros asignados al alumno
 $sql = "SELECT foros.id AS id_foro, foros.nombre AS nombre_foro, foros.descripcion AS descripcion_foro
         FROM foros
-        JOIN foro_acceso ON foros.id = foro_acceso.id_foros
-        WHERE foro_acceso.num_control = '$num_control'";
+        JOIN foro_accesoalumnos ON foros.id = foro_accesoalumnos.id_foros
+        WHERE foro_accesoalumnos.num_controlAlumno = '$num_control'";
 
 $resultado = $conexion->query($sql);
 ?>

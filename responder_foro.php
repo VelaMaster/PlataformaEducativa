@@ -8,7 +8,6 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-// Obtener el número de control del usuario desde la sesión
 $num_control = $_SESSION['usuario'];
 
 // Conexión a la base de datos
@@ -17,136 +16,179 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Obtener el ID del foro desde la URL
-if (isset($_GET['id_foro'])) {
-    $id_tema = $_GET['id_foro'];
-
-    // Consulta para obtener los datos del foro
-    $sql = "SELECT * FROM foros WHERE id = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $id_tema);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-
-    if ($resultado->num_rows > 0) {
-        $foro = $resultado->fetch_assoc();
-    } else {
-        die("Foro no encontrado.");
-    }
-} else {
-    die("ID del foro no proporcionado.");
+// Verificar si se ha proporcionado el id_foro
+if (!isset($_GET['id_foro'])) {
+    echo "ID del foro no especificado.";
+    exit();
 }
 
-// Verificar si se envió el formulario
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_tema = $_POST['id_tema'];       // ID del foro
-    $id_usuario = $_POST['id_usuario']; // ID del usuario (número de control)
-    $contenido = trim($_POST['contenido']); // Contenido de la respuesta
+$id_foro = intval($_GET['id_foro']);
 
-    // Validar que la respuesta no esté vacía
-    if (empty($contenido)) {
-        echo "<script>
-                alert('Debes contestar el foro antes de enviarlo.');
-                window.history.back();
-              </script>";
-        exit();
-    }
+// Obtener la información del foro
+$sql_foro = "SELECT nombre, descripcion FROM foros WHERE id = ?";
+$stmt_foro = $conexion->prepare($sql_foro);
+$stmt_foro->bind_param("i", $id_foro);
+$stmt_foro->execute();
+$resultado_foro = $stmt_foro->get_result();
 
-    // Insertar la respuesta en la tabla respuestas
-    $sql = "INSERT INTO respuestas (id_tema, id_usuario, contenido, fecha_creacion) VALUES (?, ?, ?, NOW())";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("iis", $id_tema, $id_usuario, $contenido);
-
-    if ($stmt->execute()) {
-        echo "<script>
-                alert('¡Respuesta entregada con éxito!');
-                window.location.href = 'forosAlumno.php';
-              </script>";
-        exit();
-    } else {
-        echo "Error al guardar la respuesta: " . $conexion->error;
-    }
-
-    $stmt->close();
+if ($resultado_foro->num_rows === 0) {
+    echo "El foro no existe.";
+    exit();
 }
 
-$conexion->close();
+$foro = $resultado_foro->fetch_assoc();
+
+// Obtener las respuestas del foro
+$sql_respuestas = "SELECT respuestas.contenido, respuestas.fecha_creacion, alumnos.nombre AS autor 
+                   FROM respuestas
+                   JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
+                   WHERE respuestas.id_tema = ?
+                   ORDER BY respuestas.fecha_creacion ASC";
+$stmt_respuestas = $conexion->prepare($sql_respuestas);
+$stmt_respuestas->bind_param("i", $id_foro);
+$stmt_respuestas->execute();
+$resultado_respuestas = $stmt_respuestas->get_result();
+
+// Procesar nueva respuesta si se envió el formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
+    $respuesta = $conexion->real_escape_string($_POST['respuesta']);
+
+    if (!empty($respuesta)) {
+        $sql_insertar = "INSERT INTO respuestas (id_tema, id_usuario, tipo_usuario, contenido, fecha_creacion) 
+                         VALUES (?, ?, 'alumno', ?, NOW())";
+        $stmt_insertar = $conexion->prepare($sql_insertar);
+        $stmt_insertar->bind_param("iss", $id_foro, $num_control, $respuesta);
+        $stmt_insertar->execute();
+        header("Location: responder_foro.php?id_foro=$id_foro");
+        exit();
+    } else {
+        $error = "La respuesta no puede estar vacía.";
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Responder Foro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($foro['nombre']); ?></title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FFE4B5; /* Fondo naranja claro */
+            background-color: #e7d6bf;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #fff;
+
+        .foro-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         h2 {
+            color: #FF7700;
             text-align: center;
+        }
+
+        p.descripcion {
+            font-size: 1.1em;
+            color: #555;
+            text-align: justify;
+        }
+
+        .respuesta {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fdfdfd;
+        }
+
+        .respuesta .autor {
+            font-weight: bold;
+            color: #FF7700;
+        }
+
+        .respuesta .contenido {
+            margin: 10px 0;
+            font-size: 1em;
             color: #333;
         }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-top: 10px;
+
+        .respuesta .fecha {
+            font-size: 0.85em;
+            color: #666;
+            text-align: right;
         }
-        textarea {
+
+        .form-container {
+            margin-top: 30px;
+        }
+
+        .form-container textarea {
             width: 100%;
-            height: 150px;
-            margin-top: 10px;
+            height: 100px;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 1em;
         }
-        button {
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #FF9900; /* Botón anaranjado */
-            color: white;
+
+        .form-container button {
+            background-color: #FF7700;
+            color: #fff;
+            padding: 10px 20px;
             border: none;
-            border-radius: 20px; /* Bordes redondeados */
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 1em;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
         }
-        button:hover {
-            background-color: #FF7700; /* Más oscuro al pasar el cursor */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+
+        .form-container button:hover {
+            background-color: #FF5500;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="foro-container">
+        <h2><?php echo htmlspecialchars($foro['nombre']); ?></h2>
+        <p class="descripcion"><?php echo htmlspecialchars($foro['descripcion']); ?></p>
 
-<div class="container">
-    <h2>Responder Foro</h2>
-    <p><strong>Foro:</strong> <?php echo htmlspecialchars($foro['nombre']); ?></p>
-    <p><strong>Descripción:</strong> <?php echo htmlspecialchars($foro['descripcion']); ?></p>
+        <div class="respuestas">
+            <h3>Respuestas</h3>
+            <?php
+            if ($resultado_respuestas->num_rows > 0) {
+                while ($respuesta = $resultado_respuestas->fetch_assoc()) {
+                    echo "<div class='respuesta'>";
+                    echo "<p class='autor'>" . htmlspecialchars($respuesta['autor']) . "</p>";
+                    echo "<p class='contenido'>" . htmlspecialchars($respuesta['contenido']) . "</p>";
+                    echo "<p class='fecha'>" . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>No hay respuestas aún. ¡Sé el primero en comentar!</p>";
+            }
+            ?>
+        </div>
 
-    <form action="" method="POST">
-        <input type="hidden" name="id_tema" value="<?php echo $foro['id']; ?>">
-        <input type="hidden" name="id_usuario" value="<?php echo $num_control; ?>">
-        
-        <label for="contenido">Tu Respuesta:</label>
-        <textarea id="contenido" name="contenido" placeholder="Escribe tu respuesta aquí..." required></textarea>
-
-        <button type="submit">Enviar Respuesta</button>
-    </form>
-</div>
-
+        <div class="form-container">
+            <h3>Agregar una respuesta</h3>
+            <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+            <form method="POST">
+                <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
+                <button type="submit">Publicar</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
