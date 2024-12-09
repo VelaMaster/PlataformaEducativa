@@ -38,12 +38,13 @@ if ($resultado_foro->num_rows === 0) {
 
 $foro = $resultado_foro->fetch_assoc();
 
-// Obtener las respuestas del foro
-$sql_respuestas = "SELECT respuestas.contenido, respuestas.fecha_creacion, alumnos.nombre AS autor 
+// Obtener las respuestas del foro, incluyendo la calificación
+$sql_respuestas = "SELECT respuestas.id, respuestas.contenido, respuestas.fecha_creacion, respuestas.calificacion, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
                    WHERE respuestas.id_tema = ?
                    ORDER BY respuestas.fecha_creacion ASC";
+
 $stmt_respuestas = $conexion->prepare($sql_respuestas);
 $stmt_respuestas->bind_param("i", $id_foro);
 $stmt_respuestas->execute();
@@ -119,6 +120,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
             color: #333;
         }
 
+        .respuesta .calificacion {
+            font-size: 0.9em;
+            color: #006400;
+            margin-top: 5px;
+        }
+
         .respuesta .fecha {
             font-size: 0.85em;
             color: #666;
@@ -172,7 +179,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
                     echo "<div class='respuesta'>";
                     echo "<p class='autor'>" . htmlspecialchars($respuesta['autor']) . "</p>";
                     echo "<p class='contenido'>" . htmlspecialchars($respuesta['contenido']) . "</p>";
+                    if (!is_null($respuesta['calificacion'])) {
+                        echo "<p class='calificacion'>Calificación: " . htmlspecialchars($respuesta['calificacion']) . "</p>";
+                    }
                     echo "<p class='fecha'>" . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
+                    // Botón para responder
+                    echo "<a href='responder_comentario.php?id_respuesta=" . $respuesta['id'] . "'>Responder</a>";
                     echo "</div>";
                 }
             } else {
