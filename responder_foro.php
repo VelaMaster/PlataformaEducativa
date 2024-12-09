@@ -164,6 +164,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
             color: red;
             margin-bottom: 10px;
         }
+
+        .btn-navegar {
+    background-color: #007BFF; /* Azul */
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-navegar:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
     </style>
 </head>
 <body>
@@ -214,6 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
             <form method="POST">
                 <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
                 <button type="submit">Publicar</button>
+                <a href="forosAlumno.php" class="btn-navegar">Regresar</a>
             </form>
         </div>
     </div>

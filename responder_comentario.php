@@ -158,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
             <form method="POST" action="responder_comentario.php?id_respuesta=<?php echo $id_respuesta; ?>&id_tema=<?php echo $id_tema; ?>">
                 <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
                 <button type="submit">Publicar</button>
+                
             </form>
         </div>
     </div>
