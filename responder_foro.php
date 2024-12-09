@@ -39,7 +39,7 @@ if ($resultado_foro->num_rows === 0) {
 $foro = $resultado_foro->fetch_assoc();
 
 // Obtener las respuestas del foro, incluyendo la calificación
-$sql_respuestas = "SELECT respuestas.id, respuestas.contenido, respuestas.fecha_creacion, respuestas.calificacion, alumnos.nombre AS autor 
+$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.calificacion, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
                    WHERE respuestas.id_tema = ?
@@ -183,13 +183,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
                         echo "<p class='calificacion'>Calificación: " . htmlspecialchars($respuesta['calificacion']) . "</p>";
                     }
                     echo "<p class='fecha'>" . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
-                    // Botón para responder
-                    echo "<a href='responder_comentario.php?id_respuesta=" . $respuesta['id'] . "'>Responder</a>";
+                    
+                   // Botón para eliminar si es el autor
+                    if ($respuesta['id_usuario'] == $num_control) {
+                    echo "<form method='GET' action='eliminar_comentario.php' style='display:inline; margin-right: 10px;'>"; // Agregamos espaciado entre botones
+                    echo "<input type='hidden' name='id_respuesta' value='" . $respuesta['id'] . "'>";
+                    echo "<input type='hidden' name='id_foro' value='" . $id_foro . "'>";
+                    echo "<button type='submit' style='background-color:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:0.9em;'>Eliminar</button>";
+                    echo "</form>";
+}
+
+                    // Botón de responder
+                    echo "<a href='responder_comentario.php?id_respuesta=" . $respuesta['id'] . "' 
+                    style='background-color: #FF7700; color: white; padding: 5px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; margin-left: 10px; display: inline-block;'>
+                    Responder
+                    </a>";
                     echo "</div>";
+
                 }
             } else {
                 echo "<p>No hay respuestas aún. ¡Sé el primero en comentar!</p>";
             }
+            
             ?>
         </div>
 
