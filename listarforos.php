@@ -1,3 +1,43 @@
+<?php
+session_start();
+include('db.php');
+
+// Verificar si el docente ha iniciado sesión y obtener su num_control
+if (!isset($_SESSION['num_control'])) {
+    die("Docente no autenticado.");
+}
+
+$docente_num_control = $_SESSION['num_control'];
+
+// Consulta para obtener los foros a los que el docente tiene acceso
+$query = "
+    SELECT f.id AS foro_id, f.nombre AS foro_nombre, f.descripcion AS foro_desc, f.tipo_for, c.nombre_curso
+    FROM foro_accesoDocentes fad
+    JOIN foros f ON fad.id_foros = f.id
+    JOIN cursos c ON f.id_curso = c.id
+    WHERE fad.num_controlDocente = '$docente_num_control'
+";
+
+$result = mysqli_query($conexion, $query);
+if (!$result) {
+    die("Error en la consulta: " . mysqli_error($conexion));
+}
+
+// Se obtienen los foros en un arreglo
+$foros = array();
+$materiasUnicas = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $foros[] = $row;
+    // Generar una lista de materias únicas
+    if (!in_array($row['nombre_curso'], $materiasUnicas)) {
+        $materiasUnicas[] = $row['nombre_curso'];
+    }
+}
+
+// Cerramos la conexión
+mysqli_free_result($result);
+mysqli_close($conexion);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,8 +58,11 @@
                     <label for="filtro-materia" class="form-label">Filtrar por Materia:</label>
                     <select id="filtro-materia" class="form-select" onchange="filtrarForos()">
                         <option value="">Todas las Materias</option>
-                        <option value="Ingeniería de Software">Ingeniería de Software</option>
-                        <option value="Redes de Computadoras">Redes de Computadoras</option>
+                        <?php foreach ($materiasUnicas as $materia): ?>
+                            <option value="<?php echo htmlspecialchars($materia, ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($materia, ENT_QUOTES, 'UTF-8'); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -27,36 +70,34 @@
                     <select id="filtro-tipo" class="form-select" onchange="filtrarForos()">
                         <option value="">Todos los tipos</option>
                         <option value="General">General</option>
-                        <option value="Temático">Privado</option>
+                        <option value="Privado">Privado</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Foro Cards -->
-        <div class="foro-card" data-materia="Ingeniería de Software" data-tipo="General" onclick="toggleButtons(this)">
-            <h3>Materia: Ingeniería de Software</h3>
-            <p><strong>Título del Foro:</strong> Planificación Ágil</p>
-            <p><strong>Descripción:</strong> Foro para discutir estrategias y herramientas en metodologías ágiles.</p>
-            <p class="tipo-foro">Tipo: General</p>
-            <div class="foro-buttons">
-                <button onclick="alert('Ver Foro')">Ver</button>
-                <button onclick="alert('Editar Foro')">Editar</button>
-                <button onclick="alert('Eliminar Foro')">Eliminar</button>
+        <!-- Foro Cards generadas dinámicamente -->
+        <?php foreach($foros as $foro): ?>
+            <?php
+            // Ajustar tipo_for: 'general' -> 'General', otra cosa -> 'Privado'
+            $tipo_mostrar = ($foro['tipo_for'] === 'general') ? 'General' : 'Privado';
+            $data_tipo = ($foro['tipo_for'] === 'general') ? 'general' : 'privado';
+            ?>
+            <div class="foro-card" 
+                 data-materia="<?php echo htmlspecialchars($foro['nombre_curso'], ENT_QUOTES, 'UTF-8'); ?>" 
+                 data-tipo="<?php echo htmlspecialchars($data_tipo, ENT_QUOTES, 'UTF-8'); ?>" 
+                 onclick="toggleButtons(this)">
+                <h3>Materia: <?php echo htmlspecialchars($foro['nombre_curso'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <p><strong>Título del Foro:</strong> <?php echo htmlspecialchars($foro['foro_nombre'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <p><strong>Descripción:</strong> <?php echo htmlspecialchars($foro['foro_desc'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <p class="tipo-foro">Tipo: <?php echo htmlspecialchars($tipo_mostrar, ENT_QUOTES, 'UTF-8'); ?></p>
+                <div class="foro-buttons">
+                    <button onclick="alert('Ver Foro')">Ver</button>
+                    <button onclick="alert('Editar Foro')">Editar</button>
+                    <button onclick="alert('Eliminar Foro')">Eliminar</button>
+                </div>
             </div>
-        </div>
-
-        <div class="foro-card" data-materia="Redes de Computadoras" data-tipo="Temático" onclick="toggleButtons(this)">
-            <h3>Materia: Redes de Computadoras</h3>
-            <p><strong>Título del Foro:</strong> Seguridad en Redes</p>
-            <p><strong>Descripción:</strong> Discusión sobre los desafíos actuales en la seguridad de redes.</p>
-            <p class="tipo-foro">Tipo: Privado</p>
-            <div class="foro-buttons">
-                <button onclick="alert('Ver Foro')">Ver</button>
-                <button onclick="alert('Editar Foro')">Editar</button>
-                <button onclick="alert('Eliminar Foro')">Eliminar</button>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
     <script>

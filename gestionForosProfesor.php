@@ -1,29 +1,53 @@
 <?php
 session_start();
 include 'db.php';
+
 if (!isset($_SESSION['usuario'])) {
     echo "<script>alert('Error: Usuario no autenticado.'); window.location.href = 'index.php';</script>";
     exit;
 }
+
 $num_control = (int) $_SESSION['usuario'];
-$sql = "
-    SELECT f.id, f.nombre, f.descripcion, f.tipo_for
-    FROM foros f
-    JOIN foro_accesoDocentes fad ON f.id = fad.id_foros
-    WHERE fad.num_controlDocente = ?
+
+// Primero obtenemos el id del docente a partir de su num_control
+$sql_docente = "SELECT id FROM docentes WHERE num_control = ?";
+$stmt_docente = $conexion->prepare($sql_docente);
+if (!$stmt_docente) {
+    die("Error al preparar la consulta de docente: " . $conexion->error);
+}
+$stmt_docente->bind_param("i", $num_control);
+if (!$stmt_docente->execute()) {
+    die("Error al ejecutar la consulta de docente: " . $stmt_docente->error);
+}
+$res_docente = $stmt_docente->get_result();
+$stmt_docente->close();
+
+if ($res_docente->num_rows === 0) {
+    die("<script>alert('No se encontró el docente en la base de datos.'); window.history.back();</script>");
+}
+
+$row_docente = $res_docente->fetch_assoc();
+$id_docente = (int)$row_docente['id'];
+
+// Ahora obtenemos las materias (cursos) asignadas a ese docente
+$sql_cursos = "
+    SELECT DISTINCT c.id AS curso_id, c.nombre_curso
+    FROM cursos c
+    INNER JOIN grupos g ON c.id = g.id_curso
+    WHERE g.id_docente = ?
 ";
-$stmt = $conexion->prepare($sql);
-if (!$stmt) {
-    die("Error al preparar la consulta: " . $conexion->error);
+$stmt_cursos = $conexion->prepare($sql_cursos);
+if (!$stmt_cursos) {
+    die("Error al preparar la consulta de cursos: " . $conexion->error);
 }
-$stmt->bind_param("i", $num_control);
+$stmt_cursos->bind_param("i", $id_docente);
 
-if (!$stmt->execute()) {
-    die("Error al ejecutar la consulta: " . $stmt->error);
+if (!$stmt_cursos->execute()) {
+    die("Error al ejecutar la consulta de cursos: " . $stmt_cursos->error);
 }
-$resultado = $stmt->get_result();
 
-$stmt->close();
+$resultado_cursos = $stmt_cursos->get_result();
+$stmt_cursos->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -74,16 +98,16 @@ $stmt->close();
     <section id="asignar-foro">
         <h2>Asignar Nuevo Foro</h2>
         <form action="asignarForo.php" method="POST" class="mb-4">
-            <div class="mb-3">
+            <div class="mb-3">  
                 <label for="materia" class="form-label">Materia:</label>
                 <select id="materia" name="materia" class="form-select" required>
-                    <?php
-                    if ($resultado->num_rows > 0) {
-                        while ($row = $resultado->fetch_assoc()) {
-                            echo "<option value='" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['nombre']) . "</option>";
+                <?php
+                    if ($resultado_cursos->num_rows > 0) {
+                        while ($row = $resultado_cursos->fetch_assoc()) {
+                            echo "<option value='" . htmlspecialchars($row['curso_id'], ENT_QUOTES, 'UTF-8') . "'>" . htmlspecialchars($row['nombre_curso'], ENT_QUOTES, 'UTF-8') . "</option>";
                         }
                     } else {
-                        echo "<option value=''>No tiene foros asignados</option>";
+                        echo "<option value=''>No tiene materias asignadas</option>";
                     }
                     ?>
                 </select>
@@ -100,7 +124,7 @@ $stmt->close();
                 <label for="tipo_for" class="form-label">Tipo de Foro:</label>
                 <select id="tipo_for" name="tipo_for" class="form-select" required onchange="toggleAccesoAlumnos(this.value)">
                     <option value="general">Foro General</option>
-                    <option value="tematico">Foro Privado</option>
+                    <option value="privado">Foro Privado</option>
                 </select>
             </div>
 
@@ -181,6 +205,7 @@ $stmt->close();
         });
         document.getElementById('totalPuntos').innerText = total;
     }
+
     document.querySelector('form').addEventListener('submit', function(e) {
         const total = parseInt(document.getElementById('totalPuntos').innerText) || 0;
         if (total > 100) {
@@ -188,7 +213,9 @@ $stmt->close();
             alert('El total de puntos asignados en la rúbrica no puede exceder 100.');
         }
     });
+
     function toggleAccesoAlumnos(tipo) {
+        // Esta función se puede usar para lógica adicional si se necesita
     }
 </script>
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
