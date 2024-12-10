@@ -23,130 +23,17 @@ if (!$conexion) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio Estudiante</title>
+    <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
-    <style>
-        /* Estilo general */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Fondo gris claro */
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Barra de navegación */
-        .barranavegacion {
-            background-color: #FF9900; /* Fondo naranja */
-            padding: 15px;
-            border-radius: 0 0 10px 10px;
-        }
-
-        .barranavegacion .navbar-brand {
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .barranavegacion .nav-link {
-            color: white;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        .barranavegacion .nav-link:hover {
-            color: #FFD580; /* Amarillo pálido */
-        }
-
-        /* Imagen de perfil */
-        .profile-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #FF9900;
-        }
-
-        .profile-container {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-
-        /* Tarjetas */
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .card {
-            width: 300px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-10px); /* Eleva la tarjeta */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más intensa */
-        }
-
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            background-color: #ffffff; /* Fondo blanco */
-            padding: 15px;
-            text-align: left;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin: 10px 0 5px;
-        }
-
-        .card-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        /* Botón dentro de la tarjeta */
-        .btn-ver-mas {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #FF9900;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-ver-mas:hover {
-            background-color: #FF7700; /* Naranja más oscuro */
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            font-size: 14px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/estilostarjetas.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/inicioProfesor.css?v=<?php echo time(); ?>">
 </head>
+<style>
+    body{
+        background-color: #e7d6bf;
+    }
+</style>
 <body>
     <!-- Barra de navegación -->
     <div class="barranavegacion">

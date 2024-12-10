@@ -1,117 +1,100 @@
-/* Estilo general del cuerpo */
 body {
     font-family: Arial, sans-serif;
-    background-color: #FFE4B5; /* Fondo naranja claro */
+    background-color: #f4f6f9;
+    color: #333;
     margin: 0;
     padding: 0;
-    min-height: 100vh; /* Altura mínima para ocupar toda la pantalla */
-    display: flex; /* Flexbox para alinear el contenido */
-    flex-direction: column; /* Alinear elementos en columna */
 }
+
 h2 {
     text-align: center;
-    color: #FF7700; /* Un naranja vibrante */
+    color: #333;
     padding: 20px 0;
-    font-size: 28px; /* Tamaño de fuente más grande */
-    font-weight: bold; /* Negrita para destacar */
-    text-transform: uppercase; /* Convertir el texto en mayúsculas */
-    letter-spacing: 2px; /* Espaciado entre letras */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil para profundidad */
+    font-size: 24px;
 }
 
-        .content {
-            flex: 1;
-        }
+.table-container {
+    max-width: 90%;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-        h2 {
-            text-align: center;
-            color: #333;
-            padding: 20px 0;
-            font-size: 24px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        .table-container {
-            max-width: 90%;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+th {
+    background-color: #ff9900;
+    color: #fff;
+    font-weight: bold;
+    text-align: left;
+    padding: 12px;
+    font-size: 16px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 15px;
+}
 
-        th {
-            background-color: #FF9900; /* Encabezado naranja */
-            color: #fff;
-            font-weight: bold;
-            text-align: left;
-            padding: 12px;
-            font-size: 16px;
-        }
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            font-size: 15px;
-        }
+tr:hover {
+    background-color: #f1f1f1;
+}
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+.acciones a {
+    margin: 0 5px;
+    color: #ff9900;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+.acciones a:hover {
+    color: #e68a00;
+}
 
-        .acciones a {
-            display: inline-block;
-            padding: 5px 10px;
-            color: #FF7700; /* Texto naranja */
-            text-decoration: none;
-            font-weight: bold;
-            border: 2px solid #FF7700;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
+.back-button-container {
+    text-align: center;
+    margin: 20px;
+}
 
-        .acciones a:hover {
-            background-color: #FF7700;
-            color: #fff;
-        }
+.back-button {
+    background-color: #ff9900;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
 
-        .back-button-container {
-            text-align: center;
-            margin: 20px;
-        }
+.back-button:hover {
+    background-color: #e68a00;
+}
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
+}
 
-        .back-button {
-            background-color: #FF9900; /* Botón anaranjado */
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px; /* Bordes redondeados */
-            font-weight: bold;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
-            transition: all 0.3s ease;
-        }
-
-        .back-button:hover {
-            background-color: #FF7700; /* Más oscuro al pasar el cursor */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
-        }
-
-        footer {
-            background-color: #000; /* Pie de página negro */
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-        }
+.footer {
+    position: relative;
+    padding-top: 10px;
+}
