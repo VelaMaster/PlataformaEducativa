@@ -29,12 +29,13 @@ if ($id_tarea > 0) {
             $tarea = $resultado->fetch_assoc();
 
             // Consulta para verificar si ya se entregó la tarea
-            $sqlEntrega = "SELECT archivo_entrega FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
-            $stmtEntrega = $conexion->prepare($sqlEntrega);
-            $stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
-            $stmtEntrega->execute();
-            $resultadoEntrega = $stmtEntrega->get_result();
-            $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
+$sqlEntrega = "SELECT archivo_entrega FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
+$stmtEntrega = $conexion->prepare($sqlEntrega);
+$stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
+$stmtEntrega->execute();
+$resultadoEntrega = $stmtEntrega->get_result();
+$entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
+
 
             // Función para obtener el nombre del curso
             function obtenerNombreMateria($id_curso, $conexion) {
@@ -149,7 +150,7 @@ if ($id_tarea > 0) {
 
 
 
-        <?php if ($entregado): ?>
+<?php if ($entregado): ?>
     <?php 
     // Obtener los datos de la entrega
     $entrega = $resultadoEntrega->fetch_assoc();
@@ -175,6 +176,7 @@ if ($id_tarea > 0) {
             <p style="font-size: 13px; color: #888; text-align: center;">Vista previa no disponible</p>
         <?php endif; ?>
     </div>
+
 
     <!-- Botón para eliminar la tarea -->
     <div style="display: flex; justify-content: center; margin-top: 15px;">

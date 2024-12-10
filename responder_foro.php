@@ -182,7 +182,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
     background-color: #0056b3; 
 }
 
+.respuesta-container {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .form-respuesta {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .form-respuesta textarea {
+            width: 100%;
+            height: 80px;
+        }
+
     </style>
+
+<script>
+        function mostrarFormularioRespuesta(idRespuesta) {
+            const formulario = document.getElementById(`form-respuesta-${idRespuesta}`);
+            formulario.style.display = formulario.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </head>
 <body>
     <div class="foro-container">
@@ -209,14 +233,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
                     echo "<input type='hidden' name='id_foro' value='" . $id_foro . "'>";
                     echo "<button type='submit' style='background-color:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:0.9em;'>Eliminar</button>";
                     echo "</form>";
+
+                    // Botón Responder
+                    echo "<button onclick='mostrarFormularioRespuesta(" . $respuesta['id'] . ")'>Responder</button>";
+
+                    // Formulario para responder
+                    echo "<form id='form-respuesta-" . $respuesta['id'] . "' class='form-respuesta' method='POST'>";
+                    echo "<textarea name='respuesta' placeholder='Escribe tu respuesta...'></textarea>";
+                    echo "<input type='hidden' name='respuesta_padre' value='" . $respuesta['id'] . "'>";
+                    echo "<button type='submit'>Publicar Respuesta</button>";
+                    echo "</form>";
 }
 
-                    // Botón de responder
-                    echo "<a href='responder_comentario.php?id_respuesta=" . $respuesta['id'] . "' 
-                    style='background-color: #FF7700; color: white; padding: 5px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; margin-left: 10px; display: inline-block;'>
-                    Responder
-                    </a>";
-                    echo "</div>";
+                    
 
                 }
             } else {

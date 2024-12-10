@@ -45,13 +45,18 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
     $archivoNombre = $_FILES['archivo']['name'];
     $archivoTamaño = $_FILES['archivo']['size'];
 
+    // Limpiar el nombre del archivo para evitar problemas con caracteres especiales
+    $archivoNombreSeguro = str_replace(' ', '_', basename($archivoNombre)); // Cambiar los espacios por guiones bajos
+    $archivoNombreSeguro = preg_replace('/[^A-Za-z0-9_\-\.]/', '', $archivoNombreSeguro); // Eliminar otros caracteres especiales
+
     // Definir el directorio de destino para almacenar el archivo
     $directorioDestino = "uploads/"; // Puedes cambiar esta ruta
     if (!is_dir($directorioDestino)) {
         mkdir($directorioDestino, 0777, true);
     }
 
-    $archivoDestino = $directorioDestino . uniqid() . "_" . basename($archivoNombre); // Asegura nombres únicos
+    // Crear el nombre único para el archivo
+    $archivoDestino = $directorioDestino . uniqid() . "_" . $archivoNombreSeguro;
 
     // Validar que el archivo no sea demasiado grande (por ejemplo, 10 MB)
     if ($archivoTamaño > 10 * 1024 * 1024) { // 10 MB
