@@ -29,7 +29,7 @@ if ($id_tarea > 0) {
             $tarea = $resultado->fetch_assoc();
 
             // Consulta para verificar si ya se entregó la tarea
-            $sqlEntrega = "SELECT * FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
+            $sqlEntrega = "SELECT archivo_entrega FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
             $stmtEntrega = $conexion->prepare($sqlEntrega);
             $stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
             $stmtEntrega->execute();
@@ -121,9 +121,13 @@ if ($id_tarea > 0) {
         </div>
         <div class="detail-item">
     <span class="detail-label">Archivo Adjunto:</span>
-    <a href="download.php?file=<?php echo urlencode($tarea['archivo_tarea']); ?>" target="_blank">
-        Ver Archivo
-    </a>
+    <?php if (!empty($tarea['archivo_tarea'])): ?>
+        <a href="download.php?file=<?php echo urlencode($tarea['archivo_tarea']); ?>" target="_blank">
+            Ver Archivo
+        </a>
+    <?php else: ?>
+        <span>No hay archivo disponible</span>
+    <?php endif; ?>
 </div>
 
 
