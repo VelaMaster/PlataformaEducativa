@@ -1,100 +1,117 @@
+/* Estilo general del cuerpo */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
+    background-color: #FFE4B5; /* Fondo naranja claro */
     margin: 0;
     padding: 0;
+    min-height: 100vh; /* Altura mínima para ocupar toda la pantalla */
+    display: flex; /* Flexbox para alinear el contenido */
+    flex-direction: column; /* Alinear elementos en columna */
 }
-
 h2 {
     text-align: center;
-    color: #333;
+    color: #FF7700; /* Un naranja vibrante */
     padding: 20px 0;
-    font-size: 24px;
+    font-size: 28px; /* Tamaño de fuente más grande */
+    font-weight: bold; /* Negrita para destacar */
+    text-transform: uppercase; /* Convertir el texto en mayúsculas */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil para profundidad */
 }
 
-.table-container {
-    max-width: 90%;
-    margin: 20px auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
+        .content {
+            flex: 1;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        h2 {
+            text-align: center;
+            color: #333;
+            padding: 20px 0;
+            font-size: 24px;
+        }
 
-th {
-    background-color: #ff9900;
-    color: #fff;
-    font-weight: bold;
-    text-align: left;
-    padding: 12px;
-    font-size: 16px;
-}
+        .table-container {
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 15px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+        th {
+            background-color: #FF9900; /* Encabezado naranja */
+            color: #fff;
+            font-weight: bold;
+            text-align: left;
+            padding: 12px;
+            font-size: 16px;
+        }
 
-tr:hover {
-    background-color: #f1f1f1;
-}
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 15px;
+        }
 
-.acciones a {
-    margin: 0 5px;
-    color: #ff9900;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-}
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-.acciones a:hover {
-    color: #e68a00;
-}
+        tr:hover {
+            background-color: #f1f1f1;
+        }
 
-.back-button-container {
-    text-align: center;
-    margin: 20px;
-}
+        .acciones a {
+            display: inline-block;
+            padding: 5px 10px;
+            color: #FF7700; /* Texto naranja */
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid #FF7700;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
 
-.back-button {
-    background-color: #ff9900;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
+        .acciones a:hover {
+            background-color: #FF7700;
+            color: #fff;
+        }
 
-.back-button:hover {
-    background-color: #e68a00;
-}
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 10; /* Asegura que el pie de página esté sobre otros elementos */
-}
+        .back-button-container {
+            text-align: center;
+            margin: 20px;
+        }
 
-.footer {
-    position: relative;
-    padding-top: 10px;
-}
+        .back-button {
+            background-color: #FF9900; /* Botón anaranjado */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px; /* Bordes redondeados */
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #FF7700; /* Más oscuro al pasar el cursor */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+        }
+
+        footer {
+            background-color: #000; /* Pie de página negro */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
