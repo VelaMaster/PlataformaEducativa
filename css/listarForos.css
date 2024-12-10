@@ -1,0 +1,123 @@
+body {
+    background-color: #e7d6bf;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.foro-card {
+    background-color: #ffe4b3;
+    border: 2px solid #ff8c00;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.foro-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.foro-card:active {
+    transform: scale(0.98);
+}
+
+.foro-card h3 {
+    color: #ff8c00;
+    margin-bottom: 10px;
+}
+
+.foro-card p {
+    margin: 5px 0;
+    color: #333;
+}
+
+.foro-card .tipo-foro {
+    background-color: #ff8c00;
+    color: #fff;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.foro-buttons {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    right: -115px !important;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Evita interacción cuando están ocultos */
+    transition: right 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+.foro-card.active .foro-buttons {
+    right: 10px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Permite interacción cuando están visibles */
+}
+
+.foro-buttons button {
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.foro-buttons button:hover {
+    background-color: #e67600;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .foro-buttons {
+        position: static;
+        transform: none;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 10px;
+        right: auto;
+        opacity: 0; /* Mantener ocultos en estado inicial */
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .foro-card.active .foro-buttons {
+        opacity: 1; /* Mostrar los botones cuando la tarjeta está activa */
+        visibility: visible;
+        pointer-events: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .foro-card {
+        padding: 15px;
+    }
+
+    .foro-buttons {
+        flex-direction: column; /* Botones en columna para pantallas muy pequeñas */
+        gap: 5px;
+    }
+
+    .foro-buttons button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+}

@@ -138,11 +138,6 @@ $stmt->close();
         </form>
     </section>
 </main>
-
-<footer class="text-center mt-5">
-    <p>© 2024 PE-ISC</p>
-</footer>
-
 <script src="js/rubrica.js"></script>
 <script>
     function mostrarRubrica() {
@@ -186,8 +181,6 @@ $stmt->close();
         });
         document.getElementById('totalPuntos').innerText = total;
     }
-
-    // Opcional: Validar que el total de puntos no exceda 100 antes de enviar el formulario
     document.querySelector('form').addEventListener('submit', function(e) {
         const total = parseInt(document.getElementById('totalPuntos').innerText) || 0;
         if (total > 100) {
@@ -196,9 +189,11 @@ $stmt->close();
         }
     });
     function toggleAccesoAlumnos(tipo) {
-        // Puedes agregar lógica adicional si necesitas mostrar u ocultar campos basados en el tipo de foro
     }
 </script>
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
+<footer class="text-center mt-5">
+    <p>© 2024 PE-ISC</p>
+</footer>
 </body>
 </html>

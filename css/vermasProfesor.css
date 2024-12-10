@@ -100,28 +100,7 @@ h4{
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     background-color: #ffdfa6; /* Fondo más claro */
 }
-.btn-ver-mas {
-    opacity: 0; /* Botón oculto inicialmente */
-    visibility: hidden; /* Oculta visibilidad */
-    position: absolute; /* Posición absoluta dentro del contenedor */
-    right: -60px; /* Botón desplazado fuera del margen derecho */
-    top: 50%; /* Centrado verticalmente */
-    transform: translateY(-50%);
-    background-color: #ff8c00;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Animación suave */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
 
-/* Botón hover */
-.btn-ver-mas:hover {
-    background-color: #e67600;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-}
 /* Efecto hover en la tarea */
 .tarea:hover {
     transform: scale(1.05);

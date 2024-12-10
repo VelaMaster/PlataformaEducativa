@@ -1,6 +1,15 @@
-body {
+html,body {
     font-family: Arial, sans-serif;
     background-color: #e7d6bf;
+    height: 100%;
+    margin: 0;
+}
+main {
+    flex: 1; /* Hace que el contenido ocupe todo el espacio restante entre header y footer */
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 header {
     background-color: #343a40;
@@ -23,13 +32,6 @@ main {
 }
 h2 {
     color: #343a40;
-}
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #343a40;
-    color: white;
-    margin-top: 20px;
 }
 /* Contenedor de la Rúbrica */
 #rubricaContainer {
