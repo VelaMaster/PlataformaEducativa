@@ -1,39 +1,34 @@
 <?php
 header('Content-Type: application/json');
-
-// Configuración de la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "peis";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
+include 'db.php';
+if (!$conexion) {
     echo json_encode([]);
     exit;
 }
-
-// Consulta para obtener las tareas junto con el nombre del curso
-$sql = "SELECT tareas.id_tarea, tareas.titulo, tareas.fecha_limite, tareas.id_curso, cursos.nombre_curso 
-        FROM tareas
-        INNER JOIN cursos ON tareas.id_curso = cursos.id_curso";
-
-$result = $conn->query($sql);
-
+$sql = "
+    SELECT 
+        tareas.id AS id_tarea, 
+        tareas.titulo, 
+        tareas.fecha_limite, 
+        tareas.id_curso, 
+        cursos.nombre_curso 
+    FROM tareas
+    INNER JOIN cursos ON tareas.id_curso = cursos.id
+";
+$result = mysqli_query($conexion, $sql);
 $events = [];
 
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+if ($result && mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
         $events[] = [
             'id' => $row['id_tarea'],
             'title' => $row['titulo'],
             'start' => $row['fecha_limite'],
-            'id_curso' => $row['id_curso'], // Usar id_curso para asociar colores
-            'curso' => $row['nombre_curso']  // Nombre del curso
+            'id_curso' => $row['id_curso'],
+            'curso' => $row['nombre_curso']
         ];
     }
 }
 echo json_encode($events);
-$conn->close();
+mysqli_close($conexion);
 ?>

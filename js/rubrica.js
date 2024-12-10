@@ -1,7 +1,3 @@
-function mostrarRubrica() {
-    document.getElementById('rubricaContainer').style.display = 'block';
-}
-
 function agregarFilaRubrica() {
     const tableBody = document.querySelector('#rubricaTable tbody');
     const row = document.createElement('tr');
@@ -16,11 +12,7 @@ function agregarFilaRubrica() {
     tableBody.appendChild(row);
     actualizarTotalPuntos();
 }
-function eliminarFilaRubrica(button) {
-    const row = button.parentNode.parentNode;
-    row.parentNode.removeChild(row);
-    actualizarTotalPuntos(); // Recalcular puntos
-}
+
 function actualizarTotalPuntos() {
     const puntosInputs = document.getElementsByName('puntos[]');
     let totalPuntos = 0;
@@ -32,13 +24,13 @@ function actualizarTotalPuntos() {
     if (totalPuntos > 100) {
         const excedente = totalPuntos - 100;
         const ultimoInput = puntosInputs[puntosInputs.length - 1];
-
         ultimoInput.value = (parseFloat(ultimoInput.value) || 0) - excedente;
 
+        // Advertencia usando SweetAlert
         Swal.fire({
             icon: 'warning',
             title: 'Límite Excedido',
-            text: `Los puntos totales no pueden exceder de 100. Se han ajustado automáticamente los puntos del último criterio.`,
+            text: 'Los puntos totales no pueden exceder de 100. Se han ajustado automáticamente.',
             confirmButtonText: 'Entendido',
             footer: `Se ajustaron ${excedente} puntos.`
         });
@@ -48,15 +40,3 @@ function actualizarTotalPuntos() {
 
     document.getElementById('totalPuntos').textContent = totalPuntos;
 }
-
-function validarTotalPuntos() {
-    const totalPuntos = parseFloat(document.getElementById('totalPuntos').textContent);
-    if (totalPuntos > 100) {
-        alert('El total de puntos asignados en la rúbrica no puede exceder 100.');
-        return false;
-    }
-    return true;
-}
-document.addEventListener('DOMContentLoaded', function() {
-    actualizarTotalPuntos();
-});

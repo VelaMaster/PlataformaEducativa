@@ -51,7 +51,7 @@ if ($result_docente_id && mysqli_num_rows($result_docente_id) > 0) {
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                    <a class="nav-link"href="inicioProfesor.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="calendarioDocente.php">Calendario</a>

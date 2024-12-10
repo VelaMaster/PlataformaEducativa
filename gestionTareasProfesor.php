@@ -191,7 +191,7 @@ $resultado = mysqli_stmt_get_result($stmt);
             Documento
         </a>
     </div>
-</div>
+ </div>
 
 
                 <button type="button" id="addRubricaButton" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>

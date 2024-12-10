@@ -1,38 +1,27 @@
 <?php
 header('Content-Type: application/json');
+include 'db.php';
 if (!isset($_GET['id'])) {
     echo json_encode(['error' => 'No se proporcionó el ID de la tarea.']);
     exit;
 }
 
 $id_tarea = intval($_GET['id']);
-
-// Configuración de la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "peis";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    echo json_encode(['error' => 'Error de conexión a la base de datos.']);
-    exit;
+$stmt = mysqli_prepare($conexion, "SELECT titulo, descripcion, fecha_creacion, fecha_limite FROM tareas WHERE id = ?");
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "i", $id_tarea);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $task = mysqli_fetch_assoc($result);
+        echo json_encode($task);
+    } else {
+        echo json_encode(['error' => 'Tarea no encontrada.']);
+    }
+    mysqli_stmt_close($stmt);
+} else {
+    echo json_encode(['error' => 'Error en la preparación de la consulta.']);
 }
-
-$stmt = $conn->prepare("SELECT titulo, descripcion, fecha_creacion, fecha_limite FROM tareas WHERE id_tarea = ?");
-$stmt->bind_param("i", $id_tarea);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    echo json_encode(['error' => 'Tarea no encontrada.']);
-    exit;
-}
-
-$task = $result->fetch_assoc();
-echo json_encode($task);
-
-$stmt->close();
-$conn->close();
+mysqli_close($conexion);
 ?>
