@@ -38,32 +38,85 @@ if ($resultado_foro->num_rows === 0) {
 
 $foro = $resultado_foro->fetch_assoc();
 
-// Obtener las respuestas del foro, incluyendo la calificación
-$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.calificacion, alumnos.nombre AS autor 
+// Procesar nueva respuesta si se envió el formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['respuesta'])) {
+        $respuesta = $conexion->real_escape_string($_POST['respuesta']);
+        $respuesta_padre = isset($_POST['respuesta_padre']) ? intval($_POST['respuesta_padre']) : NULL;
+
+        if (!empty($respuesta)) {
+            $sql_insertar = "INSERT INTO respuestas (id_tema, id_usuario, tipo_usuario, contenido, fecha_creacion, respuesta_padre) 
+                             VALUES (?, ?, 'alumno', ?, NOW(), ?)";
+            $stmt_insertar = $conexion->prepare($sql_insertar);
+            $stmt_insertar->bind_param("issi", $id_foro, $num_control, $respuesta, $respuesta_padre);
+            $stmt_insertar->execute();
+            header("Location: responder_foro.php?id_foro=$id_foro");
+            exit();
+        } else {
+            $error = "La respuesta no puede estar vacía.";
+        }
+    } elseif (isset($_POST['eliminar_respuesta'])) {
+        $id_respuesta = intval($_POST['eliminar_respuesta']);
+        $sql_eliminar = "DELETE FROM respuestas WHERE id = ?";
+        $stmt_eliminar = $conexion->prepare($sql_eliminar);
+        $stmt_eliminar->bind_param("i", $id_respuesta);
+        $stmt_eliminar->execute();
+        header("Location: responder_foro.php?id_foro=$id_foro");
+        exit();
+    }
+}
+
+// Obtener el orden seleccionado o usar un valor predeterminado
+$orden = isset($_GET['orden']) ? $_GET['orden'] : 'ASC';
+
+// Validar el valor del orden
+$orden = ($orden === 'DESC') ? 'DESC' : 'ASC';
+
+// Obtener las respuestas del foro en formato jerárquico
+$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
                    WHERE respuestas.id_tema = ?
-                   ORDER BY respuestas.fecha_creacion ASC";
-
+                   ORDER BY respuestas.respuesta_padre ASC, respuestas.fecha_creacion $orden";
 $stmt_respuestas = $conexion->prepare($sql_respuestas);
 $stmt_respuestas->bind_param("i", $id_foro);
 $stmt_respuestas->execute();
 $resultado_respuestas = $stmt_respuestas->get_result();
+// Organizar respuestas en un array jerárquico
+$respuestas = [];
+while ($fila = $resultado_respuestas->fetch_assoc()) {
+    $respuestas[$fila['respuesta_padre']][] = $fila;
+}
 
-// Procesar nueva respuesta si se envió el formulario
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
-    $respuesta = $conexion->real_escape_string($_POST['respuesta']);
+function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
+    global $num_control;
 
-    if (!empty($respuesta)) {
-        $sql_insertar = "INSERT INTO respuestas (id_tema, id_usuario, tipo_usuario, contenido, fecha_creacion) 
-                         VALUES (?, ?, 'alumno', ?, NOW())";
-        $stmt_insertar = $conexion->prepare($sql_insertar);
-        $stmt_insertar->bind_param("iss", $id_foro, $num_control, $respuesta);
-        $stmt_insertar->execute();
-        header("Location: responder_foro.php?id_foro=$id_foro");
-        exit();
-    } else {
-        $error = "La respuesta no puede estar vacía.";
+    if (isset($respuestas[$respuesta_padre])) {
+        foreach ($respuestas[$respuesta_padre] as $respuesta) {
+            echo "<div class='respuesta'>";
+            echo "<p><strong>" . htmlspecialchars($respuesta['autor']) . "</strong> - " . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
+            echo "<p>" . htmlspecialchars($respuesta['contenido']) . "</p>";
+
+            // Formulario para eliminar
+            if ($respuesta['id_usuario'] == $num_control) {
+                echo "<form method='POST' class='form-eliminar'>";
+                echo "<input type='hidden' name='eliminar_respuesta' value='" . $respuesta['id'] . "'>";
+                echo "<button type='submit'>Eliminar</button>";
+                echo "</form>";
+            }
+
+            // Formulario para responder
+            echo "<button onclick='mostrarFormularioRespuesta(" . $respuesta['id'] . ")'>Responder</button>";
+            echo "<form id='form-respuesta-" . $respuesta['id'] . "' class='form-respuesta' style='display: none;' method='POST'>";
+            echo "<textarea name='respuesta' placeholder='Escribe tu respuesta...'></textarea>";
+            echo "<input type='hidden' name='respuesta_padre' value='" . $respuesta['id'] . "'>";
+            echo "<button type='submit'>Publicar Respuesta</button>";
+            echo "</form>";
+
+            // Mostrar respuestas hijas
+            mostrarRespuestas($respuestas, $respuesta['id']);
+            echo "</div>";
+        }
     }
 }
 ?>
@@ -76,132 +129,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #e7d6bf;
             margin: 0;
             padding: 20px;
+            background-color: #f9f9f9;
         }
-
-        .foro-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
         h2 {
-            color: #FF7700;
-            text-align: center;
-        }
-
-        p.descripcion {
-            font-size: 1.1em;
-            color: #555;
-            text-align: justify;
-        }
-
-        .respuesta {
-            margin-top: 15px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fdfdfd;
-        }
-
-        .respuesta .autor {
-            font-weight: bold;
-            color: #FF7700;
-        }
-
-        .respuesta .contenido {
-            margin: 10px 0;
-            font-size: 1em;
             color: #333;
         }
-
-        .respuesta .calificacion {
-            font-size: 0.9em;
-            color: #006400;
-            margin-top: 5px;
-        }
-
-        .respuesta .fecha {
-            font-size: 0.85em;
-            color: #666;
-            text-align: right;
-        }
-
-        .form-container {
-            margin-top: 30px;
-        }
-
-        .form-container textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        .form-container button {
-            background-color: #FF7700;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .form-container button:hover {
-            background-color: #FF5500;
-        }
-
-        .error {
-            color: red;
-            margin-bottom: 10px;
-        }
-
-        .btn-navegar {
-    background-color: #007BFF; /* Azul */
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1em;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-navegar:hover {
-    background-color: #0056b3; 
-}
-
-.respuesta-container {
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .form-respuesta {
-            display: none;
+        .respuesta {
+            margin-left: 20px;
+            border-left: 2px solid #ccc;
+            padding-left: 10px;
             margin-top: 10px;
         }
-
-        .form-respuesta textarea {
-            width: 100%;
-            height: 80px;
+        .form-eliminar {
+            display: inline;
         }
-
+        textarea {
+            width: 100%;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-respuesta {
+            margin-top: 10px;
+        }
     </style>
-
-<script>
+    <script>
         function mostrarFormularioRespuesta(idRespuesta) {
             const formulario = document.getElementById(`form-respuesta-${idRespuesta}`);
             formulario.style.display = formulario.style.display === 'none' ? 'block' : 'none';
@@ -209,61 +173,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respuesta'])) {
     </script>
 </head>
 <body>
-    <div class="foro-container">
-        <h2><?php echo htmlspecialchars($foro['nombre']); ?></h2>
-        <p class="descripcion"><?php echo htmlspecialchars($foro['descripcion']); ?></p>
+    <h2><?php echo htmlspecialchars($foro['nombre']); ?></h2>
+    <p><?php echo htmlspecialchars($foro['descripcion']); ?></p>
 
-        <div class="respuestas">
-            <h3>Respuestas</h3>
-            <?php
-            if ($resultado_respuestas->num_rows > 0) {
-                while ($respuesta = $resultado_respuestas->fetch_assoc()) {
-                    echo "<div class='respuesta'>";
-                    echo "<p class='autor'>" . htmlspecialchars($respuesta['autor']) . "</p>";
-                    echo "<p class='contenido'>" . htmlspecialchars($respuesta['contenido']) . "</p>";
-                    if (!is_null($respuesta['calificacion'])) {
-                        echo "<p class='calificacion'>Calificación: " . htmlspecialchars($respuesta['calificacion']) . "</p>";
-                    }
-                    echo "<p class='fecha'>" . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
-                    
-                   // Botón para eliminar si es el autor
-                    if ($respuesta['id_usuario'] == $num_control) {
-                    echo "<form method='GET' action='eliminar_comentario.php' style='display:inline; margin-right: 10px;'>"; // Agregamos espaciado entre botones
-                    echo "<input type='hidden' name='id_respuesta' value='" . $respuesta['id'] . "'>";
-                    echo "<input type='hidden' name='id_foro' value='" . $id_foro . "'>";
-                    echo "<button type='submit' style='background-color:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:0.9em;'>Eliminar</button>";
-                    echo "</form>";
+    <h3>Ordenar respuestas</h3>
+<form method="GET" action="responder_foro.php">
+    <input type="hidden" name="id_foro" value="<?php echo $id_foro; ?>">
+    <select name="orden" onchange="this.form.submit()">
+        <option value="ASC" <?php echo ($orden === 'ASC') ? 'selected' : ''; ?>>Más antiguas primero</option>
+        <option value="DESC" <?php echo ($orden === 'DESC') ? 'selected' : ''; ?>>Más recientes primero</option>
+    </select>
+</form>
 
-                    // Botón Responder
-                    echo "<button onclick='mostrarFormularioRespuesta(" . $respuesta['id'] . ")'>Responder</button>";
-
-                    // Formulario para responder
-                    echo "<form id='form-respuesta-" . $respuesta['id'] . "' class='form-respuesta' method='POST'>";
-                    echo "<textarea name='respuesta' placeholder='Escribe tu respuesta...'></textarea>";
-                    echo "<input type='hidden' name='respuesta_padre' value='" . $respuesta['id'] . "'>";
-                    echo "<button type='submit'>Publicar Respuesta</button>";
-                    echo "</form>";
-}
-
-                    
-
-                }
-            } else {
-                echo "<p>No hay respuestas aún. ¡Sé el primero en comentar!</p>";
-            }
-            
-            ?>
-        </div>
-
-        <div class="form-container">
-            <h3>Agregar una respuesta</h3>
-            <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
-            <form method="POST">
-                <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
-                <button type="submit">Publicar</button>
-                <a href="forosAlumno.php" class="btn-navegar">Regresar</a>
-            </form>
-        </div>
+    <h3>Respuestas</h3>
+    <div>
+        <?php mostrarRespuestas($respuestas); ?>
     </div>
+
+    <h3>Agregar una respuesta</h3>
+    <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <form method="POST">
+        <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
+        <button type="submit">Publicar</button>
+        <a href="forosAlumno.php">Regresar</a>
+    </form>
+
+    
 </body>
 </html>
