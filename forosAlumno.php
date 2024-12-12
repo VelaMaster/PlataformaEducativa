@@ -16,11 +16,21 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Consulta para obtener los foros asignados al alumno
-$sql = "SELECT foros.id AS id_foro, foros.nombre AS nombre_foro, foros.descripcion AS descripcion_foro
-        FROM foros
-        JOIN foro_accesoalumnos ON foros.id = foro_accesoalumnos.id_foros
-        WHERE foro_accesoalumnos.num_controlAlumno = '$num_control'";
+// Determinar el filtro y la búsqueda
+$filtro = isset($_GET['filtro']) ? $_GET['filtro'] : 'privados';
+$busqueda = isset($_GET['busqueda']) ? $conexion->real_escape_string($_GET['busqueda']) : '';
+
+// Consulta para obtener los foros según el filtro y búsqueda
+if ($filtro === 'publicos') {
+    $sql = "SELECT id AS id_foro, nombre AS nombre_foro, descripcion AS descripcion_foro
+            FROM foros
+            WHERE tipo_for = 'general' AND nombre LIKE '%$busqueda%'";
+} else {
+    $sql = "SELECT foros.id AS id_foro, foros.nombre AS nombre_foro, foros.descripcion AS descripcion_foro
+            FROM foros
+            JOIN foro_accesoalumnos ON foros.id = foro_accesoalumnos.id_foros
+            WHERE foro_accesoalumnos.num_controlAlumno = '$num_control' AND foros.nombre LIKE '%$busqueda%'";
+}
 
 $resultado = $conexion->query($sql);
 ?>
@@ -29,119 +39,101 @@ $resultado = $conexion->query($sql);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Foros Asignados</title>
+    <title>Foros</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FFE4B5; /* Fondo naranja claro */
+            background-color: #f4f4f9;
+            color: #333;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-
         .content {
-            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
         }
-
         h2 {
             text-align: center;
-            color: #333;
-            padding: 20px 0;
-            font-size: 24px;
+            color: #444;
         }
-
         .table-container {
-            max-width: 90%;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            margin-top: 20px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        th {
-            background-color: #FF9900; /* Encabezado naranja */
-            color: #fff;
-            font-weight: bold;
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
-            padding: 12px;
-            font-size: 16px;
         }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            font-size: 15px;
+        table th {
+            background-color: #f0f0f0;
         }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .acciones a {
-            display: inline-block;
-            padding: 5px 10px;
-            color: #FF7700; /* Texto naranja */
-            text-decoration: none;
-            font-weight: bold;
-            border: 2px solid #FF7700;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .acciones a:hover {
-            background-color: #FF7700;
-            color: #fff;
-        }
-
         .back-button-container {
             text-align: center;
-            margin: 20px;
+            margin-top: 20px;
         }
-
         .back-button {
-            background-color: #FF9900; /* Botón anaranjado */
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px; /* Bordes redondeados */
-            font-weight: bold;
             text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
-            transition: all 0.3s ease;
+            color: #fff;
+            background: #007bff;
+            padding: 10px 15px;
+            border-radius: 5px;
         }
-
         .back-button:hover {
-            background-color: #FF7700; /* Más oscuro al pasar el cursor */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+            background: #0056b3;
         }
-
-        footer {
-            background-color: #000; /* Pie de página negro */
-            color: white;
+        .search-bar {
+            margin-top: 20px;
             text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px;
+            width: 70%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-bar button {
+            padding: 8px 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="content">
-        <h2>Foros Asignados</h2>
+        <h2>Foros</h2>
+
+        <!-- Barra de búsqueda -->
+        <div class="search-bar">
+            <form method="get" action="">
+                <input type="text" name="busqueda" placeholder="Buscar foros..." value="<?= htmlspecialchars($busqueda) ?>">
+                <button type="submit">Buscar</button>
+                <input type="hidden" name="filtro" value="<?= htmlspecialchars($filtro) ?>">
+            </form>
+        </div>
+
+        <!-- Filtro de foros -->
+        <form method="get" action="">
+            <label for="filtro">Selecciona tipo de foros:</label>
+            <select name="filtro" id="filtro" onchange="this.form.submit()">
+                <option value="privados" <?= $filtro === 'privados' ? 'selected' : '' ?>>Privados</option>
+                <option value="publicos" <?= $filtro === 'publicos' ? 'selected' : '' ?>>Generales</option>
+            </select>
+            <input type="hidden" name="busqueda" value="<?= htmlspecialchars($busqueda) ?>">
+        </form>
 
         <div class="table-container">
             <table>
@@ -160,7 +152,7 @@ $resultado = $conexion->query($sql);
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='3'>No tienes foros asignados.</td></tr>";
+                    echo "<tr><td colspan='3'>No se encontraron foros.</td></tr>";
                 }
                 $conexion->close();
                 ?>
@@ -173,7 +165,7 @@ $resultado = $conexion->query($sql);
     </div>
 
     <footer>
-        <p>© 2024 PE-ISC</p>
+        <p>&copy; 2024 PE-ISC</p>
     </footer>
 </body>
 </html>
