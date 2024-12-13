@@ -1,0 +1,116 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff7e6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+}
+
+h2 {
+    text-align: center;
+    color: #e67e22;
+}
+
+.table-container {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f9d6a7;
+    color: #e67e22;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #fff0db;
+}
+
+.acciones a {
+    text-decoration: none;
+    color: #fff;
+    background: #e67e22;
+    padding: 8px 15px;
+    border-radius: 25px;
+    transition: background 0.3s ease;
+}
+
+.acciones a:hover {
+    background: #d35400;
+}
+
+.back-button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-button {
+    text-decoration: none;
+    color: #fff;
+    background: #e67e22;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.back-button:hover {
+    background: #d35400;
+}
+
+.search-bar {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.search-bar input[type="text"] {
+    padding: 10px;
+    width: 70%;
+    border: 2px solid #e67e22;
+    border-radius: 25px;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background: #e67e22;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-bar button:hover {
+    background: #d35400;
+}
+
+select {
+    padding: 10px;
+    border: 2px solid #e67e22;
+    border-radius: 25px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #e67e22;
+}

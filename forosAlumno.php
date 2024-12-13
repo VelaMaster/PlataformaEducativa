@@ -40,77 +40,7 @@ $resultado = $conexion->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Foros</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .content {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-        h2 {
-            text-align: center;
-            color: #444;
-        }
-        .table-container {
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        table th {
-            background-color: #f0f0f0;
-        }
-        .back-button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .back-button {
-            text-decoration: none;
-            color: #fff;
-            background: #007bff;
-            padding: 10px 15px;
-            border-radius: 5px;
-        }
-        .back-button:hover {
-            background: #0056b3;
-        }
-        .search-bar {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .search-bar input[type="text"] {
-            padding: 8px;
-            width: 70%;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .search-bar button {
-            padding: 8px 15px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .search-bar button:hover {
-            background: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="css/verForosAlumno.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <div class="content">
@@ -135,6 +65,7 @@ $resultado = $conexion->query($sql);
             <input type="hidden" name="busqueda" value="<?= htmlspecialchars($busqueda) ?>">
         </form>
 
+        <!-- Tabla de resultados -->
         <div class="table-container">
             <table>
                 <tr>
@@ -159,6 +90,7 @@ $resultado = $conexion->query($sql);
             </table>
         </div>
 
+        <!-- Botón regresar -->
         <div class="back-button-container">
             <a href="inicioAlumno.php" class="back-button">Regresar al inicio</a>
         </div>
