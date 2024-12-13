@@ -38,6 +38,14 @@ if ($resultado_foro->num_rows === 0) {
 
 $foro = $resultado_foro->fetch_assoc();
 
+// Obtener las rúbricas asociadas al foro
+$sql_rubricas = "SELECT criterio, descripcion, puntos FROM rubricasforo WHERE id_foro = ?";
+$stmt_rubricas = $conexion->prepare($sql_rubricas);
+$stmt_rubricas->bind_param("i", $id_foro);
+$stmt_rubricas->execute();
+$resultado_rubricas = $stmt_rubricas->get_result();
+$rubricas = $resultado_rubricas->fetch_all(MYSQLI_ASSOC);
+
 // Procesar nueva respuesta si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['respuesta'])) {
@@ -117,139 +125,6 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($foro['nombre']); ?></title>
     <link rel="stylesheet" href="css/responderForo.css?v=<?php echo time(); ?>">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fff7e6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar {
-            background-color: #f57c00;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            border-radius: 10px;
-        }
-
-        .navbar h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-
-        .titulo-seccion {
-            background-color: #f57c00;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 1.5em;
-            border-radius: 10px;
-            margin: 20px auto;
-            width: 90%;
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px auto;
-            width: 90%;
-        }
-
-        .form-options select {
-            padding: 5px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-
-        .form-options h3 {
-            margin: 0;
-            color: #666;
-        }
-
-        .btn-ver {
-            padding: 10px 20px;
-            border-radius: 20px;
-            background-color: #f57c00;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-ver:hover {
-            background-color: #e64a19;
-        }
-
-        .respuestas-contenedor {
-            margin-top: 20px;
-        }
-
-        .respuesta {
-            margin-left: 20px;
-            border-left: 2px solid #f57c00;
-            padding-left: 10px;
-            margin-bottom: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-        }
-
-        button {
-            border: none;
-            border-radius: 20px;
-            padding: 10px 15px;
-            margin: 5px 0;
-            cursor: pointer;
-            background-color: #f57c00;
-            color: white;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #e64a19;
-        }
-
-        a {
-            color: #f57c00;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            color: #e64a19;
-            text-decoration: underline;
-        }
-
-        .textarea-respuesta {
-            width: 100%;
-            height: 100px;
-            border-radius: 8px;
-            border: 1px solid #f57c00;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #e64a19;
-        }
-
-        .form-container {
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        .btn-publicar {
-            margin-right: 10px;
-        }
-    </style>
     <script>
         function toggleRespuestas() {
             const contenedor = document.getElementById('respuestas-contenedor');
@@ -275,6 +150,28 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
     </div>
 
     <div class="titulo-seccion">Discusión sobre temas matemáticos</div>
+
+    <div class="rubricas">
+        <h3>Rúbricas del Foro</h3>
+        <table class="tabla-rubricas">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Descripción</th>
+                    <th>Puntaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rubricas as $rubrica): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                    <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
+                    <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
     <div class="form-options">
         <form method="GET" action="responder_foro.php">
