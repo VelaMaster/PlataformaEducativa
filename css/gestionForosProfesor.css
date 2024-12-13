@@ -1,78 +1,98 @@
-html,body {
+html, body {
     font-family: Arial, sans-serif;
-    background-color: #e7d6bf;
+    background-color: #fdf4e3;
     height: 100%;
     margin: 0;
 }
+
 main {
-    flex: 1; /* Hace que el contenido ocupe todo el espacio restante entre header y footer */
+    flex: 1;
     background: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+main:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
 header {
-    background-color: #343a40;
+    background-color: #ff8c00;
     color: white;
     padding: 10px 0;
     text-align: center;
 }
+
 nav.navbar {
     margin-bottom: 20px;
-    background-color: #343a40;
+    background-color: #ff8c00;
 }
+
 nav .navbar-nav .nav-link {
     color: white !important;
+    transition: color 0.3s ease;
 }
-main {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+nav .navbar-nav .nav-link:hover {
+    color: #ffe8cc !important;
 }
+
 h2 {
-    color: #343a40;
+    color: #ff8c00;
 }
+
 /* Contenedor de la Rúbrica */
 #rubricaContainer {
     margin-top: 20px;
     padding: 20px;
-    border: 2px solid #343a40; /* Bordes oscuros para coherencia */
+    border: 2px solid #ff8c00;
     border-radius: 8px;
-    background-color: #f1f1f1; /* Fondo ligeramente gris para contraste */
+    background-color: #fff8e6;
+    transition: background-color 0.3s ease;
 }
-/* Título de la Rúbrica */
+
+#rubricaContainer:hover {
+    background-color: #ffefd5;
+}
+
 #rubricaContainer h3 {
-    color: #343a40;
+    color: #ff8c00;
     margin-bottom: 15px;
     text-align: center;
     font-weight: bold;
 }
+
 /* Tabla de la Rúbrica */
 #rubricaTable {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
+    overflow-x: auto;
+    display: block;
 }
 
 #rubricaTable th, #rubricaTable td {
-    border: 1px solid #343a40; /* Bordes oscuros */
+    border: 1px solid #ff8c00;
     padding: 10px;
     text-align: left;
 }
 
 #rubricaTable th {
-    background-color: #343a40;
+    background-color: #ff8c00;
     color: white;
     font-size: 1rem;
 }
 
 #rubricaTable tr:nth-child(even) {
-    background-color: #e9ecef; /* Filas alternadas */
+    background-color: #fff2cc;
 }
 
 #rubricaTable tr:hover {
-    background-color: #ced4da; /* Hover efecto */
+    background-color: #ffe8b0;
+    transition: background-color 0.2s ease;
 }
 
 /* Inputs dentro de la tabla */
@@ -80,78 +100,88 @@ h2 {
 #rubricaTable input[type="number"] {
     width: 100%;
     padding: 5px;
-    border: 1px solid #ced4da;
+    border: 1px solid #ff8c00;
     border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+#rubricaTable input[type="text"]:focus,
+#rubricaTable input[type="number"]:focus {
+    border-color: #ff4500;
+    outline: none;
 }
 
 /* Botones dentro de la tabla */
 .delete-row-button {
-    background-color: #dc3545; /* Rojo para eliminar */
+    background-color: #e74c3c;
     color: white;
-    border: none;
+    border: 2px solid #c0392b;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .delete-row-button:hover {
-    background-color: #c82333;
+    background-color: #c0392b;
+    transform: scale(1.05);
 }
-/* Botón para Añadir Fila en la Rúbrica */
+
 .add-row-button {
-    background-color: #28a745; /* Verde para añadir */
+    background-color: #27ae60;
     color: white;
-    border: none;
+    border: 2px solid #1e8449;
     padding: 8px 15px;
     border-radius: 4px;
     cursor: pointer;
     margin-bottom: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .add-row-button:hover {
-    background-color: #218838;
+    background-color: #1e8449;
+    transform: scale(1.05);
 }
 
-/* Botón para Mostrar la Rúbrica */
-#addRubricaButton {
-    background-color: #007bff; /* Azul para mostrar */
-    color: white;
-    border: none;
+#addRubricaButton, #removeRubricaButton {
+    border: 2px solid transparent;
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#addRubricaButton {
+    background-color: #ffa500;
+    color: white;
 }
 
 #addRubricaButton:hover {
-    background-color: #0069d9;
+    background-color: #ff8c00;
+    transform: scale(1.05);
 }
 
-/* Botón para Ocultar la Rúbrica */
 #removeRubricaButton {
-    background-color: #6c757d; /* Gris para ocultar */
+    background-color: #e74c3c;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
 }
 
 #removeRubricaButton:hover {
-    background-color: #5a6268;
-}
-/* Total de Puntos Asignados */
-#totalPuntos {
-    font-weight: bold;
-    color: #343a40;
+    background-color: #c0392b;
+    transform: scale(1.05);
 }
 
-/* Párrafo del Total de Puntos */
+#totalPuntos {
+    font-weight: bold;
+    color: #ff8c00;
+}
+
 #rubricaContainer p {
     font-size: 1.1rem;
     text-align: right;
     margin-top: 10px;
 }
+
 /* Ajustes Generales para la Rúbrica */
 .rubrica-container .button-container {
     text-align: right;
@@ -180,5 +210,40 @@ h2 {
         padding: 8px 16px;
         font-size: 0.9rem;
     }
+
+    main {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    header {
+        font-size: 1.2rem;
+    }
 }
+
+/* Asegura que el contenido principal ocupe todo el espacio visible */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+    padding-bottom: 20px; /* Espacio extra para evitar solapamiento con el footer */
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    position: relative; /* Cambia de sticky a relative */
+}
+
 

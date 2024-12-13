@@ -55,24 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = "La respuesta no puede estar vacía.";
         }
-    } elseif (isset($_POST['eliminar_respuesta'])) {
-        $id_respuesta = intval($_POST['eliminar_respuesta']);
-        $sql_eliminar = "DELETE FROM respuestas WHERE id = ?";
-        $stmt_eliminar = $conexion->prepare($sql_eliminar);
-        $stmt_eliminar->bind_param("i", $id_respuesta);
-        $stmt_eliminar->execute();
-        header("Location: responder_foro.php?id_foro=$id_foro");
-        exit();
     }
 }
 
-// Obtener el orden seleccionado o usar un valor predeterminado
+// Obtener respuestas del foro
 $orden = isset($_GET['orden']) ? $_GET['orden'] : 'ASC';
-
-// Validar el valor del orden
 $orden = ($orden === 'DESC') ? 'DESC' : 'ASC';
 
-// Obtener las respuestas del foro en formato jerárquico
 $sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
@@ -82,7 +71,7 @@ $stmt_respuestas = $conexion->prepare($sql_respuestas);
 $stmt_respuestas->bind_param("i", $id_foro);
 $stmt_respuestas->execute();
 $resultado_respuestas = $stmt_respuestas->get_result();
-// Organizar respuestas en un array jerárquico
+
 $respuestas = [];
 while ($fila = $resultado_respuestas->fetch_assoc()) {
     $respuestas[$fila['respuesta_padre']][] = $fila;
@@ -97,24 +86,25 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             echo "<p><strong>" . htmlspecialchars($respuesta['autor']) . "</strong> - " . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
             echo "<p>" . htmlspecialchars($respuesta['contenido']) . "</p>";
 
-            // Formulario para eliminar
             if ($respuesta['id_usuario'] == $num_control) {
                 echo "<form method='POST' class='form-eliminar'>";
                 echo "<input type='hidden' name='eliminar_respuesta' value='" . $respuesta['id'] . "'>";
-                echo "<button type='submit'>Eliminar</button>";
+                echo "<button type='submit' class='btn-eliminar'>Eliminar</button>";
                 echo "</form>";
             }
 
-            // Formulario para responder
-            echo "<button onclick='mostrarFormularioRespuesta(" . $respuesta['id'] . ")'>Responder</button>";
+            echo "<button class='btn-responder' onclick='mostrarFormularioRespuesta(" . $respuesta['id'] . ")'>Responder</button>";
             echo "<form id='form-respuesta-" . $respuesta['id'] . "' class='form-respuesta' style='display: none;' method='POST'>";
-            echo "<textarea name='respuesta' placeholder='Escribe tu respuesta...'></textarea>";
+            echo "<textarea name='respuesta' placeholder='Escribe tu respuesta...' class='textarea-respuesta'></textarea>";
             echo "<input type='hidden' name='respuesta_padre' value='" . $respuesta['id'] . "'>";
-            echo "<button type='submit'>Publicar Respuesta</button>";
+            echo "<button type='submit' class='btn-publicar'>Publicar Respuesta</button>";
             echo "</form>";
 
-            // Mostrar respuestas hijas
+            echo "<button class='btn-toggle' onclick='toggleSubRespuestas(" . $respuesta['id'] . ")'>Ver/Ocultar Respuestas</button>";
+            echo "<div id='subrespuestas-" . $respuesta['id'] . "' style='display: none;'>";
             mostrarRespuestas($respuestas, $respuesta['id']);
+            echo "</div>";
+
             echo "</div>";
         }
     }
@@ -126,78 +116,188 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($foro['nombre']); ?></title>
+    <link rel="stylesheet" href="css/responderForo.css?v=<?php echo time(); ?>">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        h2 {
+            background-color: #fff7e6;
             color: #333;
+            margin: 0;
+            padding: 0;
         }
-        .respuesta {
-            margin-left: 20px;
-            border-left: 2px solid #ccc;
-            padding-left: 10px;
-            margin-top: 10px;
+
+        .navbar {
+            background-color: #f57c00;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border-radius: 10px;
         }
-        .form-eliminar {
-            display: inline;
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5em;
         }
-        textarea {
-            width: 100%;
-            height: 60px;
-            margin-bottom: 10px;
+
+        .titulo-seccion {
+            background-color: #f57c00;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.5em;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 90%;
         }
-        button {
-            padding: 5px 10px;
-            background-color: #007bff;
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px auto;
+            width: 90%;
+        }
+
+        .form-options select {
+            padding: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .form-options h3 {
+            margin: 0;
+            color: #666;
+        }
+
+        .btn-ver {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #f57c00;
             color: white;
             border: none;
-            border-radius: 3px;
+            font-weight: bold;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .btn-ver:hover {
+            background-color: #e64a19;
         }
-        .form-respuesta {
-            margin-top: 10px;
+
+        .respuestas-contenedor {
+            margin-top: 20px;
+        }
+
+        .respuesta {
+            margin-left: 20px;
+            border-left: 2px solid #f57c00;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+
+        button {
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin: 5px 0;
+            cursor: pointer;
+            background-color: #f57c00;
+            color: white;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+        }
+
+        a {
+            color: #f57c00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #e64a19;
+            text-decoration: underline;
+        }
+
+        .textarea-respuesta {
+            width: 100%;
+            height: 100px;
+            border-radius: 8px;
+            border: 1px solid #f57c00;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #e64a19;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .btn-publicar {
+            margin-right: 10px;
         }
     </style>
     <script>
+        function toggleRespuestas() {
+            const contenedor = document.getElementById('respuestas-contenedor');
+            contenedor.style.display = contenedor.style.display === 'none' ? 'block' : 'none';
+            const boton = document.getElementById('toggle-respuestas-boton');
+            boton.textContent = contenedor.style.display === 'none' ? 'Ver Respuestas' : 'Ocultar Respuestas';
+        }
+
         function mostrarFormularioRespuesta(idRespuesta) {
             const formulario = document.getElementById(`form-respuesta-${idRespuesta}`);
             formulario.style.display = formulario.style.display === 'none' ? 'block' : 'none';
         }
+
+        function toggleSubRespuestas(idRespuesta) {
+            const subRespuestas = document.getElementById(`subrespuestas-${idRespuesta}`);
+            subRespuestas.style.display = subRespuestas.style.display === 'none' ? 'block' : 'none';
+        }
     </script>
 </head>
 <body>
-    <h2><?php echo htmlspecialchars($foro['nombre']); ?></h2>
-    <p><?php echo htmlspecialchars($foro['descripcion']); ?></p>
+    <div class="navbar">
+        <h1>Foro de Matemáticas</h1>
+    </div>
 
-    <h3>Ordenar respuestas</h3>
-<form method="GET" action="responder_foro.php">
-    <input type="hidden" name="id_foro" value="<?php echo $id_foro; ?>">
-    <select name="orden" onchange="this.form.submit()">
-        <option value="ASC" <?php echo ($orden === 'ASC') ? 'selected' : ''; ?>>Más antiguas primero</option>
-        <option value="DESC" <?php echo ($orden === 'DESC') ? 'selected' : ''; ?>>Más recientes primero</option>
-    </select>
-</form>
+    <div class="titulo-seccion">Discusión sobre temas matemáticos</div>
 
-    <h3>Respuestas</h3>
-    <div>
+    <div class="form-options">
+        <form method="GET" action="responder_foro.php">
+            <input type="hidden" name="id_foro" value="<?php echo $id_foro; ?>">
+            <select name="orden" onchange="this.form.submit()">
+                <option value="ASC" <?php echo ($orden === 'ASC') ? 'selected' : ''; ?>>Más antiguas primero</option>
+                <option value="DESC" <?php echo ($orden === 'DESC') ? 'selected' : ''; ?>>Más recientes primero</option>
+            </select>
+        </form>
+        <h3>Respuestas</h3>
+        <button id="toggle-respuestas-boton" class="btn-ver" onclick="toggleRespuestas()">Ver Respuestas</button>
+    </div>
+
+    <div id="respuestas-contenedor" class="respuestas-contenedor">
         <?php mostrarRespuestas($respuestas); ?>
     </div>
 
-    <h3>Agregar una respuesta</h3>
-    <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
-    <form method="POST">
-        <textarea name="respuesta" placeholder="Escribe tu respuesta..."></textarea>
-        <button type="submit">Publicar</button>
-        <a href="forosAlumno.php">Regresar</a>
+    <div class="titulo-seccion">Agregar una respuesta</div>
+    <?php if (isset($error)) echo "<p style='color:red; text-align: center;'>$error</p>"; ?>
+    <form method="POST" class="form-container">
+        <textarea name="respuesta" placeholder="Escribe tu respuesta..." class="textarea-respuesta"></textarea>
+        <button type="submit" class="btn-publicar">Publicar</button>
+        <a href="forosAlumno.php" class="btn-regresar">Regresar</a>
     </form>
-
-    
 </body>
 </html>

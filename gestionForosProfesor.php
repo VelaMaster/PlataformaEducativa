@@ -155,12 +155,20 @@ $stmt_cursos->close();
             <button type="submit" class="btn btn-primary">Asignar Foro</button>
         </form>
     </section>
+
+    <div class="container mt-4">
     <section id="foros-asignados">
-        <h2>Foros Asignados</h2>
-        <form method="POST" action="listarforos.php">
-            <button type="submit" class="btn btn-secondary">Mostrar Foros Asignados</button>
+        <h2 class="text-center text-warning">Foros Asignados</h2>
+        <form method="POST" action="listarforos.php" class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-secondary btn-lg">Mostrar Foros Asignados</button>
         </form>
     </section>
+</div>
+<footer>
+    <p>© 2024 PE-ISC</p>
+</footer>
+
+    
 </main>
 <script src="js/rubrica.js"></script>
 <script>
