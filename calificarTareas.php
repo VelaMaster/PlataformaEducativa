@@ -135,14 +135,14 @@ if ($id_tarea_seleccionada > 0) {
 <div class="barranavegacion">
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
+        <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                    <a class="nav-link"href="inicioProfesor.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="calendarioDocente.php">Calendario</a>
@@ -151,14 +151,19 @@ if ($id_tarea_seleccionada > 0) {
                     <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a> <!-- Nueva opción -->
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
                 </li>
             </ul>
         </div>
     </div>
  </div>
 </div>
-
 <div class="container mt-4">
     <h1 class="mb-4">Calificar Tareas</h1>
 

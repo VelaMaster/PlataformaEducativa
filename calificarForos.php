@@ -7,14 +7,19 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+// Mostrar errores (para depuración)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Configuración de la base de datos
 $servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
+$usuario_db = "root";
+$contraseña_db = "";
 $baseDatos = "peis";
 
 // Establecer conexión con la base de datos
-$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
+$conexion = new mysqli($servidor, $usuario_db, $contraseña_db, $baseDatos);
 
 // Verificar si hay error en la conexión
 if ($conexion->connect_error) {
@@ -23,43 +28,50 @@ if ($conexion->connect_error) {
 
 // Procesar calificación
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_respuesta'])) {
-    $id_respuesta = $_POST['id_respuesta'];
-    $calificacion = $_POST['calificacion'];
+    $id_respuesta = intval($_POST['id_respuesta']);
+    $calificacion = intval($_POST['calificacion']);
     $revisado = isset($_POST['revisado']) ? 1 : 0;
 
+    if ($calificacion < 0 || $calificacion > 100) {
+        echo "<script>alert('Error: La calificación debe ser un número entre 0 y 100.'); window.history.back();</script>";
+        exit;
+    }
+
+    // Actualizar la calificación
     $sql_update = "UPDATE respuestas SET calificacion = ?, revisado = ? WHERE id = ?";
     $stmt_update = $conexion->prepare($sql_update);
     $stmt_update->bind_param("iii", $calificacion, $revisado, $id_respuesta);
-    $stmt_update->execute();
+    if ($stmt_update->execute()) {
+        echo "<script>alert('Calificación actualizada con éxito.'); window.location.href = 'calificarForos.php';</script>";
+    } else {
+        echo "<script>alert('Error al actualizar la calificación.'); window.history.back();</script>";
+    }
     $stmt_update->close();
-
-    echo "<script>alert('Calificación actualizada con éxito.'); window.location.href = 'calificarForos.php';</script>";
-    exit;
 }
 
-// Consultar las respuestas con los nombres de temas y usuarios
+// Consultar las respuestas con información adicional
 $sql = "
     SELECT 
         respuestas.id AS id_respuesta,
-        temas.titulo AS nombre_tema,
-        CASE
-            WHEN respuestas.tipo_usuario = 'alumno' THEN CONCAT(alumnos.nombre, ' ', alumnos.apellido_p, ' ', alumnos.apellido_m)
-            WHEN respuestas.tipo_usuario = 'docente' THEN CONCAT(docentes.nombre, ' ', docentes.apellido_p, ' ', docentes.apellido_m)
-            ELSE 'Usuario no identificado'
-        END AS nombre_usuario,
-        respuestas.contenido,
-        respuestas.fecha_creacion
+        cursos.nombre_curso AS materia,
+        foros.nombre AS titulo_foro,
+        foros.descripcion AS descripcion_foro,
+        CONCAT(alumnos.nombre, ' ', alumnos.apellido_p, ' ', alumnos.apellido_m) AS nombre_estudiante,
+        respuestas.fecha_creacion AS fecha_respuesta,
+        respuestas.calificacion,
+        respuestas.revisado
     FROM respuestas
-    JOIN temas ON respuestas.id_tema = temas.id
-    LEFT JOIN alumnos ON respuestas.id_usuario = alumnos.id AND respuestas.tipo_usuario = 'alumno'
-    LEFT JOIN docentes ON respuestas.id_usuario = docentes.id AND respuestas.tipo_usuario = 'docente'
+    INNER JOIN foros ON respuestas.id_tema = foros.id
+    INNER JOIN cursos ON foros.id_curso = cursos.id
+    INNER JOIN alumnos ON respuestas.id_usuario = alumnos.id
+    WHERE respuestas.tipo_usuario = 'alumno'
 ";
 $resultado = $conexion->query($sql);
 
-// Cerrar conexión
-$conexion->close();
+if (!$resultado) {
+    die("Error en la consulta de respuestas: " . $conexion->error);
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -73,19 +85,6 @@ $conexion->close();
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-        }
-        header {
-            background-color: #343a40;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-        }
-        nav.navbar {
-            margin-bottom: 20px;
-            background-color: #343a40;
-        }
-        nav .navbar-nav .nav-link {
-            color: white !important;
         }
         main {
             background: white;
@@ -111,7 +110,8 @@ $conexion->close();
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -145,10 +145,11 @@ $conexion->close();
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
             <tr>
-                <th>Tema</th>
-                <th>Usuario</th>
-                <th>Contenido</th>
-                <th>Fecha Creación</th>
+                <th>Materia</th>
+                <th>Título del Foro</th>
+                <th>Descripción</th>
+                <th>Nombre del Estudiante</th>
+                <th>Fecha Respuesta</th>
                 <th>Calificar</th>
             </tr>
         </thead>
@@ -156,14 +157,15 @@ $conexion->close();
             <?php if ($resultado->num_rows > 0): ?>
                 <?php while ($row = $resultado->fetch_assoc()): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['nombre_tema']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre_usuario']); ?></td>
-                        <td><?php echo htmlspecialchars($row['contenido']); ?></td>
-                        <td><?php echo $row['fecha_creacion']; ?></td>
+                        <td><?php echo htmlspecialchars($row['materia']); ?></td>
+                        <td><?php echo htmlspecialchars($row['titulo_foro']); ?></td>
+                        <td><?php echo htmlspecialchars($row['descripcion_foro']); ?></td>
+                        <td><?php echo htmlspecialchars($row['nombre_estudiante']); ?></td>
+                        <td><?php echo htmlspecialchars($row['fecha_respuesta']); ?></td>
                         <td>
                             <form action="calificarForos.php" method="POST" class="d-flex align-items-center">
                                 <input type="hidden" name="id_respuesta" value="<?php echo $row['id_respuesta']; ?>">
-                                <input type="number" name="calificacion" class="form-control me-2" placeholder="Calificación" required>
+                                <input type="number" name="calificacion" class="form-control me-2" placeholder="Calificación" min="0" max="100" required>
                                 <div class="form-check me-2">
                                     <input class="form-check-input" type="checkbox" name="revisado" id="revisado-<?php echo $row['id_respuesta']; ?>">
                                     <label class="form-check-label" for="revisado-<?php echo $row['id_respuesta']; ?>">Revisado</label>
@@ -175,7 +177,7 @@ $conexion->close();
                 <?php endwhile; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5" class="text-center">No hay respuestas disponibles.</td>
+                    <td colspan="6" class="text-center">No hay respuestas disponibles.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -189,3 +191,7 @@ $conexion->close();
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<?php
+$conexion->close();
+?>
