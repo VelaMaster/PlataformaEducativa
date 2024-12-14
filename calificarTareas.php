@@ -12,23 +12,34 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Conexión a la base de datos
-$servidor = "localhost";
-$usuario_db = "root"; // Cambio de variable para evitar confusión con $usuario (docente)
-$contraseña_db = "";
-$baseDatos = "peis";
-$conexion = new mysqli($servidor, $usuario_db, $contraseña_db, $baseDatos);
+// Incluir la conexión global
+require_once 'db.php';
 
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+if (!$conexion) {
+    die("Error de conexión: " . mysqli_connect_error());
 }
 
-// Obtener los grupos asignados al docente
+// 1. Obtener el ID del docente basado en num_control
+$query_docente = "SELECT id FROM docentes WHERE num_control = '$num_control'";
+$result_docente = $conexion->query($query_docente);
+
+if ($result_docente && $row_docente = $result_docente->fetch_assoc()) {
+    $id_docente = $row_docente['id'];
+} else {
+    echo "<script>alert('Error: Docente no encontrado.'); window.location.href = 'index.php';</script>";
+    exit;
+}
+
+// 2. Obtener los grupos asignados al docente usando id_docente
 $query_grupos = "
-    SELECT g.id_grupo, g.nombre_grupo
+    SELECT g.id, g.nombre_grupo
     FROM grupos g
-    WHERE g.id_docente = '$num_control'";
+    WHERE g.id_docente = '$id_docente'";
 $result_grupos = $conexion->query($query_grupos);
+
+if (!$result_grupos) {
+    die("Error en la consulta de grupos: " . $conexion->error);
+}
 
 // Validar selección de grupo
 $id_grupo_seleccionado = isset($_GET['id_grupo']) ? intval($_GET['id_grupo']) : 0;
@@ -51,10 +62,10 @@ if ($id_grupo_seleccionado > 0) {
 
 // Construir consulta de tareas según el filtro
 $query_tareas = "
-    SELECT t.titulo, t.descripcion, t.fecha_limite, t.id_tarea
+    SELECT t.titulo, t.descripcion, t.fecha_limite, t.id
     FROM tareas t
     INNER JOIN grupos g ON t.id_curso = g.id_curso
-    WHERE g.id_grupo = $id_grupo_seleccionado AND g.id_docente = '$num_control'";
+    WHERE g.id = $id_grupo_seleccionado AND g.id_docente = '$id_docente'";
 
 // **Modificado:** Añadir condición según el filtro seleccionado
 if ($filtro_tareas == 'no_calificadas') {
@@ -62,9 +73,9 @@ if ($filtro_tareas == 'no_calificadas') {
     $query_tareas .= " AND EXISTS (
         SELECT 1 
         FROM grupo_alumnos ga
-        LEFT JOIN entregas e ON ga.num_control = e.id_alumno AND e.id_tarea = t.id_tarea
+        LEFT JOIN entregas e ON ga.num_control = e.id_alumno AND e.id_tarea = t.id
         WHERE ga.id_grupo = $id_grupo_seleccionado 
-          AND (e.calificacion IS NULL OR e.id_entrega IS NULL)
+          AND (e.calificacion IS NULL OR e.id_tarea IS NULL)
     )";
 } elseif ($filtro_tareas == 'calificadas') {
     if ($total_estudiantes > 0) {
@@ -72,7 +83,7 @@ if ($filtro_tareas == 'no_calificadas') {
         $query_tareas .= " AND (
             SELECT COUNT(e.calificacion)
             FROM grupo_alumnos ga
-            LEFT JOIN entregas e ON ga.num_control = e.id_alumno AND e.id_tarea = t.id_tarea
+            LEFT JOIN entregas e ON ga.num_control = e.id_alumno AND e.id_tarea = t.id
             WHERE ga.id_grupo = $id_grupo_seleccionado AND e.calificacion IS NOT NULL
         ) = $total_estudiantes";
     } else {
@@ -82,22 +93,29 @@ if ($filtro_tareas == 'no_calificadas') {
 }
 $result_tareas = $conexion->query($query_tareas);
 
+if (!$result_tareas) {
+    die("Error en la consulta de tareas: " . $conexion->error);
+}
+
 // Validar selección de tarea
 $id_tarea_seleccionada = isset($_GET['id_tarea']) ? intval($_GET['id_tarea']) : 0;
 
 // Obtener las entregas de la tarea seleccionada
 if ($id_tarea_seleccionada > 0) {
     $query_entregas = "
-        SELECT e.archivo_entrega, e.fecha_entrega, e.calificacion, e.id_entrega,
+        SELECT e.archivo_entrega, e.fecha_entrega, e.calificacion, e.id AS id_entrega,
                CONCAT(a.nombre, ' ', a.apellido_p, ' ', a.apellido_m) AS alumno_nombre
         FROM entregas e
-        INNER JOIN alumnos a ON e.id_alumno = a.num_control
+        INNER JOIN alumnos a ON e.id_alumno = a.id
+        INNER JOIN grupo_alumnos ga ON ga.num_control = a.num_control
         WHERE e.id_tarea = $id_tarea_seleccionada
-          AND e.id_alumno IN (
-              SELECT num_control FROM grupo_alumnos WHERE id_grupo = $id_grupo_seleccionado
-          )
+          AND ga.id_grupo = $id_grupo_seleccionado
     ";
     $result_entregas = $conexion->query($query_entregas);
+
+    if (!$result_entregas) {
+        die("Error en la consulta de entregas: " . $conexion->error);
+    }
 } else {
     $result_entregas = null;
 }
@@ -152,14 +170,19 @@ if ($id_tarea_seleccionada > 0) {
                 <select name="id_grupo" id="id_grupo" class="form-select" onchange="this.form.submit()">
                     <option value="0">-- Seleccionar Grupo --</option>
                     <?php
-                    // Reiniciar el puntero del resultado para evitar problemas al iterar nuevamente
-                    $result_grupos->data_seek(0);
-                    while ($grupo = $result_grupos->fetch_assoc()):
+                    // Verificar si hay grupos para mostrar
+                    if ($result_grupos->num_rows > 0) {
+                        while ($grupo = $result_grupos->fetch_assoc()):
                     ?>
-                        <option value="<?= $grupo['id_grupo'] ?>" <?= $id_grupo_seleccionado == $grupo['id_grupo'] ? 'selected' : '' ?>>
+                        <option value="<?= htmlspecialchars($grupo['id']) ?>" <?= $id_grupo_seleccionado == $grupo['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($grupo['nombre_grupo']) ?>
                         </option>
-                    <?php endwhile; ?>
+                    <?php
+                        endwhile;
+                    } else {
+                        echo '<option value="0">No hay grupos disponibles</option>';
+                    }
+                    ?>
                 </select>
             </div>
             <div class="col-md-6">
@@ -193,7 +216,7 @@ if ($id_tarea_seleccionada > 0) {
                             <td><?= htmlspecialchars($tarea['descripcion']) ?></td>
                             <td><?= htmlspecialchars($tarea['fecha_limite']) ?></td>
                             <td>
-                                <a href="?id_grupo=<?= $id_grupo_seleccionado ?>&filtro=<?= $filtro_tareas ?>&id_tarea=<?= $tarea['id_tarea'] ?>" class="btn btn-primary">Ver Entregas</a>
+                                <a href="?id_grupo=<?= $id_grupo_seleccionado ?>&filtro=<?= htmlspecialchars($filtro_tareas) ?>&id_tarea=<?= $tarea['id'] ?>" class="btn btn-primary">Ver Entregas</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -203,25 +226,25 @@ if ($id_tarea_seleccionada > 0) {
             <div class="alert alert-info">No hay tareas que cumplan con el filtro seleccionado.</div>
         <?php endif; ?>
     <?php endif; ?>
+
     <!-- Modal de Confirmación para Recalificar -->
-<div class="modal fade" id="confirmRecalificarModal" tabindex="-1" aria-labelledby="confirmRecalificarModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"> 
-        <h5 class="modal-title" id="confirmRecalificarModalLabel">Recalificar Entrega</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        ¿Estás seguro de que deseas volver a calificar esta entrega?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <a href="#" id="confirmRecalificarBtn" class="btn btn-primary">Sí, recalificar</a>
+    <div class="modal fade" id="confirmRecalificarModal" tabindex="-1" aria-labelledby="confirmRecalificarModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"> 
+            <h5 class="modal-title" id="confirmRecalificarModalLabel">Recalificar Entrega</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            ¿Estás seguro de que deseas volver a calificar esta entrega?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <a href="#" id="confirmRecalificarBtn" class="btn btn-primary">Sí, recalificar</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
 
     <!-- Tabla de entregas -->
     <?php if ($id_tarea_seleccionada): ?>
@@ -251,22 +274,18 @@ if ($id_tarea_seleccionada > 0) {
                             <td><?= $entrega['calificacion'] !== null ? htmlspecialchars($entrega['calificacion']) : 'Sin Calificar' ?></td>
                             <td><?= htmlspecialchars($entrega['alumno_nombre']) ?></td>
                             <td>
-    <?php if ($entrega['id_entrega']): ?>
-        <?php if ($entrega['calificacion'] !== null): ?>
-            <span class="badge bg-info ms-2 calificada-badge" data-bs-toggle="modal" data-bs-target="#confirmRecalificarModal" data-id-entrega="<?= $entrega['id_entrega'] ?>" style="cursor: pointer;">
-                Calificada
-            </span>
-        <?php else: ?>
-            <a href="calificarEntrega.php?id_entrega=<?= $entrega['id_entrega'] ?>" class="btn btn-success btn-sm">Calificar</a>
-        <?php endif; ?>
-    <?php else: ?>
-        -
-    <?php endif; ?>
-</td>
-
-
-
-
+                                <?php if ($entrega['id_entrega']): ?>
+                                    <?php if ($entrega['calificacion'] !== null): ?>
+                                        <span class="badge bg-info ms-2 calificada-badge" data-bs-toggle="modal" data-bs-target="#confirmRecalificarModal" data-id-entrega="<?= $entrega['id_entrega'] ?>" style="cursor: pointer;">
+                                            Calificada
+                                        </span>
+                                    <?php else: ?>
+                                        <a href="calificarEntrega.php?id_entrega=<?= $entrega['id_entrega'] ?>" class="btn btn-success btn-sm">Calificar</a>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -276,6 +295,7 @@ if ($id_tarea_seleccionada > 0) {
         <?php endif; ?>
     <?php endif; ?>
 </div>
+
 <script>
 // Espera a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', function () {
