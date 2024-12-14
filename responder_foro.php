@@ -146,10 +146,10 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
 </head>
 <body>
     <div class="navbar">
-        <h1>Foro de Matemáticas</h1>
+        <h1><?php echo htmlspecialchars($foro['nombre']); ?></h1>
     </div>
 
-    <div class="titulo-seccion">Discusión sobre temas matemáticos</div>
+    <div class="titulo-seccion"><?php echo htmlspecialchars($foro['descripcion']); ?></div>
 
     <div class="rubricas">
         <h3>Rúbricas del Foro</h3>
