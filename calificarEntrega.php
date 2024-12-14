@@ -14,10 +14,10 @@ error_reporting(E_ALL);
 
 // Conexión a la base de datos
 $servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
+$usuario_db = "root"; // Evitar usar $usuario para no confundir con el usuario del sistema
+$contraseña_db = "";
 $baseDatos = "peis";
-$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
+$conexion = new mysqli($servidor, $usuario_db, $contraseña_db, $baseDatos);
 
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
@@ -31,16 +31,24 @@ if (!isset($_GET['id_entrega']) || empty($_GET['id_entrega'])) {
 
 $id_entrega = intval($_GET['id_entrega']);
 
-// Obtener detalles de la entrega
+// Obtener detalles de la entrega utilizando prepared statements para mayor seguridad
 $query_entrega = "
     SELECT e.id_tarea, e.archivo_entrega, e.fecha_entrega, e.calificacion, e.retroalimentacion,
            CONCAT(a.nombre, ' ', a.apellido_p, ' ', a.apellido_m) AS alumno_nombre,
            t.titulo AS titulo_tarea, t.descripcion AS descripcion_tarea
     FROM entregas e
-    INNER JOIN alumnos a ON e.id_alumno = a.num_control
-    INNER JOIN tareas t ON e.id_tarea = t.id_tarea
-    WHERE e.id_entrega = $id_entrega";
-$result_entrega = $conexion->query($query_entrega);
+    INNER JOIN alumnos a ON e.id_alumno = a.id
+    INNER JOIN tareas t ON e.id_tarea = t.id
+    WHERE e.id = ?
+";
+$stmt_entrega = $conexion->prepare($query_entrega);
+if (!$stmt_entrega) {
+    die("Error en la preparación de la consulta de entrega: " . $conexion->error);
+}
+
+$stmt_entrega->bind_param("i", $id_entrega);
+$stmt_entrega->execute();
+$result_entrega = $stmt_entrega->get_result();
 
 if ($result_entrega->num_rows == 0) {
     echo "<script>alert('Error: La entrega no existe.'); window.location.href = 'calificarTareas.php';</script>";
@@ -49,32 +57,67 @@ if ($result_entrega->num_rows == 0) {
 
 $entrega = $result_entrega->fetch_assoc();
 
-// Obtener rúbrica asociada a la tarea
+// Obtener rúbrica asociada a la tarea utilizando prepared statements
 $query_rubrica = "
-    SELECT id_rubrica, criterio, descripcion, puntos
+    SELECT id, criterio, descripcion, puntos
     FROM rubricas
-    WHERE id_tarea = " . intval($entrega['id_tarea']);
-$result_rubrica = $conexion->query($query_rubrica);
+    WHERE id_tarea = ?
+";
+$stmt_rubrica = $conexion->prepare($query_rubrica);
+if (!$stmt_rubrica) {
+    die("Error en la preparación de la consulta de rúbrica: " . $conexion->error);
+}
+
+$id_tarea = intval($entrega['id_tarea']);
+$stmt_rubrica->bind_param("i", $id_tarea);
+$stmt_rubrica->execute();
+$result_rubrica = $stmt_rubrica->get_result();
 
 // Guardar calificación y retroalimentación si se envía el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $calificacion_total = isset($_POST['calificacion_total']) ? intval($_POST['calificacion_total']) : null;
-    $retroalimentacion = isset($_POST['retroalimentacion']) ? $conexion->real_escape_string($_POST['retroalimentacion']) : null;
+    // Obtener calificaciones por criterio
+    $calificaciones = isset($_POST['calificaciones']) ? $_POST['calificaciones'] : [];
+    
+    // Calcular la calificación total sumando las calificaciones por criterio
+    $calificacion_total = 0;
+    foreach ($calificaciones as $id_rubrica => $valor) {
+        $valor = intval($valor);
+        $calificacion_total += $valor;
+    }
 
-    if ($calificacion_total === null || $calificacion_total < 0 || $calificacion_total > 100) {
+    // Limitar la calificación total a 100
+    if ($calificacion_total > 100) {
+        $calificacion_total = 100;
+    }
+
+    // Obtener retroalimentación
+    $retroalimentacion = isset($_POST['retroalimentacion']) ? $conexion->real_escape_string($_POST['retroalimentacion']) : '';
+
+    // Validar la calificación total
+    if ($calificacion_total < 0 || $calificacion_total > 100) {
         echo "<script>alert('Error: La calificación debe ser un número entre 0 y 100.');</script>";
     } else {
+        // Actualizar la entrega con la calificación y retroalimentación
         $query_actualizar = "
             UPDATE entregas 
-            SET calificacion = $calificacion_total, retroalimentacion = '$retroalimentacion' 
-            WHERE id_entrega = $id_entrega";
-        if ($conexion->query($query_actualizar) === TRUE) {
+            SET calificacion = ?, retroalimentacion = ? 
+            WHERE id = ?
+        ";
+        $stmt_actualizar = $conexion->prepare($query_actualizar);
+        if (!$stmt_actualizar) {
+            die("Error en la preparación de la consulta de actualización: " . $conexion->error);
+        }
+
+        $stmt_actualizar->bind_param("isi", $calificacion_total, $retroalimentacion, $id_entrega);
+        if ($stmt_actualizar->execute()) {
             echo "<script>alert('Calificación y retroalimentación guardadas correctamente.'); window.location.href = 'calificarTareas.php';</script>";
+            exit;
         } else {
             echo "<script>alert('Error al guardar la calificación.');</script>";
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -83,9 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calificar Tarea</title>
-    <link rel="stylesheet" href="css/calificarEntrega.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/calificarEntrega.css?v=<?php echo time(); ?>">
     <script>
         function actualizarCalificacionTotal() {
             const inputs = document.querySelectorAll('.calificacion-criterio');
@@ -104,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="barranavegacion">
  <div class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Plataforma educativa para Ingenieria en Sistemas</a>
+        <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -174,8 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <td>
                                         <input type="number" class="form-control calificacion-criterio" 
                                                max="<?= $rubrica['puntos'] ?>" 
-                                               name="calificaciones[<?= $rubrica['id_rubrica'] ?>]" 
-                                               value="0">
+                                               name="calificaciones[<?= $rubrica['id'] ?>]" 
+                                               value="<?= isset($_POST['calificaciones'][$rubrica['id']]) ? intval($_POST['calificaciones'][$rubrica['id']]) : 0 ?>">
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
