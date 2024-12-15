@@ -93,6 +93,31 @@ $resultado = mysqli_stmt_get_result($stmt);
         .add-rubric-button:hover, .remove-rubric-button:hover {
             background-color: #0056b3;
         }
+
+        .file-upload-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-preview p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .remove-file-button {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remove-file-button:hover {
+            background-color: #d45d39;
+        }
     </style>
 </head>
 <body>
@@ -147,24 +172,24 @@ $resultado = mysqli_stmt_get_result($stmt);
                 ?>
             </select>
 
-<label for="titulo">Título de la Tarea:</label>
-<input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título de la tarea">
+            <label for="titulo">Título de la Tarea:</label>
+            <input type="text" id="titulo" name="titulo" required placeholder="Ingrese el título de la tarea">
 
-<label for="descripcion">Descripción:</label>
-<textarea id="descripcion" name="descripcion" required placeholder="Describa los detalles de la tarea"></textarea>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required placeholder="Describa los detalles de la tarea"></textarea>
 
-<label for="fechaEntrega">Fecha de Entrega:</label>
-<input type="date" id="fechaEntrega" name="fechaEntrega" required>
+            <label for="fechaEntrega">Fecha de Entrega:</label>
+            <input type="date" id="fechaEntrega" name="fechaEntrega" required>
 
-<label class="custom-file-upload">
-    Seleccionar archivo
-    <input type="file" id="archivo" name="archivo">
-</label>
+            <label class="custom-file-upload">
+                Seleccionar archivo
+                <input type="file" id="archivo" name="archivo" onchange="previewFile()">
+            </label>
             <div class="file-upload-preview" id="filePreview" style="display: none;">
                 <img src="" alt="Previsualización de archivo" id="fileIcon" onclick="abrirModal(this.src)" ondblclick="window.open(this.src, '_blank')">
                 <p id="fileName">Ningún archivo seleccionado</p>
+                <button type="button" id="removeFileButton" class="remove-file-button" onclick="removeFile()" style="display: none;">Eliminar archivo</button>
             </div>
-
 
             <div class="button-container">
             <div class="dropdown">
@@ -183,11 +208,11 @@ $resultado = mysqli_stmt_get_result($stmt);
                 <path d="..."></path>
             </svg>
             Canva
-                        </a>
-                        <a href="https://docs.google.com/presentation" target="_blank">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#D24726" viewBox="0 0 24 24">
-                                <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z"></path>
-                            </svg>
+        </a>
+        <a href="https://docs.google.com/presentation" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#D24726" viewBox="0 0 24 24">
+                <path d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z"></path>
+            </svg>
             Presentación
         </a>
         <a href="https://docs.google.com/document" target="_blank">
@@ -198,7 +223,6 @@ $resultado = mysqli_stmt_get_result($stmt);
         </a>
     </div>
  </div>
-
 
                 <button type="button" id="addRubricaButton" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
                 <button type="button" id="removeRubricaButton" class="remove-rubric-button" onclick="ocultarRubrica()" style="display: none;">Eliminar Rúbrica</button>
@@ -242,6 +266,37 @@ $resultado = mysqli_stmt_get_result($stmt);
 <script src="js/rubrica.js"></script>
 
 <script>
+    function previewFile() {
+        const file = document.getElementById('archivo').files[0];
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileIcon = document.getElementById('fileIcon');
+        const removeFileButton = document.getElementById('removeFileButton');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (file.type.startsWith('image')) {
+                    fileIcon.src = e.target.result;
+                    filePreview.style.display = 'block';
+                } else {
+                    fileIcon.src = 'default-icon.png'; // Puedes colocar un icono predeterminado
+                    filePreview.style.display = 'block';
+                }
+                fileName.textContent = file.name;
+                removeFileButton.style.display = 'inline-block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            filePreview.style.display = 'none';
+        }
+    }
+
+    function removeFile() {
+        document.getElementById('archivo').value = ''; // Elimina el archivo del input
+        document.getElementById('filePreview').style.display = 'none'; // Oculta la vista previa
+    }
+
     function mostrarRubrica() {
         document.getElementById('rubricaContainer').style.display = 'block';
         document.getElementById('addRubricaButton').style.display = 'none';

@@ -14,7 +14,7 @@ if ($conexion->connect_error) {
 }
 
 // Query to fetch assigned tasks
-$sql = "SELECT id_tarea, id_curso, titulo, fecha_limite FROM tareas";
+$sql = "SELECT id, id, titulo, fecha_limite FROM tareas";
 $resultado = $conexion->query($sql);
 ?>
 
@@ -212,13 +212,13 @@ $resultado = $conexion->query($sql);
         if ($resultado->num_rows > 0) {
             while($fila = $resultado->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
+                echo "<td>" . obtenerNombreMateria($fila["id"], $conexion) . "</td>";
                 echo "<td>" . $fila["titulo"] . "</td>";
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td class='acciones'>
-                        <a href='verTarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> |
-                        <a href='editarTarea.php?id=" . $fila["id_tarea"] . "'>Editar</a> |
-                        <a href='#' onclick='confirmarEliminacion(" . $fila["id_tarea"] . ")'>Eliminar</a>
+                        <a href='verTarea.php?id=" . $fila["id"] . "'>Ver</a> |
+                        <a href='editarTarea.php?id=" . $fila["id"] . "'>Editar</a> |
+                        <a href='#' onclick='confirmarEliminacion(" . $fila["id"] . ")'>Eliminar</a>
                       </td>";
                 echo "</tr>";
             }
@@ -274,9 +274,9 @@ $resultado = $conexion->query($sql);
 </html>
 
 <?php
-// Function to get course name based on id_curso
-function obtenerNombreMateria($id_curso, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
+// Function to get course name based on id_
+function obtenerNombreMateria($id, $conexion) {
+    $consulta = "SELECT nombre_curso FROM cursos WHERE id = $id";
     $resultado = $conexion->query($consulta);
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();

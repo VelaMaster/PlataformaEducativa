@@ -35,117 +35,165 @@ $resultado = $conexion->query($sql);
 if ($resultado->num_rows > 0) {
     $foro = $resultado->fetch_assoc();
     $nombre_materia = obtenerNombreMateria($foro['id'], $conexion);
-    ?>
 
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Detalles del Foro</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f6f9;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                height: 100vh;
-                margin: 0;
-            }
-            .card {
-                background-color: #ffffff;
-                max-width: 800px;
-                width: 100%;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            .card h2 {
-                color: #ff9900;
-                font-size: 28px;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #ff9900;
-                padding-bottom: 10px;
-            }
-            .detail {
-                margin-bottom: 15px;
-                padding: 12px;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #f9f9f9;
-            }
-            .detail label {
-                font-weight: bold;
-                color: #ff9900;
-                margin-right: 10px;
-            }
-            .detail p {
-                color: #333;
-                margin: 0;
-                font-size: 16px;
-                text-align: left;
-                padding: 8px;
-                background-color: #ffffff;
-                border-radius: 5px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-            }
-            .back-button-container {
-                text-align: center;
-                margin-top: 25px;
-            }
-            .back-button {
-                background-color: #ff9900;
-                color: #fff;
-                padding: 12px 24px;
-                border: none;
-                border-radius: 6px;
-                font-weight: bold;
-                font-size: 16px;
-                cursor: pointer;
-                text-decoration: none;
-                transition: background-color 0.3s;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            }
-            .back-button:hover {
-                background-color: #e68a00;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <h2>Detalles del Foro</h2>
-            <div class="detail">
-                <label>Materia:</label>
-                <p><?php echo htmlspecialchars($nombre_materia); ?></p>
-            </div>
-            <div class="detail">
-                <label>Título:</label>
-                <p><?php echo htmlspecialchars($foro['nombre']); ?></p>
-            </div>
-            <div class="detail">
-                <label>Descripción:</label>
-                <p><?php echo htmlspecialchars($foro['descripcion']); ?></p>
-            </div>
-            <div class="detail">
-                <label>Tipo de Foro:</label>
-                <p><?php echo htmlspecialchars($foro['tipo_for']); ?></p>
-            </div>
+    // Obtener las rúbricas asociadas al foro
+    $sql_rubricas = "SELECT * FROM rubricasforo WHERE id_foro = $id";
+    $resultado_rubricas = $conexion->query($sql_rubricas);
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Foro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #ffffff;
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #ff9900;
+            font-size: 28px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 10px;
+        }
+        .detail {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .detail label {
+            font-weight: bold;
+            color: #ff9900;
+            margin-right: 10px;
+        }
+        .detail p {
+            color: #333;
+            margin: 0;
+            font-size: 16px;
+            text-align: left;
+            padding: 8px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .back-button {
+            background-color: #ff9900;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .back-button:hover {
+            background-color: #e68a00;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #ff9900;
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Detalles del Foro</h2>
+        <div class="detail">
+            <label>Materia:</label>
+            <p><?php echo htmlspecialchars($nombre_materia); ?></p>
+        </div>
+        <div class="detail">
+            <label>Título:</label>
+            <p><?php echo htmlspecialchars($foro['nombre']); ?></p>
+        </div>
+        <div class="detail">
+            <label>Descripción:</label>
+            <p><?php echo htmlspecialchars($foro['descripcion']); ?></p>
+        </div>
+        <div class="detail">
+            <label>Tipo de Foro:</label>
+            <p><?php echo htmlspecialchars($foro['tipo_for']); ?></p>
         </div>
 
-        <div class="back-button-container">
-            <a href="listarForos.php" class="back-button">Regresar a Foros Asignados</a>
-        </div>
-    </body>
-    </html>
+        <!-- Mostrar Rúbricas -->
+        <h3>Rúbricas Asociadas</h3>
+        <?php if ($resultado_rubricas->num_rows > 0) { ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterio</th>
+                        <th>Descripción</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($rubrica = $resultado_rubricas->fetch_assoc()) { ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                            <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
+                            <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        <?php } else { ?>
+            <p>No hay rúbricas asociadas a este foro.</p>
+        <?php } ?>
+    </div>
 
-    <?php
+    <div class="back-button-container">
+        <a href="listarForos.php" class="back-button">Regresar a Foros Asignados</a>
+    </div>
+</body>
+</html>
+
+<?php
 } else {
     echo "Foro no encontrado";
 }

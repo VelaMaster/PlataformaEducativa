@@ -12,7 +12,7 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-$id_tarea = $_GET['id'];
+$id = $_GET['id'];
 
 // Actualizar tarea principal
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) {
@@ -34,13 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) 
     }
 
     if ($archivoPath) {
-        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ?, archivo_tarea = ? WHERE id_tarea = ?";
+        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ?, archivo_tarea = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssssi", $titulo, $descripcion, $fecha_limite, $archivoPath, $id_tarea);
+        $stmt->bind_param("ssssi", $titulo, $descripcion, $fecha_limite, $archivoPath, $id);
     } else {
-        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id_tarea = ?";
+        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id_ = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssi", $titulo, $descripcion, $fecha_limite, $id_tarea);
+        $stmt->bind_param("sssi", $titulo, $descripcion, $fecha_limite, $id);
     }
 
     if ($stmt->execute()) {
@@ -61,21 +61,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['accion_rubrica'])) {
         $descripcion = $_POST['descripcion_rubrica'];
 
         // Calcular los puntos por rúbrica
-        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id_tarea";
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id = $id";
         $resultado = $conexion->query($sql);
         $total_rubricas = $resultado->fetch_assoc()['total'] + 1;
         $puntos = round(100 / $total_rubricas, 2);
 
         // Actualizar puntos de rúbricas existentes
-        $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id_tarea = ?";
+        $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id = ?";
         $stmt_actualizar = $conexion->prepare($sql_actualizar);
-        $stmt_actualizar->bind_param("ii", $puntos, $id_tarea);
+        $stmt_actualizar->bind_param("ii", $puntos, $id);
         $stmt_actualizar->execute();
 
         // Insertar nueva rúbrica
-        $sql_insertar = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) VALUES (?, ?, ?, ?)";
+        $sql_insertar = "INSERT INTO rubricas (id, criterio, descripcion, puntos) VALUES (?, ?, ?, ?)";
         $stmt_insertar = $conexion->prepare($sql_insertar);
-        $stmt_insertar->bind_param("issi", $id_tarea, $criterio, $descripcion, $puntos);
+        $stmt_insertar->bind_param("issi", $id, $criterio, $descripcion, $puntos);
         $stmt_insertar->execute();
         $stmt_insertar->close();
     } elseif ($accion === 'eliminar') {
@@ -86,26 +86,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['accion_rubrica'])) {
         $stmt_eliminar->execute();
 
         // Recalcular los puntos restantes
-        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id_tarea";
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id = $id";
         $resultado = $conexion->query($sql);
         $total_rubricas = $resultado->fetch_assoc()['total'];
         if ($total_rubricas > 0) {
             $puntos = round(100 / $total_rubricas, 2);
-            $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id_tarea = ?";
+            $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id = ?";
             $stmt_actualizar = $conexion->prepare($sql_actualizar);
-            $stmt_actualizar->bind_param("ii", $puntos, $id_tarea);
+            $stmt_actualizar->bind_param("ii", $puntos, $id);
             $stmt_actualizar->execute();
         }
     }
 }
 
 // Consultar datos de la tarea y sus rúbricas
-$sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
+$sql = "SELECT * FROM tareas WHERE id = $id";
 $resultado = $conexion->query($sql);
 
 if ($resultado->num_rows > 0) {
     $fila = $resultado->fetch_assoc();
-    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id = $id";
     $resultado_rubricas = $conexion->query($sql_rubricas);
 ?>
 

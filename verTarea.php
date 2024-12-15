@@ -14,11 +14,11 @@ if ($conexion->connect_error) {
 }
 
 // Obtener el ID de la tarea
-$id_tarea = $_GET['id'];
+$id = $_GET['id'];
 
 // Función para obtener el nombre de la materia
-function obtenerNombreMateria($id_curso, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id_curso = $id_curso";
+function obtenerNombreMateria($id, $conexion) {
+    $consulta = "SELECT nombre_curso FROM cursos WHERE id= $id";
     $resultado = $conexion->query($consulta);
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
@@ -29,15 +29,15 @@ function obtenerNombreMateria($id_curso, $conexion) {
 }
 
 // Consultar los detalles de la tarea
-$sql = "SELECT * FROM tareas WHERE id_tarea = $id_tarea";
+$sql = "SELECT * FROM tareas WHERE id = $id";
 $resultado = $conexion->query($sql);
 
 if ($resultado->num_rows > 0) {
     $tarea = $resultado->fetch_assoc();
-    $nombre_materia = obtenerNombreMateria($tarea['id_curso'], $conexion);
+    $nombre_materia = obtenerNombreMateria($tarea['id'], $conexion);
 
     // Consultar las rúbricas asociadas a la tarea
-    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id_tarea";
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id = $id";
     $resultado_rubricas = $conexion->query($sql_rubricas);
     ?>
 

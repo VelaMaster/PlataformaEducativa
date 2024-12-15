@@ -46,7 +46,42 @@ mysqli_close($conexion);
     <title>Foros Asignados</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/listarForos.css?v=<?php echo time(); ?>">
+    
 </head>
+<body>
+    <div class="barranavegacion">
+        <div class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
+                        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="calendarioDocente.php">Calendario</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="calificarForos.php">Calificar foros</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 <body>
     <div class="container">
         <h1 class="text-center mb-4">Foros Asignados</h1>
@@ -92,9 +127,10 @@ mysqli_close($conexion);
                 <p><strong>Descripción:</strong> <?php echo htmlspecialchars($foro['foro_desc'], ENT_QUOTES, 'UTF-8'); ?></p>
                 <p class="tipo-foro">Tipo: <?php echo htmlspecialchars($tipo_mostrar, ENT_QUOTES, 'UTF-8'); ?></p>
                 <div class="foro-buttons">
-                    <button onclick="alert('Ver Foro')">Ver</button>
-                    <button onclick="alert('Editar Foro')">Editar</button>
-                    <button onclick="alert('Eliminar Foro')">Eliminar</button>
+                    <!-- Modificar para redirigir a las páginas correspondientes -->
+                    <a href="verForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-primary">Ver Foro</a>
+                    <a href="editarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Editar Foro</a>
+                    <a href="eliminarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Eliminar Foro</a>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -131,6 +167,13 @@ mysqli_close($conexion);
                     tarjeta.style.display = "none";
                 }
             });
+        }
+
+        // Función para eliminar un foro
+        function eliminarForo(foroId) {
+            if (confirm("¿Estás seguro de que quieres eliminar este foro?")) {
+                window.location.href = "eliminarForo.php?id=" + foroId;
+            }
         }
     </script>
 </body>
