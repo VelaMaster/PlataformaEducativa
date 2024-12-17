@@ -15,11 +15,11 @@ error_reporting(E_ALL);
 // Configuración de la base de datos
 $servidor = "localhost";
 $usuario_db = "root";
-$contraseña_db = "";
+$contraseña_db = "12345";
 $baseDatos = "peis";
 
 // Establecer conexión con la base de datos
-$conexion = new mysqli($servidor, $usuario_db, $contraseña_db, $baseDatos);
+$conexion = mysqli_connect("localhost", "root", "", "peis");
 
 // Verificar si hay error en la conexión
 if ($conexion->connect_error) {
@@ -37,15 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_respuesta'])) {
         exit;
     }
 
-    // Actualizar la calificación
+    // Actualizar la calificación y el estado revisado en la base de datos
     $sql_update = "UPDATE respuestas SET calificacion = ?, revisado = ? WHERE id = ?";
     $stmt_update = $conexion->prepare($sql_update);
     $stmt_update->bind_param("iii", $calificacion, $revisado, $id_respuesta);
+
     if ($stmt_update->execute()) {
         echo "<script>alert('Calificación actualizada con éxito.'); window.location.href = 'calificarForos.php';</script>";
     } else {
-        echo "<script>alert('Error al actualizar la calificación.'); window.history.back();</script>";
+        echo "<script>alert('Error al actualizar la calificación: {$stmt_update->error}'); window.history.back();</script>";
     }
+
     $stmt_update->close();
 }
 
@@ -65,13 +67,16 @@ $sql = "
     INNER JOIN cursos ON foros.id_curso = cursos.id
     INNER JOIN alumnos ON respuestas.id_usuario = alumnos.id
     WHERE respuestas.tipo_usuario = 'alumno'
+    ORDER BY respuestas.fecha_creacion DESC
 ";
+
 $resultado = $conexion->query($sql);
 
 if (!$resultado) {
     die("Error en la consulta de respuestas: " . $conexion->error);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -107,37 +112,37 @@ if (!$resultado) {
 <body>
 
 <div class="barranavegacion">
- <div class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="calendarioDocente.php">Calendario</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
-                </li>
-            </ul>
+    <div class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendarioDocente.php">Calendario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
- </div>
 </div>
 
 <main class="container mt-4">
@@ -167,8 +172,8 @@ if (!$resultado) {
                                 <input type="hidden" name="id_respuesta" value="<?php echo $row['id_respuesta']; ?>">
                                 <input type="number" name="calificacion" class="form-control me-2" placeholder="Calificación" min="0" max="100" required>
                                 <div class="form-check me-2">
-                                    <input class="form-check-input" type="checkbox" name="revisado" id="revisado-<?php echo $row['id_respuesta']; ?>">
-                                    <label class="form-check-label" for="revisado-<?php echo $row['id_respuesta']; ?>">Revisado</label>
+                                    <input class="form-check-input" type="checkbox" name="revisado">
+                                    <label class="form-check-label">Revisado</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </form>
