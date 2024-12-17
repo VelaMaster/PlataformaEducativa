@@ -33,7 +33,7 @@ $alumno = $stmt->fetch();
 if ($alumno) {
     $id_alumno = $alumno['id'];
 } else {
-    die('Error: No se encontró el ID del alumno.');
+    die('Error: No se encontró el ID del alumno 112.');
 }
 
 // Verificar parámetro GET
