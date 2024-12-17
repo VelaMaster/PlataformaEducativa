@@ -7,20 +7,19 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 $num_control = $_SESSION['usuario'];
-$sql = "
-    SELECT 
+$sql = " SELECT 
         tareas.id AS id_tarea, 
         tareas.id_curso, 
         tareas.titulo, 
         tareas.fecha_limite, 
         CASE 
             WHEN entregas.archivo_entrega IS NOT NULL THEN 'Entregado' 
-            ELSE 'No entregado' 
-        END AS estado_entrega,
+            ELSE 'No Entregado' 
+            END AS estado_entrega,
         CASE 
             WHEN entregas.calificacion IS NOT NULL THEN 'Calificada' 
             ELSE 'No calificada' 
-        END AS estado_calificacion
+            END AS estado_calificacion
     FROM tareas
     JOIN grupos ON tareas.id_curso = grupos.id_curso
     JOIN grupo_alumnos ON grupos.id = grupo_alumnos.id_grupo
@@ -62,8 +61,11 @@ $resultado = $stmt->get_result();
             echo "<td>" . obtenerNombreMateria($fila["id_curso"], $conexion) . "</td>";
             echo "<td>" . $fila["titulo"] . "</td>";
             echo "<td>" . $fila["fecha_limite"] . "</td>";
-            echo "<td>" . $fila["estado_entrega"] . "</td>";
-            echo "<td>" . $fila["estado_calificacion"] . "</td>";
+            echo "<td>" . ($fila["estado_entrega"] ?? 'No Entregado') . "</td>";
+            echo "<td>" . ($fila["estado_calificacion"] ?? 'No calificada') . "</td>";
+            
+            
+
             echo "<td class='acciones'> <a href='verdetallesTarea.php?id=" . $fila["id_tarea"] . "'>Ver</a> </td>";
             echo "</tr>";
         }

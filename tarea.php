@@ -1,4 +1,6 @@
-<?php 
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1); 
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -16,7 +18,13 @@ if ($conexion->connect_error) {
 $conexion->set_charset("utf8");
 
 // Obtener 'id_tarea' de los parámetros GET y asegurarse de que sea un entero válido
-$id_tarea = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (!isset($_GET['id'])) {
+    die("Error: No se encontró el parámetro 'id' en la URL.");
+}
+$id_tarea = (int)$_GET['id'];
+
+
+
 
 if ($id_tarea > 0) {
     session_start();
