@@ -4,15 +4,11 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: loginAlumno.php');
     exit();
 }
-<<<<<<< HEAD
 $id_alumno = $_SESSION['id'];
 if (!isset($_GET['id'])) {
     die('No se ha proporcionado el ID de la tarea.');
 }
 $id_tarea = intval($_GET['id']); 
-=======
-
->>>>>>> refs/remotes/origin/main
 $host = 'localhost';
 $db   = 'peis';
 $user = 'root';

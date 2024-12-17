@@ -15,7 +15,6 @@ $conexion = new mysqli("localhost", "root", "", "peis");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
-
 // Determinar el filtro y la búsqueda
 $filtro = isset($_GET['filtro']) ? $_GET['filtro'] : 'privados';
 $busqueda = isset($_GET['busqueda']) ? $conexion->real_escape_string($_GET['busqueda']) : '';
