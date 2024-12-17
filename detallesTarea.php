@@ -9,9 +9,9 @@ if (!isset($_SESSION['num_control'])) {
 }
 $docente_num_control = $_SESSION['num_control'];
 
-// Verificar si se ha proporcionado id_tarea
-if (isset($_GET['id_tarea'])) {
-    $id_tarea = intval($_GET['id_tarea']); // Convertir a entero para seguridad
+// Verificar si se ha proporcionado id
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']); // Convertir a entero para seguridad
 
     // Verificar que la tarea pertenece a un curso del docente
     $query_verificar_tarea = "
@@ -19,8 +19,8 @@ if (isset($_GET['id_tarea'])) {
         FROM tareas t
         JOIN cursos c ON t.id_curso = c.id_curso
         JOIN grupos g ON c.id_curso = g.id_curso
-        WHERE t.id_tarea = $id_tarea AND g.id_docente = '$docente_num_control'
-        GROUP BY t.id_tarea
+        WHERE t.id = $id AND g.id_docente = '$docente_num_control'
+        GROUP BY t.id
     ";
     $result_verificar_tarea = mysqli_query($conexion, $query_verificar_tarea);
 

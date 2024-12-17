@@ -46,7 +46,6 @@ mysqli_close($conexion);
     <title>Foros Asignados</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/listarForos.css?v=<?php echo time(); ?>">
-    
 </head>
 <body>
     <div class="barranavegacion">
@@ -82,7 +81,7 @@ mysqli_close($conexion);
             </div>
         </div>
     </div>
-<body>
+
     <div class="container">
         <h1 class="text-center mb-4">Foros Asignados</h1>
 
@@ -130,10 +129,29 @@ mysqli_close($conexion);
                     <!-- Modificar para redirigir a las páginas correspondientes -->
                     <a href="verForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-primary">Ver Foro</a>
                     <a href="editarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Editar Foro</a>
-                    <a href="eliminarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Eliminar Foro</a>
+                    <button class="btn btn-danger" onclick="confirmarEliminacion(<?php echo $foro['foro_id']; ?>)">Eliminar Foro</button>
                 </div>
             </div>
         <?php endforeach; ?>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEliminarLabel">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar esta tarea?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -169,12 +187,18 @@ mysqli_close($conexion);
             });
         }
 
-        // Función para eliminar un foro
-        function eliminarForo(foroId) {
-            if (confirm("¿Estás seguro de que quieres eliminar este foro?")) {
+        // Función para mostrar el modal de confirmación
+        function confirmarEliminacion(foroId) {
+            const confirmarBtn = document.getElementById('confirmarEliminarBtn');
+            confirmarBtn.onclick = function() {
                 window.location.href = "eliminarForo.php?id=" + foroId;
-            }
+            };
+            const modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
+            modal.show();
         }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

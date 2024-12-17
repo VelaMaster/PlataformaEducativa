@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 // Configuración de la base de datos
 $servidor = "localhost";
 $usuario_db = "root";
-$contraseña_db = "12345";
+$contraseña_db = "";
 $baseDatos = "peis";
 
 // Establecer conexión con la base de datos
