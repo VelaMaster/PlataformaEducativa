@@ -12,7 +12,7 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-$id = $_GET['id'];
+$id = $_GET['id'];  // Se obtiene el ID de la tarea desde la URL.
 
 // Actualizar tarea principal
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) {
@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) 
     $fecha_limite = $_POST['fecha_limite'];
     $archivoPath = null;
 
+    // Verificar si se subió un archivo
     if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
         $archivoNombre = $_FILES['archivo']['name'];
         $archivoTmp = $_FILES['archivo']['tmp_name'];
@@ -33,12 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) 
         }
     }
 
+    // Actualización de la tarea
     if ($archivoPath) {
         $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ?, archivo_tarea = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("ssssi", $titulo, $descripcion, $fecha_limite, $archivoPath, $id);
     } else {
-        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id_ = ?";
+        $sql = "UPDATE tareas SET titulo = ?, descripcion = ?, fecha_limite = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("sssi", $titulo, $descripcion, $fecha_limite, $id);
     }
@@ -56,42 +58,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_tarea'])) 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['accion_rubrica'])) {
     $accion = $_POST['accion_rubrica'];
 
+    // Acción de agregar una nueva rúbrica
     if ($accion === 'agregar') {
         $criterio = $_POST['criterio'];
         $descripcion = $_POST['descripcion_rubrica'];
 
         // Calcular los puntos por rúbrica
-        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id = $id";
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id"; // Se usa id_tarea
         $resultado = $conexion->query($sql);
-        $total_rubricas = $resultado->fetch_assoc()['total'] + 1;
-        $puntos = round(100 / $total_rubricas, 2);
+        if ($resultado) {
+            $total_rubricas = $resultado->fetch_assoc()['total'] + 1;
+            $puntos = round(100 / $total_rubricas, 2);
 
-        // Actualizar puntos de rúbricas existentes
-        $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id = ?";
-        $stmt_actualizar = $conexion->prepare($sql_actualizar);
-        $stmt_actualizar->bind_param("ii", $puntos, $id);
-        $stmt_actualizar->execute();
-
-        // Insertar nueva rúbrica
-        $sql_insertar = "INSERT INTO rubricas (id, criterio, descripcion, puntos) VALUES (?, ?, ?, ?)";
-        $stmt_insertar = $conexion->prepare($sql_insertar);
-        $stmt_insertar->bind_param("issi", $id, $criterio, $descripcion, $puntos);
-        $stmt_insertar->execute();
-        $stmt_insertar->close();
+            // Insertar nueva rúbrica
+            $sql_insertar = "INSERT INTO rubricas (id_tarea, criterio, descripcion, puntos) VALUES (?, ?, ?, ?)";
+            $stmt_insertar = $conexion->prepare($sql_insertar);
+            $stmt_insertar->bind_param("issi", $id, $criterio, $descripcion, $puntos);
+            $stmt_insertar->execute();
+            $stmt_insertar->close();
+        } else {
+            echo "Error al consultar el total de rúbricas: " . $conexion->error;
+        }
     } elseif ($accion === 'eliminar') {
+        // Acción de eliminar una rúbrica
         $id_rubrica = $_POST['id_rubrica'];
-        $sql_eliminar = "DELETE FROM rubricas WHERE id_rubrica = ?";
+        $sql_eliminar = "DELETE FROM rubricas WHERE id = ?";  // Usar 'id' en lugar de 'id_rubrica'
         $stmt_eliminar = $conexion->prepare($sql_eliminar);
         $stmt_eliminar->bind_param("i", $id_rubrica);
         $stmt_eliminar->execute();
 
         // Recalcular los puntos restantes
-        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id = $id";
+        $sql = "SELECT COUNT(*) AS total FROM rubricas WHERE id_tarea = $id"; // Se usa id_tarea
         $resultado = $conexion->query($sql);
         $total_rubricas = $resultado->fetch_assoc()['total'];
         if ($total_rubricas > 0) {
             $puntos = round(100 / $total_rubricas, 2);
-            $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id = ?";
+            $sql_actualizar = "UPDATE rubricas SET puntos = ? WHERE id_tarea = ?";
             $stmt_actualizar = $conexion->prepare($sql_actualizar);
             $stmt_actualizar->bind_param("ii", $puntos, $id);
             $stmt_actualizar->execute();
@@ -105,7 +107,7 @@ $resultado = $conexion->query($sql);
 
 if ($resultado->num_rows > 0) {
     $fila = $resultado->fetch_assoc();
-    $sql_rubricas = "SELECT * FROM rubricas WHERE id = $id";
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id"; // Se usa id_tarea
     $resultado_rubricas = $conexion->query($sql_rubricas);
 ?>
 
@@ -213,6 +215,10 @@ if ($resultado->num_rows > 0) {
             font-size: 12px;
             margin-top: 5px;
         }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
     <script>
         function validarCampos() {
@@ -261,7 +267,10 @@ if ($resultado->num_rows > 0) {
                 <label for="archivo">Archivo (opcional):</label>
                 <input type="file" id="archivo" name="archivo">
             </div>
-            <button type="submit" name="actualizar_tarea" class="btn">Actualizar Tarea</button>
+            <div class="button-container">
+                <button type="submit" name="actualizar_tarea" class="btn">Actualizar Tarea</button>
+                <a href="listarTareas.php" class="btn">Regresar a Tareas</a>
+            </div>
         </form>
     </div>
 
@@ -285,7 +294,7 @@ if ($resultado->num_rows > 0) {
                             <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
                             <td>
                                 <form method="POST" style="display:inline-block;">
-                                    <input type="hidden" name="id_rubrica" value="<?php echo $rubrica['id_rubrica']; ?>">
+                                    <input type="hidden" name="id_rubrica" value="<?php echo $rubrica['id']; ?>"> <!-- Usamos 'id' en lugar de 'id_rubrica' -->
                                     <button type="submit" name="accion_rubrica" value="eliminar" class="btn-red">Eliminar</button>
                                 </form>
                             </td>

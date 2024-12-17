@@ -230,6 +230,7 @@ $resultado = $conexion->query($sql);
     </table>
 </div>
 
+<!-- Botón para regresar -->
 <div class="back-button-container">
     <a href="gestionTareasProfesor.php" class="back-button">Regresar a Gestión de Tareas</a>
 </div>

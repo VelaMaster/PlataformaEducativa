@@ -36,8 +36,8 @@ if ($resultado->num_rows > 0) {
     $tarea = $resultado->fetch_assoc();
     $nombre_materia = obtenerNombreMateria($tarea['id'], $conexion);
 
-    // Consultar las rúbricas asociadas a la tarea
-    $sql_rubricas = "SELECT * FROM rubricas WHERE id = $id";
+    // Consultar las rúbricas asociadas a la tarea (corrigiendo la consulta SQL)
+    $sql_rubricas = "SELECT * FROM rubricas WHERE id_tarea = $id"; // Usar 'id_tarea' en lugar de 'id'
     $resultado_rubricas = $conexion->query($sql_rubricas);
     ?>
 
