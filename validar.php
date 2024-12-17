@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?error=empty_fields");
         exit();
     }
-
     // Escapa las entradas para prevenir inyección SQL
     $usuario = mysqli_real_escape_string($conexion, $usuario);
 

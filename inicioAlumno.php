@@ -6,15 +6,11 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
-
 $passwordPlain = isset($_SESSION['password_plain']) ? $_SESSION['password_plain'] : false;
-unset($_SESSION['password_plain']);
+unset($_SESSION['password_plain']); // Limpiar después de mostrar el modal
 
-// Asegurar que num_control es un entero
-$num_control = isset($_SESSION['usuario']) ? (int)$_SESSION['usuario'] : 0;
-
-// Conexión a la base de datos
-$conexion = mysqli_connect("127.0.0.1", "root", "", "peis", 3306);
+$num_control = $_SESSION['usuario'];
+$conexion = mysqli_connect("localhost", "root", "", "peis");
 
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());

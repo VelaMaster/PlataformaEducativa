@@ -8,7 +8,6 @@ $id_alumno = $_SESSION['id'];
 if (!isset($_GET['id'])) {
     die('No se ha proporcionado el ID de la tarea.');
 }
-
 $id_tarea = intval($_GET['id']); 
 $host = 'localhost';
 $db   = 'peis';
