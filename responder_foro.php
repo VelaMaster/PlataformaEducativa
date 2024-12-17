@@ -96,11 +96,12 @@ if (isset($_POST['eliminar_comentario'])) {
 $orden = isset($_GET['orden']) ? $_GET['orden'] : 'ASC';
 $orden = ($orden === 'DESC') ? 'DESC' : 'ASC';
 
-$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, alumnos.nombre AS autor 
+$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, respuestas.calificacion, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
                    WHERE respuestas.id_tema = ?
                    ORDER BY respuestas.respuesta_padre ASC, respuestas.fecha_creacion $orden";
+
 $stmt_respuestas = $conexion->prepare($sql_respuestas);
 $stmt_respuestas->bind_param("i", $id_foro);
 $stmt_respuestas->execute();
@@ -120,6 +121,14 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             echo "<p><strong>" . htmlspecialchars($respuesta['autor']) . "</strong> - " . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
             echo "<p>" . htmlspecialchars($respuesta['contenido']) . "</p>";
 
+            // Mostrar calificación si existe
+            if (!is_null($respuesta['calificacion'])) {
+                echo "<p><strong>Calificación: </strong>" . htmlspecialchars($respuesta['calificacion']) . "/100</p>";
+            } else {
+                echo "<p><em>Sin calificación</em></p>";
+            }
+
+            // Botón eliminar si el usuario es el autor
             if ($respuesta['id_usuario'] == $num_control) {
                 echo "<form method='POST' class='form-eliminar'>";
                 echo "<input type='hidden' name='eliminar_comentario' value='" . $respuesta['id'] . "'>";
@@ -143,6 +152,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
         }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
