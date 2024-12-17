@@ -10,12 +10,18 @@ if (!isset($_SESSION['usuario'])) {
 $passwordPlain = isset($_SESSION['password_plain']) ? $_SESSION['password_plain'] : false;
 unset($_SESSION['password_plain']);
 
-$num_control = $_SESSION['usuario'];
-$conexion = mysqli_connect("127.0.0.1:3306", "root", "", "peis");
+// Asegurar que num_control es un entero
+$num_control = isset($_SESSION['usuario']) ? (int)$_SESSION['usuario'] : 0;
+
+// Conexión a la base de datos
+$conexion = mysqli_connect("127.0.0.1", "root", "", "peis", 3306);
 
 if (!$conexion) {
     die("Conexión fallida: " . mysqli_connect_error());
 }
+
+// Configurar el conjunto de caracteres a UTF-8
+mysqli_set_charset($conexion, "utf8");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -91,31 +97,48 @@ if (!$conexion) {
                 ORDER BY 
                     c.nombre_curso, g.nombre_grupo;
             ";
+            
+            // Preparar la consulta
             $stmt = mysqli_prepare($conexion, $consulta_materias);
-            mysqli_stmt_bind_param($stmt, 's', $num_control);
+            if ($stmt === false) {
+                throw new Exception("Error al preparar la consulta: " . mysqli_error($conexion));
+            }
+
+            // Vincular parámetros (usar 'i' para entero)
+            mysqli_stmt_bind_param($stmt, 'i', $num_control);
+
+            // Ejecutar la consulta
             mysqli_stmt_execute($stmt);
+
+            // Obtener el resultado
             $resultado_materias = mysqli_stmt_get_result($stmt);
 
             if ($resultado_materias && mysqli_num_rows($resultado_materias) > 0) {
                 while ($row = mysqli_fetch_assoc($resultado_materias)) {
                     $imagen_url = $row['imagen_url'];
-                    echo "<div class='card'>";
-                    echo "<img src='$imagen_url' alt='Imagen de la materia'>";
+                    $id_curso = $row['id_curso'];
+                    echo "<div class='card' style='background-image: url($imagen_url)'>";
                     echo "<div class='card-content'>";
-                    echo "<h2 class='card-title'>" . $row['nombre_materia'] . "</h2>";
-                    echo "<p class='card-subtitle'>Grupo: " . $row['nombre_grupo'] . "</p>";
-                    echo "<p class='card-subtitle'>Horario: " . $row['horario'] . " en " . $row['aula'] . "</p>";
-                    echo "<a href='gestionTareasAlumno2.php?id_curso=" . $row['id_curso'] . "' class='btn-ver-mas'>Ver más</a>";
+                    echo "<h2 class='card-title'>" . htmlspecialchars($row['nombre_materia'], ENT_QUOTES, 'UTF-8') . "</h2>";
+                    echo "<p class='card-subtitle'>Grupo: " . htmlspecialchars($row['nombre_grupo'], ENT_QUOTES, 'UTF-8') . "</p>";
+                    echo "<p class='card-subtitle'>Horario: " . htmlspecialchars($row['horario'], ENT_QUOTES, 'UTF-8') . " en " . htmlspecialchars($row['aula'], ENT_QUOTES, 'UTF-8') . "</p>";
+                    echo "<button class='view-more' onclick=\"window.location.href='gestionTareasAlumno2.php?id_curso=$id_curso'\">Ver más</button>";
                     echo "</div>";
                     echo "</div>";
                 }
             } else {
                 echo "<p>No se encontraron materias para este estudiante.</p>";
             }
+
+            // Cerrar la sentencia
+            mysqli_stmt_close($stmt);
         } catch (mysqli_sql_exception $e) {
-            echo "<p>Error en la consulta: " . $e->getMessage() . "</p>";
+            echo "<p>Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
+        } catch (Exception $e) {
+            echo "<p>" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
         }
 
+        // Cerrar la conexión
         mysqli_close($conexion);
         ?>
     </div>
