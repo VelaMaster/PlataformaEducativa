@@ -4,14 +4,7 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: loginAlumno.php');
     exit();
 }
-<<<<<<< HEAD
-$id_alumno = $_SESSION['id'];
-if (!isset($_GET['id'])) {
-    die('No se ha proporcionado el ID de la tarea.');
-}
-$id_tarea = intval($_GET['id']); 
-=======
->>>>>>> 4d02e976d899d99eb2811993568531d4dff63e1b
+
 $host = 'localhost';
 $db   = 'peis';
 $user = 'root';
@@ -84,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                 $upload_dir = 'uploads/entregas/' . $id_tarea . '/';
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0777, true);
-                    chmod($upload_dir, 0777); 
+                    chmod($upload_dir, 0777); // Fuerza los permisos a 0777
                 }
                 
                 $new_file_name = 'entrega_alumno_' . $id_alumno . '_' . time() . '.' . $file_ext;
