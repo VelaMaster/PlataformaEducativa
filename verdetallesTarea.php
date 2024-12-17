@@ -4,11 +4,15 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: loginAlumno.php');
     exit();
 }
+<<<<<<< HEAD
 $id_alumno = $_SESSION['id'];
 if (!isset($_GET['id'])) {
     die('No se ha proporcionado el ID de la tarea.');
 }
 $id_tarea = intval($_GET['id']); 
+=======
+
+>>>>>>> refs/remotes/origin/main
 $host = 'localhost';
 $db   = 'peis';
 $user = 'root';
@@ -27,6 +31,27 @@ try {
 } catch (\PDOException $e) {
     die('Error de conexión: ' . $e->getMessage());
 }
+
+// Obtener el ID del alumno desde la sesión
+$usuario = $_SESSION['usuario'];
+$stmt = $pdo->prepare('SELECT id FROM alumnos WHERE num_control= ?');
+$stmt->execute([$usuario]);
+$alumno = $stmt->fetch();
+
+if ($alumno) {
+    $id_alumno = $alumno['id'];
+} else {
+    die('Error: No se encontró el ID del alumno 112.');
+}
+
+// Verificar parámetro GET
+if (!isset($_GET['id'])) {
+    die('No se ha proporcionado el ID de la tarea.');
+}
+$id_tarea = intval($_GET['id']);
+
+// Resto del código para subir archivos y manejar entregas...
+
 $stmt = $pdo->prepare('SELECT tareas.*, cursos.nombre_curso FROM tareas JOIN cursos ON tareas.id_curso = cursos.id WHERE tareas.id = ?');
 $stmt->execute([$id_tarea]);
 $tarea = $stmt->fetch();
@@ -121,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                             <a class="nav-link" href="calendarioAlumno.php">Calendario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="verTareasAlumno.php">Tareas</a>
+                            <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="forosAlumno.php">Foros</a>
