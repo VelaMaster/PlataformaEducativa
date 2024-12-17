@@ -7,11 +7,6 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-// Mostrar errores (para depuración)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 // Configuración de la base de datos
 $servidor = "localhost";
 $usuario_db = "root";
@@ -19,9 +14,8 @@ $contraseña_db = "";
 $baseDatos = "peis";
 
 // Establecer conexión con la base de datos
-$conexion = mysqli_connect("localhost", "root", "", "peis");
+$conexion = new mysqli($servidor, $usuario_db, $contraseña_db, $baseDatos);
 
-// Verificar si hay error en la conexión
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
@@ -41,13 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_respuesta'])) {
     $sql_update = "UPDATE respuestas SET calificacion = ?, revisado = ? WHERE id = ?";
     $stmt_update = $conexion->prepare($sql_update);
     $stmt_update->bind_param("iii", $calificacion, $revisado, $id_respuesta);
-
-    if ($stmt_update->execute()) {
-        echo "<script>alert('Calificación actualizada con éxito.'); window.location.href = 'calificarForos.php';</script>";
-    } else {
-        echo "<script>alert('Error al actualizar la calificación: {$stmt_update->error}'); window.history.back();</script>";
-    }
-
+    $stmt_update->execute();
     $stmt_update->close();
 }
 
@@ -55,26 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_respuesta'])) {
 $sql = "
     SELECT 
         respuestas.id AS id_respuesta,
-        cursos.nombre_curso AS materia,
         foros.nombre AS titulo_foro,
         foros.descripcion AS descripcion_foro,
-        CONCAT(alumnos.nombre, ' ', alumnos.apellido_p, ' ', alumnos.apellido_m) AS nombre_estudiante,
+        respuestas.contenido AS contenido_respuesta,
+        CONCAT(alumnos.nombre, ' ', alumnos.segundo_nombre, ' ', alumnos.apellido_p, ' ', alumnos.apellido_m) AS nombre_estudiante,
         respuestas.fecha_creacion AS fecha_respuesta,
         respuestas.calificacion,
         respuestas.revisado
     FROM respuestas
     INNER JOIN foros ON respuestas.id_tema = foros.id
-    INNER JOIN cursos ON foros.id_curso = cursos.id
-    INNER JOIN alumnos ON respuestas.id_usuario = alumnos.id
+    INNER JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
     WHERE respuestas.tipo_usuario = 'alumno'
     ORDER BY respuestas.fecha_creacion DESC
 ";
 
 $resultado = $conexion->query($sql);
-
-if (!$resultado) {
-    die("Error en la consulta de respuestas: " . $conexion->error);
-}
 ?>
 
 <!DOCTYPE html>
@@ -82,70 +65,11 @@ if (!$resultado) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calificar Respuestas de Foros - Profesor</title>
-    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="css/gestionForosProfesor.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-        main {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #343a40;
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #343a40;
-            color: white;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Calificar Respuestas de Foros</title>
+    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
 </head>
 <body>
-
-<div class="barranavegacion">
-    <div class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Plataforma educativa para Ingeniería en Sistemas</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" 
-                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="inicioProfesor.php">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="calendarioDocente.php">Calendario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="gestionTareasProfesor.php">Asignar tareas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="gestionForosProfesor.php">Asignar foros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="calificarTareas.php">Calificar tareas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="calificarForos.php">Calificar foros</a>  
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<main class="container mt-4">
+<div class="container mt-4">
     <h2 class="mb-4">Calificar Respuestas de Foros</h2>
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
@@ -153,6 +77,7 @@ if (!$resultado) {
                 <th>Materia</th>
                 <th>Título del Foro</th>
                 <th>Descripción</th>
+                <th>Contenido</th>
                 <th>Nombre del Estudiante</th>
                 <th>Fecha Respuesta</th>
                 <th>Calificar</th>
@@ -162,9 +87,10 @@ if (!$resultado) {
             <?php if ($resultado->num_rows > 0): ?>
                 <?php while ($row = $resultado->fetch_assoc()): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['materia']); ?></td>
+                        <td><?php echo "Materia"; ?></td> <!-- Materia está estática, puedes ajustarlo si existe un campo -->
                         <td><?php echo htmlspecialchars($row['titulo_foro']); ?></td>
                         <td><?php echo htmlspecialchars($row['descripcion_foro']); ?></td>
+                        <td><?php echo nl2br(htmlspecialchars($row['contenido_respuesta'])); ?></td>
                         <td><?php echo htmlspecialchars($row['nombre_estudiante']); ?></td>
                         <td><?php echo htmlspecialchars($row['fecha_respuesta']); ?></td>
                         <td>
@@ -182,14 +108,14 @@ if (!$resultado) {
                 <?php endwhile; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6" class="text-center">No hay respuestas disponibles.</td>
+                    <td colspan="7" class="text-center">No hay respuestas disponibles.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
-</main>
+</div>
 
-<footer>
+<footer class="text-center mt-4">
     <p>© 2024 Plataforma de Ingeniería en Sistemas</p>
 </footer>
 
