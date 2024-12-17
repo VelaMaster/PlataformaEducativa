@@ -64,6 +64,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "La respuesta no puede estar vacía.";
         }
     }
+    // Procesar la eliminación de una respuesta
+if (isset($_POST['eliminar_comentario'])) {
+    $id_respuesta = intval($_POST['eliminar_comentario']);
+
+    // Verificar que la respuesta pertenece al usuario autenticado
+    $sql_verificar = "SELECT id FROM respuestas WHERE id = ? AND id_usuario = ?";
+    $stmt_verificar = $conexion->prepare($sql_verificar);
+    $stmt_verificar->bind_param("ii", $id_respuesta, $num_control);
+    $stmt_verificar->execute();
+    $resultado_verificar = $stmt_verificar->get_result();
+
+    if ($resultado_verificar->num_rows > 0) {
+        // Eliminar la respuesta
+        $sql_eliminar = "DELETE FROM respuestas WHERE id = ?";
+        $stmt_eliminar = $conexion->prepare($sql_eliminar);
+        $stmt_eliminar->bind_param("i", $id_respuesta);
+        $stmt_eliminar->execute();
+
+        // Redirigir para evitar el reenvío del formulario
+        header("Location: responder_foro.php?id_foro=$id_foro");
+        exit();
+    } else {
+        $error = "No tienes permiso para eliminar esta respuesta.";
+    }
+}
+
 }
 
 // Obtener respuestas del foro
