@@ -34,7 +34,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['titulo'],
         'description' => $row['descripcion'],
         'start' => $row['fecha_limite'],
-        'url' => 'tarea.php?id=' . $row['id'] // URL dinámica
+        'url' => 'verdetallesTarea.php?id=' . $row['id'] // URL dinámica
     ];
 }
 

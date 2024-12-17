@@ -62,6 +62,7 @@ $sql = "
         respuestas.fecha_creacion AS fecha_respuesta,
         respuestas.calificacion,
         respuestas.revisado
+        
     FROM respuestas
     INNER JOIN foros ON respuestas.id_tema = foros.id
     INNER JOIN cursos ON foros.id_curso = cursos.id

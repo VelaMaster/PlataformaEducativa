@@ -168,6 +168,22 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             const subRespuestas = document.getElementById(`subrespuestas-${idRespuesta}`);
             subRespuestas.style.display = subRespuestas.style.display === 'none' ? 'block' : 'none';
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("toggleRubricas");
+    const rubricasDiv = document.getElementById("rubricas");
+
+    toggleButton.addEventListener("click", function () {
+        if (rubricasDiv.style.display === "none" || rubricasDiv.style.display === "") {
+            rubricasDiv.style.display = "block"; // Mostrar rúbricas
+            toggleButton.textContent = "Ocultar Rúbrica";
+        } else {
+            rubricasDiv.style.display = "none"; // Ocultar rúbricas
+            toggleButton.textContent = "Mostrar Rúbrica";
+        }
+    });
+});
+
     </script>
 </head>
 <body>
@@ -177,7 +193,12 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
 
     <div class="titulo-seccion"><?php echo htmlspecialchars($foro['descripcion']); ?></div>
 
-    <div class="rubricas">
+    <div class="rubricas-container">
+    <!-- Botón para mostrar las rúbricas -->
+    <button id="toggleRubricas" class="btn-mostrar">Mostrar Rúbrica</button>
+    
+    <!-- Sección de rúbricas inicialmente oculta -->
+    <div id="rubricas" class="rubricas" style="display: none;">
         <h3>Rúbricas del Foro</h3>
         <table class="tabla-rubricas">
             <thead>
@@ -198,6 +219,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             </tbody>
         </table>
     </div>
+</div>
 
     <div class="form-options">
         <form method="GET" action="responder_foro.php">

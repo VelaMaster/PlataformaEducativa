@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                 $upload_dir = 'uploads/entregas/' . $id_tarea . '/';
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0777, true);
-                    chmod($upload_dir, 0777); // Fuerza los permisos a 0777
+                    chmod($upload_dir, 0777); 
                 }
                 
                 $new_file_name = 'entrega_alumno_' . $id_alumno . '_' . time() . '.' . $file_ext;
