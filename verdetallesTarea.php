@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                             <a class="nav-link" href="calendarioAlumno.php">Calendario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="verTareasAlumno.php">Tareas</a>
+                            <a class="nav-link" href="gestionTareasAlumno.php">Tareas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="forosAlumno.php">Foros</a>
