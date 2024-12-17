@@ -85,7 +85,7 @@ $resultado = $conexion->query($sql);
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 30px;
+            padding: 20px;
             margin-top: 20px;
         }
         h2 {
@@ -94,26 +94,32 @@ $resultado = $conexion->query($sql);
             margin-bottom: 20px;
         }
         table {
-            font-size: 14px;
+            font-size: 13px; /* Tamaño de fuente reducido */
             text-align: center;
             vertical-align: middle;
         }
         th {
             background-color: #343a40;
             color: white;
-            text-align: center;
         }
         td {
-            padding: 5px;
-            vertical-align: middle;
+            padding: 8px;
         }
         tr {
-            height: 40px; /* Altura más pequeña */
+            height: 30px; /* Altura más compacta */
         }
-        .btn-primary {
+        .btn-revisado {
+            background-color: #28a745;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+        .btn-guardar {
             background-color: #0d6efd;
             border-color: #0d6efd;
-            font-weight: bold;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
         }
         footer {
             background-color: #E6861F;
@@ -153,7 +159,8 @@ $resultado = $conexion->query($sql);
                 <th>Contenido</th>
                 <th>Nombre del Estudiante</th>
                 <th>Fecha Respuesta</th>
-                <th>Calificar</th>
+                <th>Revisado</th>
+                <th>Guardar</th>
             </tr>
         </thead>
         <tbody>
@@ -168,19 +175,20 @@ $resultado = $conexion->query($sql);
                         <td>
                             <form action="calificarForos.php" method="POST">
                                 <input type="hidden" name="id_respuesta" value="<?php echo $row['id_respuesta']; ?>">
-                                <input type="number" name="calificacion" class="form-control mb-2" placeholder="Calificación" min="0" max="100" required>
-                                <div class="form-check mb-2">
+                                <div class="form-check d-flex justify-content-center">
                                     <input class="form-check-input" type="checkbox" name="revisado">
-                                    <label class="form-check-label">Revisado</label>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                        </td>
+                        <td>
+                                <input type="number" name="calificacion" class="form-control mb-2" placeholder="0-100" min="0" max="100" required>
+                                <button type="submit" class="btn btn-guardar w-100">Guardar</button>
                             </form>
                         </td>
                     </tr>
                 <?php endwhile; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6" class="text-center">No hay respuestas disponibles.</td>
+                    <td colspan="7" class="text-center">No hay respuestas disponibles.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
