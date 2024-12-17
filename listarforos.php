@@ -9,33 +9,48 @@ if (!isset($_SESSION['num_control'])) {
 
 $docente_num_control = $_SESSION['num_control'];
 
-// Consulta para obtener los foros a los que el docente tiene acceso
+// Preparar la consulta para obtener los foros a los que el docente tiene acceso
 $query = "
     SELECT f.id AS foro_id, f.nombre AS foro_nombre, f.descripcion AS foro_desc, f.tipo_for, c.nombre_curso
-    FROM foro_accesoDocentes fad
+    FROM foro_accesodocentes fad
     JOIN foros f ON fad.id_foros = f.id
     JOIN cursos c ON f.id_curso = c.id
-    WHERE fad.num_controlDocente = '$docente_num_control'
+    WHERE fad.num_controlDocente = ?
 ";
 
-$result = mysqli_query($conexion, $query);
-if (!$result) {
-    die("Error en la consulta: " . mysqli_error($conexion));
-}
+// Preparar la sentencia
+if ($stmt = mysqli_prepare($conexion, $query)) {
+    // Vincular parámetros
+    mysqli_stmt_bind_param($stmt, "i", $docente_num_control);
 
-// Se obtienen los foros en un arreglo
-$foros = array();
-$materiasUnicas = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    $foros[] = $row;
-    // Generar una lista de materias únicas
-    if (!in_array($row['nombre_curso'], $materiasUnicas)) {
-        $materiasUnicas[] = $row['nombre_curso'];
+    // Ejecutar la consulta
+    mysqli_stmt_execute($stmt);
+
+    // Obtener el resultado
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        die("Error en la consulta: " . mysqli_error($conexion));
     }
+
+    // Se obtienen los foros en un arreglo
+    $foros = array();
+    $materiasUnicas = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $foros[] = $row;
+        // Generar una lista de materias únicas
+        if (!in_array($row['nombre_curso'], $materiasUnicas)) {
+            $materiasUnicas[] = $row['nombre_curso'];
+        }
+    }
+
+    // Cerramos la sentencia
+    mysqli_stmt_close($stmt);
+} else {
+    die("Error en la preparación de la consulta: " . mysqli_error($conexion));
 }
 
 // Cerramos la conexión
-mysqli_free_result($result);
 mysqli_close($conexion);
 ?>
 <!DOCTYPE html>
@@ -46,7 +61,6 @@ mysqli_close($conexion);
     <title>Foros Asignados</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/listarForos.css?v=<?php echo time(); ?>">
-    
 </head>
 <body>
     <div class="barranavegacion">
@@ -82,7 +96,6 @@ mysqli_close($conexion);
             </div>
         </div>
     </div>
-<body>
     <div class="container">
         <h1 class="text-center mb-4">Foros Asignados</h1>
 
@@ -104,8 +117,8 @@ mysqli_close($conexion);
                     <label for="filtro-tipo" class="form-label">Filtrar por tipo de foro:</label>
                     <select id="filtro-tipo" class="form-select" onchange="filtrarForos()">
                         <option value="">Todos los tipos</option>
-                        <option value="General">General</option>
-                        <option value="Privado">Privado</option>
+                        <option value="general">General</option>
+                        <option value="privado">Privado</option>
                     </select>
                 </div>
             </div>
@@ -116,7 +129,7 @@ mysqli_close($conexion);
             <?php
             // Ajustar tipo_for: 'general' -> 'General', otra cosa -> 'Privado'
             $tipo_mostrar = ($foro['tipo_for'] === 'general') ? 'General' : 'Privado';
-            $data_tipo = ($foro['tipo_for'] === 'general') ? 'general' : 'privado';
+            $data_tipo = strtolower($foro['tipo_for']);
             ?>
             <div class="foro-card" 
                  data-materia="<?php echo htmlspecialchars($foro['nombre_curso'], ENT_QUOTES, 'UTF-8'); ?>" 
@@ -128,9 +141,9 @@ mysqli_close($conexion);
                 <p class="tipo-foro">Tipo: <?php echo htmlspecialchars($tipo_mostrar, ENT_QUOTES, 'UTF-8'); ?></p>
                 <div class="foro-buttons">
                     <!-- Modificar para redirigir a las páginas correspondientes -->
-                    <a href="verForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-primary">Ver Foro</a>
-                    <a href="editarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Editar Foro</a>
-                    <a href="eliminarForo.php?id=<?php echo $foro['foro_id']; ?>" class="btn btn-warning">Eliminar Foro</a>
+                    <a href="verForo.php?id=<?php echo urlencode($foro['foro_id']); ?>" class="btn btn-primary">Ver Foro</a>
+                    <a href="editarForo.php?id=<?php echo urlencode($foro['foro_id']); ?>" class="btn btn-warning">Editar Foro</a>
+                    <a href="eliminarForo.php?id=<?php echo urlencode($foro['foro_id']); ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este foro?');">Eliminar Foro</a>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -169,12 +182,7 @@ mysqli_close($conexion);
             });
         }
 
-        // Función para eliminar un foro
-        function eliminarForo(foroId) {
-            if (confirm("¿Estás seguro de que quieres eliminar este foro?")) {
-                window.location.href = "eliminarForo.php?id=" + foroId;
-            }
-        }
+        // Nota: La función eliminarForo se maneja directamente en el onclick del botón eliminar
     </script>
 </body>
 </html>
