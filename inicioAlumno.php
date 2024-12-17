@@ -60,6 +60,25 @@ mysqli_set_charset($conexion, "utf8");
             </div>
         </div>
     </div>
+    <?php if ($passwordPlain): ?>
+    <div class="modal fade" id="passwordWarningModal" tabindex="-1" aria-labelledby="passwordWarningLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordWarningLabel">¡Atención!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    Tu contraseña no está encriptada. Por tu seguridad, te recomendamos cambiarla lo antes posible.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-orange" onclick="window.location.href='editarperfilAlumno.php';">Cambiar Contraseña</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
     <!-- Imagen de perfil -->
     <div class="profile-container">

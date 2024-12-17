@@ -86,7 +86,7 @@ if ($result_docente_id && mysqli_num_rows($result_docente_id) > 0) {
                     Tu contraseña no está encriptada. Por tu seguridad, te recomendamos cambiarla lo antes posible.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-orange" onclick="window.location.href='editarperfilAlumno.php';">Cambiar Contraseña</button>
+                    <button type="button" class="btn btn-orange" onclick="window.location.href='editarperfilDocente.php';">Cambiar Contraseña</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>

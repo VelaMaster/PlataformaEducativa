@@ -1,0 +1,176 @@
+body{
+    background-color: #e7d6bf;
+}
+h1, h4 {
+    color: black;
+}
+h4{
+    text-align: center !important;
+}
+/* Contenedor de los tabs centrado */
+.nav-tabs {
+    justify-content: center; /* Centra los botones dentro del contenedor */
+    border-bottom: none; /* Quita la línea inferior de los tabs */
+}
+
+/* Botones de los tabs */
+.nav-tabs .nav-link {
+    color: #fff; /* Color del texto */
+    background-color: #ff8c00; /* Tono de naranja */
+    border: 1px solid #ff8c00; /* Borde del mismo color */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    margin: 0 5px; /* Separación entre botones */
+    padding: 10px 20px; /* Espaciado interno */
+    font-weight: bold; /* Negrita */
+    text-align: center;
+    transition: background-color 0.3s ease-in-out; /* Transición suave */
+}
+
+/* Estilo al pasar el mouse */
+.nav-tabs .nav-link:hover {
+    background-color: #e67600; /* Color naranja más oscuro */
+    color: #fff; /* Texto blanco */
+}
+
+/* Botón activo */
+.nav-tabs .nav-link.active {
+    background-color: #ec9c24; /* Tono más oscuro para el botón activo */
+    border-color: #db890d; /* Borde del activo */
+    color: #fff; /* Texto blanco */
+}
+
+/* Estilos para los nombres del grupo */
+.tab-pane .estudiante {
+    border: 2px solid #ff8c00; /* Borde naranja */
+    background-color: #ffe4b3; /* Naranja tenue */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px; /* Espaciado interno */
+    margin: 10px auto; /* Espaciado externo y centrado */
+    width: 70%; /* Ancho del contenedor */
+    text-align: center; /* Centra el texto */
+    font-size: 16px; /* Tamaño de la letra */
+    color: #333; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transición para la animación */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra inicial */
+}
+/* Efecto al pasar el mouse */
+.tab-pane .estudiante:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    background-color: #ffdfa6; /* Fondo más claro al pasar el mouse */
+}
+/* Efecto al hacer clic */
+.tab-pane .estudiante:active {
+    transform: scale(0.95); /* Reduce ligeramente el tamaño */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3); /* Sombra más pequeña */
+    background-color: #ffd080; /* Fondo más oscuro al hacer clic */
+}
+/* Espaciado entre las líneas de texto */
+.tab-pane .estudiante span {
+    display: block; /* Cada elemento ocupa una línea */
+    margin: 5px 0; /* Espaciado vertical entre las líneas */
+}
+
+/* Estilo de las tareas */
+.tarea {
+    border: 2px solid #ff8c00; /* Borde naranja */
+    background-color: #ffe4b3; /* Fondo claro */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 15px; /* Espaciado interno */
+    margin: 10px auto; /* Margen externo */
+    width: 70%; /* Ancho de la tarea */
+    text-align: center; /* Texto centrado */
+    font-size: 16px; /* Tamaño del texto */
+    color: #333; /* Color del texto */
+    font-weight: bold; /* Negrita */
+    position: relative; /* Necesario para el botón flotante */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra inicial */
+}
+
+/* Efecto hover */
+.tarea:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    background-color: #ffdfa6; /* Fondo más claro */
+}
+
+/* Botón "Ver más" flotante */
+.btn-ver-mas {
+    display: none; /* Oculto por defecto */
+    position: absolute; /* Posición absoluta dentro del contenedor */
+    right: -120px; /* Aparece fuera del lado derecho */
+    top: 50%; /* Centrado verticalmente */
+    transform: translateY(-50%); /* Ajusta la posición al centro */
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Botón hover */
+.btn-ver-mas:hover {
+    background-color: #e67600;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Mostrar el botón al pasar el mouse por la tarea */
+.tarea:hover .btn-ver-mas {
+    display: block; /* Muestra el botón */
+}
+
+/* Estilos para la Rubrica */
+.rubrica-table th, .rubrica-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Estilos para el botón Agregar o Crear una tarea */
+.btn-agregar-tarea {
+    background-color: #28a745; /* Verde */
+    color: white;
+}
+.btn-agregar-tarea:hover {
+    background-color: #218838;
+    color: white;
+}
+
+/* Responsividad para dispositivos pequeños */
+@media (max-width: 576px) {
+    .detail-label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .btn-ver-mas {
+        right: 10px; /* Ajusta la posición en pantallas pequeñas */
+    }
+}
+
+/* Estilos para la previsualización del archivo subido por el alumno */
+#uploadedFilePreview {
+    border: 2px solid #28a745; /* Borde verde para diferenciar */
+    background-color: #e2f0d9; /* Fondo verde claro */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 15px; /* Espaciado interno */
+    margin: 20px auto; /* Margen externo y centrado */
+    width: 70%; /* Ancho del contenedor */
+    text-align: center; /* Centra el contenido */
+    font-size: 16px; /* Tamaño del texto */
+    color: #333; /* Color del texto */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+#uploadedFilePreview img,
+#uploadedFilePreview embed {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
