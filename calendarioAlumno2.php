@@ -91,5 +91,10 @@ $conexion->close();
             calendar.render();
         });
     </script>
+    <div style="text-align: center; margin-top: 20px;"><a href="inicioAlumno.php" class="boton-regresar">
+        Regresar al Menú
+    </a>
+</div>
+
 </body>
 </html>
