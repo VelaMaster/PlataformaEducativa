@@ -205,3 +205,96 @@ textarea:focus {
 .btn-publicar {
     margin-right: 10px;
 }
+/* aqui rubrica*/
+/* Contenedor principal de rúbricas */
+.rubricas {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+/* Título de rúbricas */
+.rubricas h3 {
+    color: #ff7f00;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Tabla de rúbricas */
+.tabla-rubricas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Encabezados de la tabla */
+.tabla-rubricas thead th {
+    background-color: #ff7f00;
+    color: #fff;
+    text-transform: uppercase;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Filas de la tabla */
+.tabla-rubricas tbody tr {
+    background-color: #fdfdfd;
+    transition: background-color 0.3s;
+}
+
+.tabla-rubricas tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover en las filas */
+.tabla-rubricas tbody tr:hover {
+    background-color: #ffecb3;
+}
+
+/* Celdas de la tabla */
+.tabla-rubricas td {
+    text-align: center;
+    padding: 12px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .tabla-rubricas thead {
+        display: none; /* Oculta encabezados */
+    }
+
+    .tabla-rubricas, .tabla-rubricas tbody, .tabla-rubricas tr, .tabla-rubricas td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabla-rubricas tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .tabla-rubricas td {
+        text-align: left;
+        padding-left: 10px;
+        position: relative;
+    }
+
+    .tabla-rubricas td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 50%;
+        color: #ff7f00;
+    }
+}
+

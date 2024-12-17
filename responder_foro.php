@@ -96,11 +96,12 @@ if (isset($_POST['eliminar_comentario'])) {
 $orden = isset($_GET['orden']) ? $_GET['orden'] : 'ASC';
 $orden = ($orden === 'DESC') ? 'DESC' : 'ASC';
 
-$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, alumnos.nombre AS autor 
+$sql_respuestas = "SELECT respuestas.id, respuestas.id_usuario, respuestas.contenido, respuestas.fecha_creacion, respuestas.respuesta_padre, respuestas.calificacion, alumnos.nombre AS autor 
                    FROM respuestas
                    JOIN alumnos ON respuestas.id_usuario = alumnos.num_control
                    WHERE respuestas.id_tema = ?
                    ORDER BY respuestas.respuesta_padre ASC, respuestas.fecha_creacion $orden";
+
 $stmt_respuestas = $conexion->prepare($sql_respuestas);
 $stmt_respuestas->bind_param("i", $id_foro);
 $stmt_respuestas->execute();
@@ -120,6 +121,14 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             echo "<p><strong>" . htmlspecialchars($respuesta['autor']) . "</strong> - " . htmlspecialchars($respuesta['fecha_creacion']) . "</p>";
             echo "<p>" . htmlspecialchars($respuesta['contenido']) . "</p>";
 
+            // Mostrar calificación si existe
+            if (!is_null($respuesta['calificacion'])) {
+                echo "<p><strong>Calificación: </strong>" . htmlspecialchars($respuesta['calificacion']) . "/100</p>";
+            } else {
+                echo "<p><em>Sin calificación</em></p>";
+            }
+
+            // Botón eliminar si el usuario es el autor
             if ($respuesta['id_usuario'] == $num_control) {
                 echo "<form method='POST' class='form-eliminar'>";
                 echo "<input type='hidden' name='eliminar_comentario' value='" . $respuesta['id'] . "'>";
@@ -143,6 +152,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
         }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -168,6 +178,22 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             const subRespuestas = document.getElementById(`subrespuestas-${idRespuesta}`);
             subRespuestas.style.display = subRespuestas.style.display === 'none' ? 'block' : 'none';
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("toggleRubricas");
+    const rubricasDiv = document.getElementById("rubricas");
+
+    toggleButton.addEventListener("click", function () {
+        if (rubricasDiv.style.display === "none" || rubricasDiv.style.display === "") {
+            rubricasDiv.style.display = "block"; // Mostrar rúbricas
+            toggleButton.textContent = "Ocultar Rúbrica";
+        } else {
+            rubricasDiv.style.display = "none"; // Ocultar rúbricas
+            toggleButton.textContent = "Mostrar Rúbrica";
+        }
+    });
+});
+
     </script>
 </head>
 <body>
@@ -177,7 +203,12 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
 
     <div class="titulo-seccion"><?php echo htmlspecialchars($foro['descripcion']); ?></div>
 
-    <div class="rubricas">
+    <div class="rubricas-container">
+    <!-- Botón para mostrar las rúbricas -->
+    <button id="toggleRubricas" class="btn-mostrar">Mostrar Rúbrica</button>
+    
+    <!-- Sección de rúbricas inicialmente oculta -->
+    <div id="rubricas" class="rubricas" style="display: none;">
         <h3>Rúbricas del Foro</h3>
         <table class="tabla-rubricas">
             <thead>
@@ -198,6 +229,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
             </tbody>
         </table>
     </div>
+</div>
 
     <div class="form-options">
         <form method="GET" action="responder_foro.php">

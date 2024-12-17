@@ -4,6 +4,7 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: loginAlumno.php');
     exit();
 }
+
 $host = 'localhost';
 $db   = 'peis';
 $user = 'root';
