@@ -67,22 +67,29 @@ $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
                 }
             }
 
-            // Obtener calificación y retroalimentación
-            $sqlCalificacion = "SELECT calificacion
-                                 FROM entregas 
-                                 WHERE id_tarea = ? AND id_alumno = ?";
-            $stmtCalificacion = $conexion->prepare($sqlCalificacion);
-            $stmtCalificacion->bind_param("is", $id_tarea, $id_alumno);
-            $stmtCalificacion->execute();
-            $resultadoCalificacion = $stmtCalificacion->get_result();
-            $calificacion = null;
-            $retroalimentacion = null;
+           // Consulta para obtener la calificación y retroalimentación
+$sqlCalificacion = "SELECT calificacion, retroalimentacion
+FROM entregas 
+WHERE id_tarea = ? AND id_alumno = ?";
+$stmtCalificacion = $conexion->prepare($sqlCalificacion);
+$stmtCalificacion->bind_param("ii", $id_tarea, $id_alumno);
+$stmtCalificacion->execute();
+$resultadoCalificacion = $stmtCalificacion->get_result();
 
-            if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
-                $filaCalificacion = $resultadoCalificacion->fetch_assoc();
-                $calificacion = $filaCalificacion['calificacion'];
-                
-            }
+// Inicializar variables
+$calificacion = null;
+$retroalimentacion = null;
+
+if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
+$filaCalificacion = $resultadoCalificacion->fetch_assoc();
+$calificacion = $filaCalificacion['calificacion'];
+$retroalimentacion = $filaCalificacion['retroalimentacion'];
+} else {
+// No se encontraron datos
+$calificacion = null;
+$retroalimentacion = null;
+}
+
 
 
 ?>
@@ -146,7 +153,12 @@ $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
         <span class="detail-label">Calificación:</span>
         <span>Aún no calificada</span>
     </div>
+    <div class="detail-item">
+        <span class="detail-label">Retroalimentación:</span>
+        <span>Sin retroalimentación</span>
+    </div>
 <?php endif; ?>
+
 
 
 
