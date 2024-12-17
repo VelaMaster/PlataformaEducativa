@@ -23,6 +23,20 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
     $id_tarea = (int)$_POST['id_tarea']; // Convertir a entero para evitar inyecciones
     $num_control = $_SESSION['usuario'];
 
+    // Validar num_control
+    if (!ctype_digit($num_control)) {
+        error_log("Error: num_control no es numérico.");
+        header("Location: gestionTareasAlumno.php?error=ID de alumno inválido.");
+        exit;
+    }
+
+    // Validar id_tarea
+    if (!ctype_digit((string)$id_tarea)) {
+        error_log("Error: id_tarea no es numérico.");
+        header("Location: gestionTareasAlumno.php?error=ID de tarea inválido.");
+        exit;
+    }
+
     // Verificar que el alumno existe en la base de datos (usando num_control)
     $sqlAlumno = "SELECT id FROM alumnos WHERE num_control = ?";
     $stmtAlumno = $conexion->prepare($sqlAlumno);
@@ -55,6 +69,13 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
         mkdir($directorioDestino, 0777, true);
     }
 
+    // Verificar permisos de escritura en el directorio
+    if (!is_writable($directorioDestino)) {
+        error_log("Error: No se puede escribir en el directorio '$directorioDestino'.");
+        header("Location: gestionTareasAlumno.php?error=No se puede guardar el archivo.");
+        exit;
+    }
+
     // Crear el nombre único para el archivo
     $archivoDestino = $directorioDestino . uniqid() . "_" . $archivoNombreSeguro;
 
@@ -74,7 +95,7 @@ if (isset($_POST['id_tarea']) && isset($_FILES['archivo']) && $_FILES['archivo']
         if ($stmt->execute()) {
             header("Location: gestionTareasAlumno.php?success=Archivo subido correctamente.");
         } else {
-            error_log("Error en la base de datos: " . $conexion->error);
+            error_log("Error en la base de datos: " . $stmt->error);
             header("Location: gestionTareasAlumno.php?error=Error al guardar en la base de datos.");
         }
         $stmt->close();

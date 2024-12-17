@@ -46,7 +46,7 @@ if (!$conexion) {
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link active" href="inicioAlumno.php">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="calendarioAlumno.php">Calendario</a></li>
+                        <li class="nav-item"><a class="nav-link" href="calendarioAlumno2.php">Calendario</a></li>
                         <li class="nav-item"><a class="nav-link" href="gestionTareasAlumno.php">Tareas</a></li>
                         <li class="nav-item"><a class="nav-link" href="forosAlumno.php">Foros</a></li>
                     </ul>

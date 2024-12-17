@@ -96,7 +96,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
 
             if ($respuesta['id_usuario'] == $num_control) {
                 echo "<form method='POST' class='form-eliminar'>";
-                echo "<input type='hidden' name='eliminar_respuesta' value='" . $respuesta['id'] . "'>";
+                echo "<input type='hidden' name='eliminar_comentario' value='" . $respuesta['id'] . "'>";
                 echo "<button type='submit' class='btn-eliminar'>Eliminar</button>";
                 echo "</form>";
             }

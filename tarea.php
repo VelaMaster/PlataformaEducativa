@@ -29,12 +29,12 @@ if ($id_tarea > 0) {
             $tarea = $resultado->fetch_assoc();
 
             // Consulta para verificar si ya se entregó la tarea
-$sqlEntrega = "SELECT archivo_entrega FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
-$stmtEntrega = $conexion->prepare($sqlEntrega);
-$stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
-$stmtEntrega->execute();
-$resultadoEntrega = $stmtEntrega->get_result();
-$entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
+            $sqlEntrega = "SELECT archivo_entrega FROM entregas WHERE id_tarea = ? AND id_alumno = ?";
+            $stmtEntrega = $conexion->prepare($sqlEntrega);
+            $stmtEntrega->bind_param("is", $id_tarea, $id_alumno);
+            $stmtEntrega->execute();
+            $resultadoEntrega = $stmtEntrega->get_result();
+            $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
 
 
             // Función para obtener el nombre del curso
@@ -67,22 +67,29 @@ $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
                 }
             }
 
-            // Obtener calificación y retroalimentación
-            $sqlCalificacion = "SELECT calificacion
-                                 FROM entregas 
-                                 WHERE id_tarea = ? AND id_alumno = ?";
-            $stmtCalificacion = $conexion->prepare($sqlCalificacion);
-            $stmtCalificacion->bind_param("is", $id_tarea, $id_alumno);
-            $stmtCalificacion->execute();
-            $resultadoCalificacion = $stmtCalificacion->get_result();
-            $calificacion = null;
-            $retroalimentacion = null;
+           // Consulta para obtener la calificación y retroalimentación
+$sqlCalificacion = "SELECT calificacion, retroalimentacion
+FROM entregas 
+WHERE id_tarea = ? AND id_alumno = ?";
+$stmtCalificacion = $conexion->prepare($sqlCalificacion);
+$stmtCalificacion->bind_param("ii", $id_tarea, $id_alumno);
+$stmtCalificacion->execute();
+$resultadoCalificacion = $stmtCalificacion->get_result();
 
-            if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
-                $filaCalificacion = $resultadoCalificacion->fetch_assoc();
-                $calificacion = $filaCalificacion['calificacion'];
-                
-            }
+// Inicializar variables
+$calificacion = null;
+$retroalimentacion = null;
+
+if ($resultadoCalificacion && $resultadoCalificacion->num_rows > 0) {
+$filaCalificacion = $resultadoCalificacion->fetch_assoc();
+$calificacion = $filaCalificacion['calificacion'];
+$retroalimentacion = $filaCalificacion['retroalimentacion'];
+} else {
+// No se encontraron datos
+$calificacion = null;
+$retroalimentacion = null;
+}
+
 
 
 ?>
@@ -146,7 +153,12 @@ $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
         <span class="detail-label">Calificación:</span>
         <span>Aún no calificada</span>
     </div>
+    <div class="detail-item">
+        <span class="detail-label">Retroalimentación:</span>
+        <span>Sin retroalimentación</span>
+    </div>
 <?php endif; ?>
+
 
 
 
@@ -363,68 +375,6 @@ $entregado = $resultadoEntrega && $resultadoEntrega->num_rows > 0;
 
 
 
-<div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
-    <span onclick="cerrarModal()" style="position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; cursor: pointer;">&times;</span>
-    <div id="modal-content" style="background-color: #fff; padding: 20px; border-radius: 8px;">
-        <!-- Contenido del archivo (imagen o PDF) se cargará aquí -->
-    </div>
-</div>
-
-
-
-    <!-- Botón para abrir la ventana modal de confirmación -->
-    <div style="display: flex; justify-content: center; margin-top: 15px;">
-    <form id="eliminarForm" action="eliminarTareaAlumno.php" method="POST">
-        <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($id_tarea); ?>">
-    </form>
-</div>
-
-
-
-        
-    </div>
-    <script>
-    // Función para mostrar el modal
-    function mostrarModal() {
-        document.getElementById("modalConfirmacion").style.display = "block";
-    }
-
-    // Función para cerrar el modal
-    function cerrarModal() {
-        document.getElementById("modalConfirmacion").style.display = "none";
-    }
-
-    function abrirModal(ruta, nombre) {
-    const modal = document.getElementById("modal");
-    const modalContent = document.getElementById("modal-content");
-    
-    // Limpiar contenido previo
-    modalContent.innerHTML = "";
-
-    // Verificar el tipo de archivo y agregar contenido apropiado
-    if (/\.(jpg|jpeg|png|gif)$/i.test(nombre)) {
-        modalContent.innerHTML = <img src="${ruta}" style="width: 100%; max-width: 600px; border-radius: 8px;">;
-    } else if (/\.pdf$/i.test(nombre)) {
-        modalContent.innerHTML = <embed src="${ruta}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="600" height="500" style="border-radius: 8px; border: none;">;
-    } else {
-        modalContent.innerHTML = "<p style='color: #333; text-align: center;'>Vista previa no disponible</p>";
-    }
-
-    // Mostrar el modal
-    modal.style.display = "flex";
-}
-
-function cerrarModal() {
-    document.getElementById("modal").style.display = "none";
-}
-<script>
-    function toggleMenu(event) {
-        event.preventDefault(); // Previene el comportamiento predeterminado
-        const menu = document.getElementById("menuOpciones");
-        menu.style.display = menu.style.display === "none" ? "block" : "none";
-    }
-</script>
-</script>
 
   <!-- Pie de página --> 
     <footer class="text-center py-3">
