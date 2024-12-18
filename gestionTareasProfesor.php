@@ -32,6 +32,8 @@ $resultado = mysqli_stmt_get_result($stmt);
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/seleccionarArchivo.css?v=<?php echo time(); ?>">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 <div class="barranavegacion">
@@ -182,28 +184,60 @@ $resultado = mysqli_stmt_get_result($stmt);
 <script src="js/rubrica.js"></script>
 
 <script>
-function agregarFilaRubrica() {
-    const table = document.getElementById('rubricaTable').getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
+        // Añadir una fila a la rúbrica
+        function agregarFilaRubrica() {
+            const table = document.getElementById('rubricaTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
 
-    newRow.innerHTML = `
-        <td><input type="text" name="criterio[]" required></td>
-        <td><input type="text" name="descripcionCriterio[]" required></td>
-        <td><input type="number" name="puntos[]" min="0" required></td>
-        <td><input type="checkbox" name="cumple[]"></td>
-        <td><input type="checkbox" name="no_cumple[]"></td>
-        <td><input type="text" name="observaciones[]"></td>
-        <td>
-            <button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button>
-        </td>
-    `;
-}
+            newRow.innerHTML = `
+                <td><input type="text" name="criterio[]" oninput="validarTexto(this)" required></td>
+                <td><input type="text" name="descripcionCriterio[]" oninput="validarTexto(this)" required></td>
+                <td><input type="number" name="puntos[]" min="0" max="100" oninput="actualizarTotal()" required></td>
+                <td><input type="checkbox" name="cumple[]"></td>
+                <td><input type="checkbox" name="no_cumple[]"></td>
+                <td><input type="text" name="observaciones[]"></td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button>
+                </td>
+            `;
+            actualizarTotal();
+        }
 
-function eliminarFila(btn) {
-    const row = btn.parentNode.parentNode;
-    row.parentNode.removeChild(row);
-}
-</script>
+        // Validar que solo se ingresen letras en "Criterio" y "Descripción"
+        function validarTexto(input) {
+            input.value = input.value.replace(/[0-9]/g, '');
+        }
+
+        // Eliminar una fila
+        function eliminarFila(btn) {
+            const row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            actualizarTotal();
+        }
+
+        // Actualizar el total de puntos
+        function actualizarTotal() {
+            const puntos = document.getElementsByName('puntos[]');
+            let total = 0;
+            for (let i = 0; i < puntos.length; i++) {
+                total += parseInt(puntos[i].value || 0);
+            }
+            const totalPuntosSpan = document.getElementById('totalPuntos');
+            totalPuntosSpan.textContent = total;
+
+            if (total > 100) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'El total de puntos no puede superar los 100.',
+                    confirmButtonText: 'Aceptar'
+                });
+                totalPuntosSpan.style.color = 'red';
+            } else {
+                totalPuntosSpan.style.color = 'black';
+            }
+        }
+    </script>
 
 <script>
     function previewFile() {
