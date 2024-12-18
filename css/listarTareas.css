@@ -198,3 +198,100 @@
         .foro-buttons a, .foro-buttons button {
             margin-right: 5px;
         }
+        /* Estilo del contenedor del filtro */
+.filtro-container {
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo del menú desplegable */
+.form-select {
+    border: 2px solid #e48d16;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-select:focus {
+    border-color: #e48d16;
+    box-shadow: 0 0 8px rgba(0, 91, 187, 0.4);
+    outline: none;
+}
+
+/* Estilo del botón Filtrar */
+.btn-primary {
+    background-color: #e48d16;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #e48d16;
+    transform: scale(1.05);
+}
+/* Contenedor principal del filtro */
+.filtro-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 80%; /* Alineación al ancho de la tabla */
+}
+
+/* Contenedor ajustado del filtro */
+.filtro-container .col-md-8,
+.filtro-container .col-md-4 {
+    margin: 0;
+}
+
+/* Estilo del botón */
+.btn-primary {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #e48d16;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #d07b12;
+    transform: scale(1.05);
+}
+
+/* Estilo del menú desplegable */
+.form-select {
+    width: 100%;
+    border: 2px solid #e48d16;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    max-width: 80%;
+    margin: 0 auto;
+}
