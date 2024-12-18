@@ -68,6 +68,42 @@
     <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/vermasProfesor.css?v=<?php echo time(); ?>">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .tarea {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            transition: box-shadow 0.3s ease;
+        }
+        .tarea:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .btn-ver-mas {
+            background-color: #ff7f50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .btn-ver-mas:hover {
+            background-color: #e7603a;
+            transform: scale(1.05);
+        }
+        .tarea h5 {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="barranavegacion">
