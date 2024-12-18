@@ -170,74 +170,71 @@ $editor->closeConnection();
 
     <!-- Vista previa del archivo -->
     <div class="file-preview" id="file-preview">
-        <?php if (!empty($task['archivo_tarea'])): ?>
-            <?php $extension = pathinfo($task['archivo_tarea'], PATHINFO_EXTENSION); ?>
-            <?php if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
-                <img src="<?php echo htmlspecialchars($task['archivo_tarea']); ?>" id="preview-image" alt="Vista previa del archivo">
-            <?php elseif (strtolower($extension) === 'pdf'): ?>
-                <iframe src="<?php echo htmlspecialchars($task['archivo_tarea']); ?>" id="preview-pdf"></iframe>
-            <?php else: ?>
-                <p>Vista previa no disponible para este tipo de archivo.</p>
-            <?php endif; ?>
+    <?php if (!empty($task['archivo_tarea'])): ?>
+        <?php $extension = pathinfo($task['archivo_tarea'], PATHINFO_EXTENSION); ?>
+        <?php if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
+            <img src="<?php echo htmlspecialchars($task['archivo_tarea']); ?>" alt="Vista previa del archivo">
+        <?php elseif (strtolower($extension) === 'pdf'): ?>
+            <iframe src="<?php echo htmlspecialchars($task['archivo_tarea']); ?>"></iframe>
         <?php else: ?>
-            <p>No hay archivo asignado actualmente.</p>
+            <p>Vista previa no disponible para este tipo de archivo.</p>
         <?php endif; ?>
-    </div>
+    <?php else: ?>
+        <p>No hay archivo asignado actualmente.</p>
+    <?php endif; ?>
+</div>
 
-    <div class="container">
-        <h3>Rúbricas Asociadas</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Criterio</th>
-                    <th>Descripción</th>
-                    <th>Puntos</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($rubrics)): ?>
-                    <?php foreach ($rubrics as $rubrica): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
-                            <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
-                            <td><input type="number" name="puntos[]" value="<?php echo htmlspecialchars($rubrica['puntos']); ?>" readonly></td>
-                            <td>
-                                <form method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta rúbrica?');">
-                                    <input type="hidden" name="id_rubrica" value="<?php echo $rubrica['id']; ?>">
-                                    <input type="hidden" name="accion_rubrica" value="eliminar">
-                                    <button type="submit">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+
+    <div class="rubrica-container">
+    <h3>Rúbricas Asociadas</h3>
+    <table class="rubrica-table">
+        <thead>
+            <tr>
+                <th>Criterio</th>
+                <th>Descripción</th>
+                <th>Puntos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($rubrics)): ?>
+                <?php foreach ($rubrics as $rubrica): ?>
                     <tr>
-                        <td colspan="4">No hay rúbricas asignadas.</td>
+                        <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                        <td><?php echo htmlspecialchars($rubrica['descripcion']); ?></td>
+                        <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                        <td>
+                            <form method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta rúbrica?');">
+                                <input type="hidden" name="id_rubrica" value="<?php echo $rubrica['id']; ?>">
+                                <input type="hidden" name="accion_rubrica" value="eliminar">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <p>Total de puntos actuales: <span id="totalPuntos"><?php echo htmlspecialchars($totalPuntos); ?></span>/100</p>
-        <p id="errorPuntos" style="color: red;"></p>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4">No hay rúbricas asignadas.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 
-        <form method="POST" onsubmit="return validarNuevaRubrica()">
-            <input type="hidden" name="accion_rubrica" value="agregar">
-            <div>
-                <label for="criterio">Criterio:</label>
-                <input type="text" id="criterio" name="criterio" required>
-            </div>
-            <div>
-                <label for="descripcion_rubrica">Descripción:</label>
-                <input type="text" id="descripcion_rubrica" name="descripcion_rubrica" required>
-            </div>
-            <div>
-                <label for="nuevoPuntos">Puntos:</label>
-                <input type="number" id="nuevoPuntos" name="puntos" min="1" required>
-            </div>
-            <button type="submit">Agregar Rúbrica</button>
-        </form>
-    </div>
+    <p class="total-puntos">Total de puntos actuales: <span id="totalPuntos"><?php echo htmlspecialchars($totalPuntos); ?></span>/100</p>
+    <p class="error-puntos" id="errorPuntos"></p>
+
+    <form method="POST" class="agregar-rubrica" onsubmit="return validarNuevaRubrica();">
+        <input type="hidden" name="accion_rubrica" value="agregar">
+        <label for="criterio">Criterio:</label>
+        <input type="text" id="criterio" name="criterio" required>
+        <label for="descripcion_rubrica">Descripción:</label>
+        <input type="text" id="descripcion_rubrica" name="descripcion_rubrica" required>
+        <label for="nuevoPuntos">Puntos:</label>
+        <input type="number" id="nuevoPuntos" name="puntos" min="1" required>
+        <button type="submit">Agregar Rúbrica</button>
+    </form>
+</div>
+
 
     <!-- JavaScript para la vista previa -->
     <script>

@@ -99,3 +99,150 @@ input.error {
     display: flex;
     justify-content: space-between;
 }
+/* Contenedor de rúbricas */
+.rubrica-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título de rúbricas */
+.rubrica-container h3 {
+    font-size: 24px;
+    color: #ff9900;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Tabla de rúbricas */
+.rubrica-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.rubrica-table th {
+    background-color: #ff9900;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+}
+
+.rubrica-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e6e6e6;
+    text-align: center;
+    background-color: #fff;
+    font-size: 15px;
+}
+
+/* Estilo para filas alternas */
+.rubrica-table tr:nth-child(even) td {
+    background-color: #f4f6f9;
+}
+
+/* Estilo de los botones de acción */
+.rubrica-container button {
+    background-color: #ff4d4d;
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rubrica-container button:hover {
+    background-color: #e60000;
+}
+
+/* Formulario para agregar rúbricas */
+.agregar-rubrica {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.agregar-rubrica label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.agregar-rubrica input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.agregar-rubrica button {
+    background-color: #ff9900;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.agregar-rubrica button:hover {
+    background-color: #e68a00;
+}
+
+/* Mensajes de error y total */
+.total-puntos {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+    text-align: right;
+    font-weight: bold;
+}
+
+.error-puntos {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+/* Contenedor de la vista previa */
+.file-preview {
+    margin: 20px auto; /* Centrado */
+    text-align: center;
+    width: 100%; /* Ocupar todo el ancho disponible */
+    max-width: 100%; /* Asegura que no se desborde */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: #f9f9f9;
+}
+
+/* Imágenes en la vista previa */
+.file-preview img {
+    width: 100%; /* Ajuste al contenedor */
+    max-height: 600px; /* Altura máxima visible */
+    object-fit: contain; /* Proporciones sin distorsión */
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+
+/* Vista previa para PDFs */
+.file-preview iframe {
+    width: 100%; /* Ocupar todo el ancho */
+    height: 600px; /* Altura controlada */
+    border: none;
+    display: block;
+    margin: 0 auto;
+}
