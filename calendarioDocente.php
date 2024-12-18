@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="css/calendarioEstilo.css?v=<?php echo time(); ?>">
-
 </head>
 <body>
 <div class="barranavegacion">
