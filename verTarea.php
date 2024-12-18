@@ -171,7 +171,26 @@ if ($resultado->num_rows > 0) {
                 <p><?php echo htmlspecialchars($tarea['fecha_limite']); ?></p>
             </div>
         </div>
-
+<!-- Vista previa del archivo -->
+<?php if (!empty($tarea['archivo_tarea'])): ?>
+                <div class="file-preview">
+                    <h3>Vista previa del Archivo</h3>
+                    <?php
+                    $ruta_archivo = htmlspecialchars($tarea['archivo_tarea']);
+                    $extension = pathinfo($ruta_archivo, PATHINFO_EXTENSION);
+                    ?>
+                    <?php if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
+                        <img src="<?php echo $ruta_archivo; ?>" alt="Archivo Asignado">
+                    <?php elseif (strtolower($extension) === 'pdf'): ?>
+                        <iframe src="<?php echo $ruta_archivo; ?>"></iframe>
+                    <?php else: ?>
+                        <a class="download-link" href="<?php echo $ruta_archivo; ?>" target="_blank">Descargar Archivo</a>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <p>No hay archivo asignado a esta tarea.</p>
+            <?php endif; ?>
+        </div>
         <!-- Tabla de rúbricas -->
         <div class="table-container">
             <h3>Rúbrica Asignada</h3>

@@ -194,9 +194,49 @@ $resultado = $conexion->query($sql);
             height: 5px;
             background-color: #ff9900;
         }
+
+         /* Estilo personalizado para la barra de navegación */
+         .barranavegacion {
+            background-color: #e48d16;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 95%;
+            color: white;
+            text-align: center;
+        }
+        .barranavegacion a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .barranavegacion a:hover {
+            text-decoration: underline;
+        }
+        .foro-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .foro-buttons a, .foro-buttons button {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
+     <!-- Barra de navegación -->
+     <div class="barranavegacion">
+        <span>Plataforma educativa para Ingeniería en Sistemas</span>
+        <a href="inicioProfesor.php">Inicio</a>
+        <a href="calendarioDocente.php">Calendario</a>
+        <a href="gestionTareasProfesor.php">Asignar tareas</a>
+        <a href="gestionForosProfesor.php">Asignar foros</a>
+        <a href="calificarTareas.php">Calificar tareas</a>
+        <a href="calificarForos.php">Calificar foros</a>
+    </div>
 
 <h2>Tareas Asignadas</h2>
 

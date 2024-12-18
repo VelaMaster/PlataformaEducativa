@@ -273,6 +273,53 @@ if ($resultado->num_rows > 0) {
             </div>
         </form>
     </div>
+ <!-- Vista previa del archivo -->
+ <div class="file-preview" id="file-preview">
+                <?php if (!empty($fila['archivo_tarea'])): ?>
+                    <?php $extension = pathinfo($fila['archivo_tarea'], PATHINFO_EXTENSION); ?>
+                    <?php if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
+                        <img src="<?php echo htmlspecialchars($fila['archivo_tarea']); ?>" id="preview-image" alt="Vista previa del archivo">
+                    <?php elseif (strtolower($extension) === 'pdf'): ?>
+                        <iframe src="<?php echo htmlspecialchars($fila['archivo_tarea']); ?>" id="preview-pdf"></iframe>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p>No hay archivo asignado actualmente.</p>
+                <?php endif; ?>
+            </div>
+
+        </form>
+    </div>
+ <!-- JavaScript para la vista previa -->
+ <script>
+        document.getElementById('archivo').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('file-preview');
+            previewContainer.innerHTML = ""; // Limpia la vista previa anterior
+
+            if (file) {
+                const fileReader = new FileReader();
+                const fileType = file.type;
+
+                fileReader.onload = function(e) {
+                    if (fileType.includes("image")) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.borderRadius = "8px";
+                        previewContainer.appendChild(img);
+                    } else if (fileType === "application/pdf") {
+                        const iframe = document.createElement("iframe");
+                        iframe.src = e.target.result;
+                        previewContainer.appendChild(iframe);
+                    } else {
+                        previewContainer.innerHTML = "<p>Vista previa no disponible. Archivo: " + file.name + "</p>";
+                    }
+                };
+
+                fileReader.readAsDataURL(file);
+            }
+        });
+    </script>
+
 
     <div class="container">
         <h3>Rúbricas Asociadas</h3>
