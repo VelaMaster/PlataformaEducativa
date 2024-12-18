@@ -205,7 +205,7 @@ function obtenerNombreMateria($id_curso, $conexion) {
                 echo "<td>" . $fila["fecha_limite"] . "</td>";
                 echo "<td>" . $fila["estado_entrega"] . "</td>";
                 echo "<td class='" . ($fila["estado_fecha"] === "Vencida" ? "estado-vencida" : "estado-en-plazo") . "'>" . $fila["estado_fecha"] . "</td>";
-                echo "<td class='acciones'><a href='tarea.php?id=" . $fila["id_tarea"] . "'>Ver</a></td>";
+                echo "<td class='acciones'><a href='verdetallesTarea.php?id=" . $fila["id_tarea"] . "'>Ver</a></td>";
                 echo "</tr>";
             }
         } else {

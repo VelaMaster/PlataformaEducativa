@@ -52,18 +52,20 @@ if (!$tarea) {
     die('Tarea no encontrada.');
 }
 // esto es para la rubricas nuevas
-$stmtEntrega = $pdo->prepare('SELECT calificacion FROM entregas WHERE id_tarea = ? AND id_alumno = ?');
+// Consulta única para obtener todos los datos de la entrega
+$stmtEntrega = $pdo->prepare('SELECT * FROM entregas WHERE id_tarea = ? AND id_alumno = ?');
 $stmtEntrega->execute([$id_tarea, $id_alumno]);
 $entrega = $stmtEntrega->fetch();
 
+// Variable para verificar si está calificada
 $calificada = $entrega && $entrega['calificacion'] !== null;
+
+// Obtener la rúbrica
 $stmt = $pdo->prepare('SELECT * FROM rubricas WHERE id_tarea = ?');
 $stmt->execute([$id_tarea]);
 $rubricas = $stmt->fetchAll();
-// hazta aqui
-$stmt = $pdo->prepare('SELECT * FROM entregas WHERE id_tarea = ? AND id_alumno = ?');
-$stmt->execute([$id_tarea, $id_alumno]);
-$entrega = $stmt->fetch();
+
+//entegas hazta aqui
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
     if ($entrega) {
         $error = 'Ya has subido una entrega para esta tarea.';
@@ -115,6 +117,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
         }
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_entrega'])) {
+    if ($entrega) {
+        // Eliminar el archivo físicamente
+        if (file_exists($entrega['archivo_entrega'])) {
+            unlink($entrega['archivo_entrega']);
+        }
+
+        // Eliminar el registro de la base de datos
+        $stmt = $pdo->prepare('DELETE FROM entregas WHERE id = ?');
+        $stmt->execute([$entrega['id']]);
+
+        // Limpiar la variable entrega
+        $entrega = null;
+        $calificada = false;
+
+        $success = 'La entrega ha sido eliminada correctamente.';
+    } else {
+        $error = 'No se encontró la entrega para eliminar.';
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -225,31 +249,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-3 detail-label">Calificación:</div>
-                    <div class="col-md-9">
-                        <?php
-                            if ($entrega && $entrega['calificacion'] !== null) {
-                                echo htmlspecialchars($entrega['calificacion']) . ' / 100';
-                            } else {
-                                echo 'Aún no calificado';
-                            }
-                        ?>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-3 detail-label">Retroalimentación:</div>
-                    <div class="col-md-9">
-                        <?php
-                            if ($entrega && !empty($entrega['retroalimentacion'])) {
-                                echo htmlspecialchars($entrega['retroalimentacion']);
-                            } else {
-                                echo 'Aún no hay retroalimentación.';
-                            }
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-3 detail-label">Calificación:</div>
+    <div class="col-md-9">
+        <?php if ($calificada): ?>
+            <?= htmlspecialchars($entrega['calificacion']) ?> / 100
+        <?php else: ?>
+            Aún no calificado
+        <?php endif; ?>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-3 detail-label">Retroalimentación:</div>
+    <div class="col-md-9">
+        <?php if (isset($entrega) && !empty($entrega['retroalimentacion'])): ?>
+            <?= htmlspecialchars($entrega['retroalimentacion']) ?>
+        <?php else: ?>
+            Aún no hay retroalimentación.
+        <?php endif; ?>
+    </div>
+</div>
+
+                        <!--Esto es de las rubricas -->
         <div class="card shadow-sm mb-4">
     <div class="card-header">
         <h4 class="mb-0">Rúbrica</h4>
@@ -276,9 +296,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                             <td><?php echo nl2br(htmlspecialchars($rubrica['descripcion'])); ?></td>
                             <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
                             <?php if ($calificada): ?>
-                                <td><?php echo $rubrica['cumple'] ? 'Sí' : 'No'; ?></td>
-                                <td><?php echo $rubrica['no_cumple'] ? 'Sí' : 'No'; ?></td>
-                                <td><?php echo nl2br(htmlspecialchars($rubrica['observaciones'])); ?></td>
+                                <td><?php echo ($rubrica['cumple'] === 1) ? '•' : ''; ?></td>
+                                <td><?php echo ($rubrica['no_cumple'] === 1) ? '•' : ''; ?></td>
+                            <td><?php echo ($rubrica['observaciones'] === null || $rubrica['observaciones'] === '') ? '' : nl2br(htmlspecialchars($rubrica['observaciones'])); ?></td>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
@@ -312,6 +332,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
                 <i class="fas fa-plus"></i> Agregar o Crear una Tarea
             </button>
         </div>
+                    <!--Boton de eliminar-->
+                    <?php if ($entrega && $entrega['calificacion'] === null): ?>
+                <form action="" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta entrega?');">
+                <button type="submit" name="eliminar_entrega" style="color: red;">Eliminar entrega</button>
+                </form>
+                <?php elseif ($entrega && $entrega['calificacion'] !== null): ?>
+                <p style="color: red;">La entrega ya ha sido calificada y no puede eliminarse.</p>
+                <?php endif; ?>
+
+
     </div>
 
     <!-- Modal para Agregar o Crear una Tarea -->
