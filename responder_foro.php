@@ -157,6 +157,24 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<div class="barranavegacion">
+    
+        <div class="container-fluid">
+            <!-- Cambiado para mostrar el nombre del foro dinámicamente -->
+            <a class="navbar-brand" href="#"><?php echo htmlspecialchars($foro['nombre']); ?></a>
+            
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="inicioAlumno.php">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="calendarioAlumno2.php">Calendario</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gestionTareasAlumno.php">Tareas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forosAlumno.php">Foros</a></li>
+                </ul>
+            </div>
+        </div>
+    
+</div>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($foro['nombre']); ?></title>
@@ -197,9 +215,7 @@ function mostrarRespuestas($respuestas, $respuesta_padre = NULL) {
     </script>
 </head>
 <body>
-    <div class="navbar">
-        <h1><?php echo htmlspecialchars($foro['nombre']); ?></h1>
-    </div>
+    
 
     <div class="titulo-seccion"><?php echo htmlspecialchars($foro['descripcion']); ?></div>
 

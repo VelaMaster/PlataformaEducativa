@@ -301,3 +301,47 @@ textarea:focus {
         color: #ff8c00;
     }
 }
+/* Barra de navegación */
+.barranavegacion {
+    background-color: #e67e22; /* Color naranja principal */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px 30px; /* Padding amplio */
+    display: flex; /* Flexbox */
+    justify-content: space-between; /* Distribuye los elementos */
+    align-items: center; /* Centra verticalmente */
+    font-family: Arial, sans-serif;
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+}
+
+/* Texto principal (nombre del foro) */
+.barranavegacion .navbar-brand {
+    font-size: 1.5rem; /* Tamaño más grande */
+    color: #333; /* Texto oscuro */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Menú de navegación */
+.barranavegacion .navbar-nav {
+    list-style: none; /* Sin puntos */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Flexbox horizontal */
+    gap: 20px; /* Espaciado entre elementos */
+    justify-content: flex-end; /* Alineación derecha */
+    flex: 1;
+}
+
+/* Enlaces de navegación */
+.barranavegacion .navbar-nav .nav-link {
+    color: #fff; /* Texto blanco */
+    font-weight: bold; /* Negrita */
+    text-decoration: none;
+    font-size: 1.2rem; /* Aumentar tamaño del texto */
+    transition: color 0.3s ease;
+}
+
+.barranavegacion .navbar-nav .nav-link:hover {
+    color: #ddd; /* Cambio de color al pasar el cursor */
+}
