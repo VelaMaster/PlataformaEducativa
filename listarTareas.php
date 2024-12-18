@@ -35,9 +35,13 @@ $resultado = mysqli_query($conexion, $sql);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    
     <title>Tareas Asignadas</title>
     <link rel="stylesheet" href="css/listarTareas.css?v=<?php echo time(); ?>">
 </head>
+
+
+
 <body>
     <!-- Barra de navegación -->
     <div class="barranavegacion">
@@ -50,23 +54,29 @@ $resultado = mysqli_query($conexion, $sql);
         <a href="calificarForos.php">Calificar foros</a>
     </div>
 
-    <h2>Tareas Asignadas</h2>
+    <div class="container">
+    <h2 class="my-4 text-center">Tareas Asignadas</h2>
+  
 
-    <!-- Formulario para filtrar por curso -->
-    <form method="GET" action="listarTareas.php" class="filtro-container">
-        <label for="id_curso">Filtrar por curso:</label>
-        <select name="id_curso" id="id_curso">
-            <option value="0">Todos</option>
-            <?php
-            if ($result_cursos && mysqli_num_rows($result_cursos) > 0) {
-                while($curso = mysqli_fetch_assoc($result_cursos)) {
-                    $selected = ($id_curso == $curso['id']) ? 'selected' : '';
-                    echo "<option value='" . $curso['id'] . "' $selected>" . htmlspecialchars($curso['nombre_curso']) . "</option>";
+    <!-- Formulario de Filtrado -->
+    <form method="GET" action="listarTareas.php" class="row g-3 filtro-container">
+        <div class="col-md-8">
+            <label for="id_curso" class="form-label">Filtrar por curso:</label>
+            <select name="id_curso" id="id_curso" class="form-select">
+                <option value="0">Todos</option>
+                <?php
+                if ($result_cursos && mysqli_num_rows($result_cursos) > 0) {
+                    while($curso = mysqli_fetch_assoc($result_cursos)) {
+                        $selected = ($id_curso == $curso['id']) ? 'selected' : '';
+                        echo "<option value='" . $curso['id'] . "' $selected>" . htmlspecialchars($curso['nombre_curso']) . "</option>";
+                    }
                 }
-            }
-            ?>
-        </select>
-        <button type="submit">Filtrar</button>
+                ?>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
     </form>
 
     <div class="table-container">
