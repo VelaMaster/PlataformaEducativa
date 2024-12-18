@@ -51,9 +51,16 @@ $tarea = $stmt->fetch();
 if (!$tarea) {
     die('Tarea no encontrada.');
 }
+// esto es para la rubricas nuevas
+$stmtEntrega = $pdo->prepare('SELECT calificacion FROM entregas WHERE id_tarea = ? AND id_alumno = ?');
+$stmtEntrega->execute([$id_tarea, $id_alumno]);
+$entrega = $stmtEntrega->fetch();
+
+$calificada = $entrega && $entrega['calificacion'] !== null;
 $stmt = $pdo->prepare('SELECT * FROM rubricas WHERE id_tarea = ?');
 $stmt->execute([$id_tarea]);
 $rubricas = $stmt->fetchAll();
+// hazta aqui
 $stmt = $pdo->prepare('SELECT * FROM entregas WHERE id_tarea = ? AND id_alumno = ?');
 $stmt->execute([$id_tarea, $id_alumno]);
 $entrega = $stmt->fetch();
@@ -244,32 +251,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivoTarea'])) {
             </div>
         </div>
         <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h4 class="mb-0">Rúbrica</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered rubrica-table">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Criterio</th>
-                                <th>Descripción</th>
-                                <th>Puntos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($rubricas as $rubrica): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
-                                    <td><?php echo nl2br(htmlspecialchars($rubrica['descripcion'])); ?></td>
-                                    <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="card-header">
+        <h4 class="mb-0">Rúbrica</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered rubrica-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Criterio</th>
+                        <th>Descripción</th>
+                        <th>Puntos</th>
+                        <?php if ($calificada): ?>
+                            <th>Cumple</th>
+                            <th>No Cumple</th>
+                            <th>Observaciones</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($rubricas as $rubrica): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($rubrica['criterio']); ?></td>
+                            <td><?php echo nl2br(htmlspecialchars($rubrica['descripcion'])); ?></td>
+                            <td><?php echo htmlspecialchars($rubrica['puntos']); ?></td>
+                            <?php if ($calificada): ?>
+                                <td><?php echo $rubrica['cumple'] ? 'Sí' : 'No'; ?></td>
+                                <td><?php echo $rubrica['no_cumple'] ? 'Sí' : 'No'; ?></td>
+                                <td><?php echo nl2br(htmlspecialchars($rubrica['observaciones'])); ?></td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
+    </div>
+</div>
+
 
         <!-- Div para Previsualizar el Archivo Subido por el Alumno -->
         <?php if ($entrega && file_exists($entrega['archivo_entrega'])): ?>
