@@ -1,234 +1,46 @@
 <?php
-// listarTareas.php
+session_start(); 
+include('db.php');
 
-// Database connection
-$servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
-$baseDatos = "peis";
+if (!isset($_SESSION['num_control'])) {
+    header('Location: login.php');
+    exit();
+}
+$docente_num_control = $_SESSION['num_control'];
+$query_docente = "SELECT id FROM docentes WHERE num_control = '$docente_num_control'";
+$result_docente = mysqli_query($conexion, $query_docente);
+$docente_data = mysqli_fetch_assoc($result_docente);
+$docente_id = $docente_data['id'];
 
-$conexion = new mysqli($servidor, $usuario, $contraseña, $baseDatos);
+$query_cursos = "SELECT DISTINCT c.id, c.nombre_curso
+                 FROM cursos c
+                 INNER JOIN grupos g ON c.id = g.id_curso
+                 WHERE g.id_docente = '$docente_id'";
+$result_cursos = mysqli_query($conexion, $query_cursos);
 
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+$id_curso = isset($_GET['id_curso']) ? intval($_GET['id_curso']) : 0;
+$sql = "SELECT t.id, t.titulo, t.fecha_limite, c.nombre_curso
+        FROM tareas t
+        INNER JOIN cursos c ON t.id_curso = c.id
+        INNER JOIN grupos g ON c.id = g.id_curso
+        WHERE g.id_docente = '$docente_id'";
+
+if ($id_curso > 0) {
+    $sql .= " AND c.id = '$id_curso'";
 }
 
-// Query to fetch assigned tasks
-$sql = "SELECT id, id, titulo, fecha_limite FROM tareas";
-$resultado = $conexion->query($sql);
+$resultado = mysqli_query($conexion, $sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Tareas Asignadas</title>
-    <style>
-        /* Global Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9fbfd;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            padding: 20px 0;
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        /* Table Container */
-        .table-container {
-            max-width: 80%;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: #ff9900;
-            color: #fff;
-            font-weight: bold;
-            text-align: left;
-            padding: 16px;
-            font-size: 18px;
-        }
-
-        td {
-            padding: 14px;
-            border-bottom: 1px solid #e6e6e6;
-            font-size: 16px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #fef3e6;
-        }
-
-        .acciones a {
-            margin: 0 10px;
-            color: #ff9900;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        .acciones a:hover {
-            color: #e68a00;
-        }
-
-        /* Back Button */
-        .back-button-container {
-            text-align: center;
-            margin: 30px;
-        }
-
-        .back-button {
-            background-color: #ff9900;
-            color: #fff;
-            padding: 14px 30px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            font-size: 16px;
-        }
-
-        .back-button:hover {
-            background-color: #e68a00;
-        }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        /* Modal Content */
-        .modal-content {
-            background-color: #fff;
-            padding: 25px;
-            width: 360px;
-            border-radius: 10px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-            text-align: center;
-        }
-
-        .modal-content p {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        /* Modal Buttons */
-        .modal-buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .modal-button {
-            padding: 12px 28px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .confirm-button {
-            background-color: #ff9900;
-            color: #fff;
-        }
-
-        .confirm-button:hover {
-            background-color: #e68a00;
-        }
-
-        .cancel-button {
-            background-color: #ccc;
-            color: #333;
-        }
-
-        .cancel-button:hover {
-            background-color: #aaa;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-            font-size: 14px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
-
-        .footer-divider {
-            height: 5px;
-            background-color: #ff9900;
-        }
-
-         /* Estilo personalizado para la barra de navegación */
-         .barranavegacion {
-            background-color: #e48d16;
-            padding: 10px;
-            border-radius: 10px;
-            margin: 10px auto;
-            max-width: 95%;
-            color: white;
-            text-align: center;
-        }
-        .barranavegacion a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-        .barranavegacion a:hover {
-            text-decoration: underline;
-        }
-        .foro-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .foro-buttons a, .foro-buttons button {
-            margin-right: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/listarTareas.css?v=<?php echo time(); ?>">
 </head>
 <body>
-     <!-- Barra de navegación -->
-     <div class="barranavegacion">
+    <!-- Barra de navegación -->
+    <div class="barranavegacion">
         <span>Plataforma educativa para Ingeniería en Sistemas</span>
         <a href="inicioProfesor.php">Inicio</a>
         <a href="calendarioDocente.php">Calendario</a>
@@ -238,92 +50,95 @@ $resultado = $conexion->query($sql);
         <a href="calificarForos.php">Calificar foros</a>
     </div>
 
-<h2>Tareas Asignadas</h2>
+    <h2>Tareas Asignadas</h2>
 
-<div class="table-container">
-    <table>
-        <tr>
-            <th>Materia</th>
-            <th>Título de la Tarea</th>
-            <th>Fecha de Entrega</th>
-            <th>Acciones</th>
-        </tr>
-        <?php
-        if ($resultado->num_rows > 0) {
-            while($fila = $resultado->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . obtenerNombreMateria($fila["id"], $conexion) . "</td>";
-                echo "<td>" . $fila["titulo"] . "</td>";
-                echo "<td>" . $fila["fecha_limite"] . "</td>";
-                echo "<td class='acciones'>
-                        <a href='verTarea.php?id=" . $fila["id"] . "'>Ver</a> |
-                        <a href='editarTarea.php?id=" . $fila["id"] . "'>Editar</a> |
-                        <a href='#' onclick='confirmarEliminacion(" . $fila["id"] . ")'>Eliminar</a>
-                      </td>";
-                echo "</tr>";
+    <!-- Formulario para filtrar por curso -->
+    <form method="GET" action="listarTareas.php" class="filtro-container">
+        <label for="id_curso">Filtrar por curso:</label>
+        <select name="id_curso" id="id_curso">
+            <option value="0">Todos</option>
+            <?php
+            if ($result_cursos && mysqli_num_rows($result_cursos) > 0) {
+                while($curso = mysqli_fetch_assoc($result_cursos)) {
+                    $selected = ($id_curso == $curso['id']) ? 'selected' : '';
+                    echo "<option value='" . $curso['id'] . "' $selected>" . htmlspecialchars($curso['nombre_curso']) . "</option>";
+                }
             }
-        } else {
-            echo "<tr><td colspan='4'>No hay tareas asignadas</td></tr>";
-        }
-        $conexion->close();
-        ?>
-    </table>
-</div>
+            ?>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
 
-<!-- Botón para regresar -->
-<div class="back-button-container">
-    <a href="gestionTareasProfesor.php" class="back-button">Regresar a Gestión de Tareas</a>
-</div>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Materia</th>
+                <th>Título de la Tarea</th>
+                <th>Fecha de Entrega</th>
+                <th>Acciones</th>
+            </tr>
+            <?php
+            if ($resultado && mysqli_num_rows($resultado) > 0) {
+                while($fila = mysqli_fetch_assoc($resultado)) {
+                    echo "<tr>";
+                    echo "<td>" . htmlspecialchars($fila["nombre_curso"]) . "</td>";
+                    echo "<td>" . htmlspecialchars($fila["titulo"]) . "</td>";
+                    echo "<td>" . htmlspecialchars($fila["fecha_limite"]) . "</td>";
+                    echo "<td class='acciones'>
+                            <a href='verTarea.php?id=" . $fila["id"] . "'>Ver</a> |
+                            <a href='editarTarea.php?id=" . $fila["id"] . "'>Editar</a> |
+                            <a href='#' onclick='confirmarEliminacion(" . $fila["id"] . ")'>Eliminar</a>
+                          </td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4'>No hay tareas asignadas</td></tr>";
+            }
 
-<!-- Modal HTML -->
-<div id="modalEliminar" class="modal-overlay">
-    <div class="modal-content">
-        <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
-        <div class="modal-buttons">
-            <button class="modal-button confirm-button" onclick="eliminarTarea()">Confirmar</button>
-            <button class="modal-button cancel-button" onclick="cerrarModal()">Cancelar</button>
+            mysqli_close($conexion);
+            ?>
+        </table>
+    </div>
+
+    <!-- Botón para regresar -->
+    <div class="back-button-container">
+        <a href="gestionTareasProfesor.php" class="back-button">Regresar a Gestión de Tareas</a>
+    </div>
+
+    <!-- Modal HTML -->
+    <div id="modalEliminar" class="modal-overlay">
+        <div class="modal-content">
+            <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
+            <div class="modal-buttons">
+                <button class="modal-button confirm-button" onclick="eliminarTarea()">Confirmar</button>
+                <button class="modal-button cancel-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<footer>
-    <div class="footer-divider"></div>
-    <p>&copy; 2024 PE-ISC</p>
-</footer>
+    <footer>
+        <div class="footer-divider"></div>
+        <p>&copy; 2024 PE-ISC</p>
+    </footer>
 
-<script>
-    let idTareaEliminar = null;
+    <script>
+        let idTareaEliminar = null;
 
-    function confirmarEliminacion(idTarea) {
-        idTareaEliminar = idTarea;
-        document.getElementById('modalEliminar').style.display = 'flex';
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalEliminar').style.display = 'none';
-        idTareaEliminar = null;
-    }
-
-    function eliminarTarea() {
-        if (idTareaEliminar) {
-            window.location.href = 'eliminarTarea.php?id=' + idTareaEliminar;
+        function confirmarEliminacion(idTarea) {
+            idTareaEliminar = idTarea;
+            document.getElementById('modalEliminar').style.display = 'flex';
         }
-    }
-</script>
 
+        function cerrarModal() {
+            document.getElementById('modalEliminar').style.display = 'none';
+            idTareaEliminar = null;
+        }
+
+        function eliminarTarea() {
+            if (idTareaEliminar) {
+                window.location.href = 'eliminarTarea.php?id=' + idTareaEliminar;
+            }
+        }
+    </script>
 </body>
 </html>
-
-<?php
-// Function to get course name based on id_
-function obtenerNombreMateria($id, $conexion) {
-    $consulta = "SELECT nombre_curso FROM cursos WHERE id = $id";
-    $resultado = $conexion->query($consulta);
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        return $fila['nombre_curso'];
-    } else {
-        return "Desconocido";
-    }
-}
-?>
