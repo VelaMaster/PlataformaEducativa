@@ -229,30 +229,34 @@ $resultado = mysqli_stmt_get_result($stmt);
             </div>
 
             <div id="rubricaContainer" style="display: none;">
-                <h3>Rúbrica de Evaluación</h3>
-                <table id="rubricaTable">
-                    <thead>
-                        <tr>
-                            <th>Criterio</th>
-                            <th>Descripción</th>
-                            <th>Puntos</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <div class="button-container">
-                    <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
-                </div>
-
-                <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
-            </div>
+    <h3>Rúbrica de Evaluación</h3>
+    <table id="rubricaTable">
+        <thead>
+            <tr>
+                <th>Criterio</th>
+                <th>Descripción</th>
+                <th>Puntos</th>
+                <th>Cumple</th>
+                <th>No Cumple</th>
+                <th>Observaciones</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="button-container">
+        <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
+    </div>
+    <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
+</div>
 
             <div class="button-container">
                 <button type="submit" class="assign-button">Asignar Tarea</button>
                 <a href="listarTareas.php" class="show-tasks-button">Mostrar Tareas Asignadas</a>
             </div>
+
+
         </form>
     </section>
 </main>
@@ -264,6 +268,29 @@ $resultado = mysqli_stmt_get_result($stmt);
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="js/seleccionarArchivos.js"></script>
 <script src="js/rubrica.js"></script>
+
+<script>
+function agregarFilaRubrica() {
+    const table = document.getElementById('rubricaTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+
+    // Crear celdas para cada columna
+    newRow.innerHTML = `
+        <td><input type="text" name="criterio[]" required></td>
+        <td><input type="text" name="descripcionCriterio[]" required></td>
+        <td><input type="number" name="puntos[]" min="0" required></td>
+        <td><input type="checkbox" name="cumple[]"></td>
+        <td><input type="checkbox" name="no_cumple[]"></td>
+        <td><input type="text" name="observaciones[]"></td>
+        <td><button type="button" onclick="eliminarFila(this)">Eliminar</button></td>
+    `;
+}
+
+function eliminarFila(btn) {
+    const row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+}
+</script>
 
 <script>
     function previewFile() {
