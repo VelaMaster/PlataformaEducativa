@@ -32,93 +32,6 @@ $resultado = mysqli_stmt_get_result($stmt);
     <link rel="stylesheet" href="css/iniciosesionalumno.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/barradeNavegacion.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/seleccionarArchivo.css?v=<?php echo time(); ?>">
-    <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-toggle {
-            background-color: #ff5722;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            border-radius: 5px;
-            overflow: hidden;
-            width: 220px;
-        }
-
-        .dropdown-menu a {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            color: #000;
-            text-decoration: none;
-            gap: 10px;
-        }
-
-        .dropdown-menu a:hover {
-            background-color: #f1f1f1;
-        }
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .dropdown-menu svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .add-rubric-button, .remove-rubric-button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .add-rubric-button:hover, .remove-rubric-button:hover {
-            background-color: #0056b3;
-        }
-
-        .file-upload-preview img {
-            max-width: 100%;
-            max-height: 200px;
-            margin-bottom: 10px;
-        }
-
-        .file-upload-preview p {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .remove-file-button {
-            background-color: #ff5722;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .remove-file-button:hover {
-            background-color: #d45d39;
-        }
-    </style>
 </head>
 <body>
 <div class="barranavegacion">
@@ -223,7 +136,6 @@ $resultado = mysqli_stmt_get_result($stmt);
         </a>
     </div>
  </div>
-
                 <button type="button" id="addRubricaButton" class="add-rubric-button" onclick="mostrarRubrica()">Añadir Rúbrica</button>
                 <button type="button" id="removeRubricaButton" class="remove-rubric-button" onclick="ocultarRubrica()" style="display: none;">Eliminar Rúbrica</button>
             </div>
@@ -245,7 +157,7 @@ $resultado = mysqli_stmt_get_result($stmt);
         <tbody>
         </tbody>
     </table>
-    <div class="button-container">
+<div class="button-container">
         <button type="button" class="add-row-button" onclick="agregarFilaRubrica()">Añadir Fila</button>
     </div>
     <p>Total de Puntos Asignados: <span id="totalPuntos">0</span>/100</p>
@@ -319,7 +231,6 @@ function eliminarFila(btn) {
             filePreview.style.display = 'none';
         }
     }
-
     function removeFile() {
         document.getElementById('archivo').value = ''; // Elimina el archivo del input
         document.getElementById('filePreview').style.display = 'none'; // Oculta la vista previa
