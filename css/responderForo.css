@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #e7d6bf;
+    background-color: #f9f9f9;
     color: #333;
     margin: 0;
     padding: 20px;
@@ -15,7 +15,7 @@ body {
 
 h2 {
     text-align: center;
-    color: #e67e22;
+    color: #555;
 }
 
 p {
@@ -28,8 +28,9 @@ p {
     padding: 10px;
     border-left: 3px solid #ff8c00;
     margin-top: 10px;
-    background-color: #ffe4b3;
+    background-color: #fff;
     border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 textarea {
@@ -39,20 +40,22 @@ textarea {
     padding: 10px;
     border: 2px solid #ff8c00;
     border-radius: 10px;
+    background-color: #fff;
 }
 
 button {
-    padding: 8px 15px;
-    background-color: #f57c00;
+    padding: 12px 20px;
+    background-color: #ff8c00;
     color: #fff;
     border: none;
     border-radius: 20px;
     cursor: pointer;
+    font-size: 16px;
     transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: #e64a19;
+    background-color: #e67600;
 }
 
 .form-respuesta {
@@ -60,20 +63,20 @@ button:hover {
 }
 
 .form-eliminar button {
-    background-color: #e74c3c;
+    background-color: #d9534f;
 }
 
 .form-eliminar button:hover {
-    background-color: #c0392b;
+    background-color: #c9302c;
 }
 
 /* Estilo para el menú desplegable */
 select {
     padding: 10px;
     font-size: 16px;
-    color: #fff;
-    background-color: #ff8c00;
-    border: 2px solid #e67600;
+    color: #333;
+    background-color: #fff;
+    border: 2px solid #ff8c00;
     border-radius: 25px;
     outline: none;
     cursor: pointer;
@@ -81,8 +84,8 @@ select {
 }
 
 select:hover {
-    background-color: #e67600;
-    border-color: #e74c3c;
+    background-color: #f5f5f5;
+    border-color: #e67600;
 }
 
 select:focus {
@@ -93,12 +96,12 @@ select:focus {
 select option {
     font-size: 16px;
     color: #333;
-    background-color: #ffe4b3;
+    background-color: #fff;
     padding: 10px;
 }
 
 .navbar {
-    background-color: #f57c00;
+    background-color: #ff8c00;
     padding: 15px 20px;
     display: flex;
     justify-content: center;
@@ -143,17 +146,18 @@ select option {
 }
 
 .btn-ver {
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 20px;
-    background-color: #f57c00;
+    background-color: #ff8c00;
     color: white;
     border: none;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
 }
 
 .btn-ver:hover {
-    background-color: #e64a19;
+    background-color: #e67600;
 }
 
 .respuestas-contenedor {
@@ -165,20 +169,20 @@ select option {
     border-left: 2px solid #ff8c00;
     padding-left: 10px;
     margin-bottom: 10px;
-    background-color: #ffe4b3;
+    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
 }
 
 a {
-    color: #f57c00;
+    color: #ff8c00;
     text-decoration: none;
     font-weight: bold;
 }
 
 a:hover {
-    color: #e64a19;
+    color: #e67600;
     text-decoration: underline;
 }
 
@@ -193,7 +197,7 @@ a:hover {
 
 textarea:focus {
     outline: none;
-    border-color: #e64a19;
+    border-color: #e67600;
 }
 
 .form-container {
@@ -205,7 +209,7 @@ textarea:focus {
 .btn-publicar {
     margin-right: 10px;
 }
-/* aqui rubrica*/
+/* aquí rúbrica */
 /* Contenedor principal de rúbricas */
 .rubricas {
     background-color: #fff;
@@ -219,7 +223,7 @@ textarea:focus {
 
 /* Título de rúbricas */
 .rubricas h3 {
-    color: #ff7f00;
+    color: #ff8c00;
     font-size: 24px;
     text-align: center;
     margin-bottom: 20px;
@@ -234,7 +238,7 @@ textarea:focus {
 
 /* Encabezados de la tabla */
 .tabla-rubricas thead th {
-    background-color: #ff7f00;
+    background-color: #ff8c00;
     color: #fff;
     text-transform: uppercase;
     padding: 10px;
@@ -244,7 +248,7 @@ textarea:focus {
 
 /* Filas de la tabla */
 .tabla-rubricas tbody tr {
-    background-color: #fdfdfd;
+    background-color: #fff;
     transition: background-color 0.3s;
 }
 
@@ -254,7 +258,7 @@ textarea:focus {
 
 /* Hover en las filas */
 .tabla-rubricas tbody tr:hover {
-    background-color: #ffecb3;
+    background-color: #f5f5f5;
 }
 
 /* Celdas de la tabla */
@@ -294,7 +298,50 @@ textarea:focus {
         font-weight: bold;
         display: inline-block;
         width: 50%;
-        color: #ff7f00;
+        color: #ff8c00;
     }
 }
+/* Barra de navegación */
+.barranavegacion {
+    background-color: #e67e22; /* Color naranja principal */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px 30px; /* Padding amplio */
+    display: flex; /* Flexbox */
+    justify-content: space-between; /* Distribuye los elementos */
+    align-items: center; /* Centra verticalmente */
+    font-family: Arial, sans-serif;
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+}
 
+/* Texto principal (nombre del foro) */
+.barranavegacion .navbar-brand {
+    font-size: 1.5rem; /* Tamaño más grande */
+    color: #333; /* Texto oscuro */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Menú de navegación */
+.barranavegacion .navbar-nav {
+    list-style: none; /* Sin puntos */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Flexbox horizontal */
+    gap: 20px; /* Espaciado entre elementos */
+    justify-content: flex-end; /* Alineación derecha */
+    flex: 1;
+}
+
+/* Enlaces de navegación */
+.barranavegacion .navbar-nav .nav-link {
+    color: #fff; /* Texto blanco */
+    font-weight: bold; /* Negrita */
+    text-decoration: none;
+    font-size: 1.2rem; /* Aumentar tamaño del texto */
+    transition: color 0.3s ease;
+}
+
+.barranavegacion .navbar-nav .nav-link:hover {
+    color: #ddd; /* Cambio de color al pasar el cursor */
+}
