@@ -274,7 +274,6 @@ function agregarFilaRubrica() {
     const table = document.getElementById('rubricaTable').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
 
-    // Crear celdas para cada columna
     newRow.innerHTML = `
         <td><input type="text" name="criterio[]" required></td>
         <td><input type="text" name="descripcionCriterio[]" required></td>
@@ -282,7 +281,9 @@ function agregarFilaRubrica() {
         <td><input type="checkbox" name="cumple[]"></td>
         <td><input type="checkbox" name="no_cumple[]"></td>
         <td><input type="text" name="observaciones[]"></td>
-        <td><button type="button" onclick="eliminarFila(this)">Eliminar</button></td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button>
+        </td>
     `;
 }
 

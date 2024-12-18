@@ -202,25 +202,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Criterio</th>
-                                <th>Descripción</th>
-                                <th>Puntos</th>
-                                <th>Calificación</th>
+                            <th>Criterio</th>
+                            <th>Descripción</th>
+                            <th>Puntos</th>
+                            <th>Cumple</th>
+                            <th>No Cumple</th>
+                            <th>Observaciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($rubrica = $result_rubrica->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($rubrica['criterio']) ?></td>
-                                    <td><?= htmlspecialchars($rubrica['descripcion']) ?></td>
-                                    <td><?= htmlspecialchars($rubrica['puntos']) ?></td>
-                                    <td>
-                                        <input type="number" class="form-control calificacion-criterio" 
-                                               max="<?= $rubrica['puntos'] ?>" 
-                                               name="calificaciones[<?= $rubrica['id'] ?>]" 
-                                               value="<?= isset($_POST['calificaciones'][$rubrica['id']]) ? intval($_POST['calificaciones'][$rubrica['id']]) : 0 ?>">
-                                    </td>
-                                </tr>
+                            <td><?= htmlspecialchars($rubrica['criterio']) ?></td>
+                            <td><?= htmlspecialchars($rubrica['descripcion']) ?></td>
+                            <td>
+                                <input type="number" name="calificaciones[<?= $rubrica['id'] ?>]" 
+                                       class="form-control calificacion-criterio" min="0" max="<?= $rubrica['puntos'] ?>" value="0">
+                            </td>
+                            <td><input type="checkbox" name="cumple[<?= $rubrica['id'] ?>]"></td>
+                            <td><input type="checkbox" name="no_cumple[<?= $rubrica['id'] ?>]"></td>
+                            <td><input type="text" name="observaciones[<?= $rubrica['id'] ?>]" class="form-control"></td>
+                            
+                        </tr>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
@@ -241,6 +244,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+<script>
+function agregarFila() {
+    const tableBody = document.getElementById('rubricaTableBody');
+    const newRow = `
+        <tr>
+            <td><input type="text" name="criterio[]" class="form-control" required></td>
+            <td><input type="text" name="descripcionCriterio[]" class="form-control" required></td>
+            <td><input type="number" name="puntos[]" class="form-control calificacion-criterio" min="0" required></td>
+            <td><input type="checkbox" name="cumple[]"></td>
+            <td><input type="checkbox" name="no_cumple[]"></td>
+            <td><input type="text" name="observaciones[]" class="form-control"></td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button>
+            </td>
+        </tr>
+    `;
+    tableBody.insertAdjacentHTML('beforeend', newRow);
+}
+
+function eliminarFila(btn) {
+    btn.closest('tr').remove();
+    actualizarCalificacionTotal();
+}
+</script>
 
 <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
