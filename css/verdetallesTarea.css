@@ -174,3 +174,47 @@ h4{
     height: auto;
     border-radius: 5px;
 }
+/* Contenedor flex para alinear los botones */
+.contenedor-botones {
+    display: flex; /* Activa Flexbox */
+    justify-content: space-between; /* Distribuye los botones a los extremos */
+    align-items: center; /* Centra verticalmente */
+    margin-top: 20px; /* Margen superior */
+    gap: 10px; /* Espaciado entre botones */
+}
+
+/* Estilo del botón Eliminar */
+.btn-eliminar-entrega {
+    padding: 10px 20px; /* Espaciado interno */
+    background-color: #e74c3c; /* Rojo */
+    color: #fff; /* Texto blanco */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 1rem; /* Tamaño del texto */
+    font-weight: bold; /* Negrita */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-eliminar-entrega:hover {
+    background-color: #c0392b; /* Rojo más oscuro */
+    transform: scale(1.05); /* Efecto de escala */
+}
+
+/* Estilo del botón Agregar */
+.btn-agregar-tarea {
+    padding: 10px 20px;
+    background-color: #28a745; /* Verde */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-agregar-tarea:hover {
+    background-color: #218838; /* Verde más oscuro */
+    transform: scale(1.05); /* Efecto de escala */
+}

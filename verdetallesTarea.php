@@ -327,19 +327,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_entrega'])) 
                 </div>
             </div>
         <?php endif; ?>
-        <div class="d-flex justify-content-end mb-4">
-            <button type="button" class="btn btn-agregar-tarea" data-bs-toggle="modal" data-bs-target="#agregarTareaModal">
-                <i class="fas fa-plus"></i> Agregar o Crear una Tarea
-            </button>
-        </div>
-                    <!--Boton de eliminar-->
-                    <?php if ($entrega && $entrega['calificacion'] === null): ?>
-                <form action="" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta entrega?');">
-                <button type="submit" name="eliminar_entrega" style="color: red;">Eliminar entrega</button>
-                </form>
-                <?php elseif ($entrega && $entrega['calificacion'] !== null): ?>
-                <p style="color: red;">La entrega ya ha sido calificada y no puede eliminarse.</p>
-                <?php endif; ?>
+        <!-- Contenedor para los botones alineados -->
+<div class="contenedor-botones">
+    <!-- Botón Eliminar Entrega -->
+    <?php if ($entrega && $entrega['calificacion'] === null): ?>
+        <form action="" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta entrega?');">
+            <button type="submit" name="eliminar_entrega" class="btn-eliminar-entrega">Eliminar entrega</button>
+        </form>
+    <?php elseif ($entrega && $entrega['calificacion'] !== null): ?>
+        <p style="color: red; font-weight: bold;">La entrega ya ha sido calificada y no puede eliminarse.</p>
+    <?php endif; ?>
+
+    <!-- Botón Agregar o Crear Tarea -->
+    <button type="button" class="btn-agregar-tarea" data-bs-toggle="modal" data-bs-target="#agregarTareaModal">
+        <i class="fas fa-plus"></i> Agregar o Crear una Tarea
+    </button>
+</div>
+
+
 
 
     </div>
