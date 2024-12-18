@@ -73,16 +73,37 @@ $stmt_rubrica->bind_param("i", $id_tarea);
 $stmt_rubrica->execute();
 $result_rubrica = $stmt_rubrica->get_result();
 
-// Guardar calificación y retroalimentación si se envía el formulario
+// Guardar calificación, rúbrica y retroalimentación si se envía el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener calificaciones por criterio
+    // Obtener calificaciones, cumple, no cumple y observaciones
     $calificaciones = isset($_POST['calificaciones']) ? $_POST['calificaciones'] : [];
+    $cumple = isset($_POST['cumple']) ? $_POST['cumple'] : [];
+    $no_cumple = isset($_POST['no_cumple']) ? $_POST['no_cumple'] : [];
+    $observaciones = isset($_POST['observaciones']) ? $_POST['observaciones'] : [];
     
-    // Calcular la calificación total sumando las calificaciones por criterio
+    // Calcular la calificación total
     $calificacion_total = 0;
     foreach ($calificaciones as $id_rubrica => $valor) {
         $valor = intval($valor);
         $calificacion_total += $valor;
+        
+        // Limpiar los datos para evitar inyección
+        $cumple_valor = isset($cumple[$id_rubrica]) ? 1 : 0;
+        $no_cumple_valor = isset($no_cumple[$id_rubrica]) ? 1 : 0;
+        $observacion_texto = isset($observaciones[$id_rubrica]) ? $conexion->real_escape_string($observaciones[$id_rubrica]) : '';
+
+        // Actualizar la tabla de rúbricas
+        $query_update_rubrica = "
+            UPDATE rubricas
+            SET cumple = ?, no_cumple = ?, observaciones = ?
+            WHERE id = ?
+        ";
+        $stmt_update_rubrica = $conexion->prepare($query_update_rubrica);
+        if (!$stmt_update_rubrica) {
+            die("Error en la actualización de rúbrica: " . $conexion->error);
+        }
+        $stmt_update_rubrica->bind_param("iisi", $cumple_valor, $no_cumple_valor, $observacion_texto, $id_rubrica);
+        $stmt_update_rubrica->execute();
     }
 
     // Limitar la calificación total a 100
@@ -93,30 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener retroalimentación
     $retroalimentacion = isset($_POST['retroalimentacion']) ? $conexion->real_escape_string($_POST['retroalimentacion']) : '';
 
-    // Validar la calificación total
-    if ($calificacion_total < 0 || $calificacion_total > 100) {
-        echo "<script>alert('Error: La calificación debe ser un número entre 0 y 100.');</script>";
+    // Actualizar la calificación total en la tabla entregas
+    $query_actualizar = "
+        UPDATE entregas 
+        SET calificacion = ?, retroalimentacion = ? 
+        WHERE id = ?
+    ";
+    $stmt_actualizar = $conexion->prepare($query_actualizar);
+    if (!$stmt_actualizar) {
+        die("Error en la preparación de la consulta de actualización: " . $conexion->error);
+    }
+    $stmt_actualizar->bind_param("isi", $calificacion_total, $retroalimentacion, $id_entrega);
+    if ($stmt_actualizar->execute()) {
+        echo "<script>alert('Calificación y rúbrica guardadas correctamente.'); window.location.href = 'calificarTareas.php';</script>";
+        exit;
     } else {
-        // Actualizar la entrega con la calificación y retroalimentación
-        $query_actualizar = "
-            UPDATE entregas 
-            SET calificacion = ?, retroalimentacion = ? 
-            WHERE id = ?
-        ";
-        $stmt_actualizar = $conexion->prepare($query_actualizar);
-        if (!$stmt_actualizar) {
-            die("Error en la preparación de la consulta de actualización: " . $conexion->error);
-        }
-
-        $stmt_actualizar->bind_param("isi", $calificacion_total, $retroalimentacion, $id_entrega);
-        if ($stmt_actualizar->execute()) {
-            echo "<script>alert('Calificación y retroalimentación guardadas correctamente.'); window.location.href = 'calificarTareas.php';</script>";
-            exit;
-        } else {
-            echo "<script>alert('Error al guardar la calificación.');</script>";
-        }
+        echo "<script>alert('Error al guardar la calificación y rúbrica.');</script>";
     }
 }
+
 
 ?>
 
